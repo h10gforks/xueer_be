@@ -173,8 +173,10 @@ def put_course(id):
             results.append(course.name)
         for seg in results:
             s = Search.query.filter_by(name=seg).first()
-            if not s:
-                s = Search(name=seg)
+            if s:
+              db.session.delete(s)
+              db.session.commit()
+            s = Search(name=seg)
             s.courses.append(course)
             db.session.add(s)
             db.session.commit()
