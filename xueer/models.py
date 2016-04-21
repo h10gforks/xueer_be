@@ -69,41 +69,41 @@ class Role(db.Model):
 # 多对多关系的中间表
 UCLike = db.Table(
     'user_like',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'))
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete="CASCADE")),
+    db.Column('course_id', db.Integer, db.ForeignKey('courses.id', ondelete="CASCADE"))
 )
 
 UCMLike = db.Table(
     'user_comment_like',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('comment_id', db.Integer, db.ForeignKey('comments.id'))
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete="CASCADE")),
+    db.Column('comment_id', db.Integer, db.ForeignKey('comments.id', ondelete="CASCADE"))
 )
 
 UTLike = db.Table(
     'user_tips_like',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('tips_id', db.Integer, db.ForeignKey('tips.id'))
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete="CASCADE")),
+    db.Column('tips_id', db.Integer, db.ForeignKey('tips.id', ondelete="CASCADE"))
 )
 
 
 class CourseTag(db.Model):
     #__table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'courses_tags'
-    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), primary_key=True)
-    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'), primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id', ondelete="CASCADE"), primary_key=True)
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE"), primary_key=True)
     count = db.Column(db.Integer)
     counts = db.Column(db.Integer)
 
 CourseSearch =  db.Table(
     'courses_search',
-    db.Column('course_id', db.Integer, db.ForeignKey('courses.id')),
-    db.Column('search_id', db.Integer, db.ForeignKey('search.id'))
+    db.Column('course_id', db.Integer, db.ForeignKey('courses.id', ondelete="CASCADE")),
+    db.Column('search_id', db.Integer, db.ForeignKey('search.id', ondelete="CASCADE"))
 )
 
 TagSearch = db.Table(
     'tags_search',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-    db.Column('search_id', db.Integer, db.ForeignKey('search.id'))
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE")),
+    db.Column('search_id', db.Integer, db.ForeignKey('search.id', ondelete="CASCADE"))
 )
 
 
