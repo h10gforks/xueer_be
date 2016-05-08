@@ -4,12 +4,12 @@ from flask import jsonify, url_for, request, current_app
 # from flask_login import current_user
 from .authentication import auth
 from sqlalchemy import desc
-from ..models import Courses, User, Tags, CourseCategories, CourseTypes, Permission
+from ..models import Courses, User, Tags, CourseCategories, CourseTypes, Permission,Search
 from . import api
 from xueer import db
 import json
 from xueer.decorators import admin_required
-
+import jieba
 
 @api.route('/courses/', methods=["GET"])  # ?string=sort&main_cat&ts_cat
 def get_courses():
@@ -26,7 +26,7 @@ def get_courses():
     if request.args.get('teacher'):
         # /api/v1.0/courses/?teacher=1
         # 获取id为1的老师教学的所有课
-        pagination = Courses.query.filter_by(teacher_id=request.args.get('teacher')).paginate(
+        pagination = Courses.query.filter_by(teacher_id=request.args.get('teacher')).order_by(desc(Courses.id)).paginate(
             page,
             per_page=current_app.config['XUEER_COURSES_PER_PAGE'],
             error_out=False
@@ -102,6 +102,7 @@ def get_courses():
     else:
         page_count = courses_count//current_app.config['XUEER_COURSES_PER_PAGE']+1
     last = url_for('api.get_courses', page=page_count, _external=True)
+    # courses = sorted(courses, key=lambda x: x.id, reverse=True)
     return json.dumps(
         [course.to_json2() for course in courses],
         ensure_ascii=False,
@@ -153,7 +154,19 @@ def put_course(id):
         course.type_id = data_dict.get('type_id', course.type_id)
         db.session.add(course)
         db.session.commit()
-    return jsonify({'update': id}), 200
+        generator = jieba.cut_for_search(course.name)
+        seg_list = '/'.join(generator)
+        results = seg_list.split('/')
+        if course.name not in results:
+            results.append(course.name)
+        for seg in results:
+            s = Search.query.filter_by(name=seg).first()
+            if not s:
+                s = Search(name=seg)
+            s.courses.append(course)
+            db.session.add(s)
+            db.session.commit()
+    return jsonify({'update': id, 'request_data': request.data}), 200
 
 
 @api.route('/courses/<int:id>/', methods=['GET', 'DELETE'])
