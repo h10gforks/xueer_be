@@ -1,11 +1,12 @@
 # coding:utf-8
 
 from flask import jsonify, url_for, request, current_app
-from ..models import Tags, Courses
+from ..models import Tags, Courses, Search
 from . import api
 from xueer import db
 import json
 from xueer.api_1_0.authentication import auth
+import jieba
 
 
 @api.route('/tags/', methods=["GET"])
@@ -55,14 +56,15 @@ def new_tag(id):
     """
     向特定的课程创建一个新的tag
     """
-    tag = Tags.from_json(request.json)
-    tag.course_id = id
-    db.session.add(tag)
-    db.session.commit()
-    return jsonify({'id': tag.id}), 201, {
-        # location 会自动写在头部
-        'location': url_for('api.get_tags_id', id=tag.id, _external=True)
-    }
+    if request.method == "POST":
+        tag = Tags.from_json(request.json)
+        tag.course_id = id
+        db.session.add(tag)
+        db.session.commit()
+        return jsonify({'id': tag.id}), 201, {
+            # location 会自动写在头部
+            'location': url_for('api.get_tags_id', id=tag.id, _external=True)
+        }
 
 
 @api.route('/tags/<int:id>', methods=["GET", "DELETE"])

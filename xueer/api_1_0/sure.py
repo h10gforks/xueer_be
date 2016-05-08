@@ -24,4 +24,3 @@ def sure():
             })
         else:
             return jsonify({"user": "false"})
-

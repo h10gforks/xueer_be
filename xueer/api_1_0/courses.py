@@ -4,12 +4,13 @@ from flask import jsonify, url_for, request, current_app
 # from flask_login import current_user
 from .authentication import auth
 from sqlalchemy import desc
-from ..models import Courses, User, Tags, CourseCategories, CourseTypes, Permission,Search
+from ..models import Courses, User, Tags, CourseCategories, CourseTypes, Permission, Search
 from . import api
 from xueer import db
 import json
 from xueer.decorators import admin_required
 import jieba
+
 
 @api.route('/courses/', methods=["GET"])  # ?string=sort&main_cat&ts_cat
 def get_courses():
@@ -133,6 +134,18 @@ def new_course():
         course = Courses.from_json(request.get_json())
         db.session.add(course)
         db.session.commit()
+        generator = jieba.cut_for_search(course.name)
+        seg_list = '/'.join(generator)
+        results = seg_list.split('/')
+        if course.name not in results:
+            results.append(course.name)
+        for seg in results:
+            s = Search.query.filter_by(name=seg).first()
+            if not s:
+                s = Search(name=seg)
+            s.courses.append(course)
+            db.session.add(s)
+            db.session.commit()
         return jsonify({
             'id': course.id
         }), 201
@@ -161,12 +174,14 @@ def put_course(id):
             results.append(course.name)
         for seg in results:
             s = Search.query.filter_by(name=seg).first()
-            if not s:
-                s = Search(name=seg)
+            if s:
+              db.session.delete(s)
+              db.session.commit()
+            s = Search(name=seg)
             s.courses.append(course)
             db.session.add(s)
             db.session.commit()
-    return jsonify({'update': id, 'request_data': request.data}), 200
+    return jsonify({'update': id}), 200
 
 
 @api.route('/courses/<int:id>/', methods=['GET', 'DELETE'])
