@@ -1,0 +1,33 @@
+[program:xueer]
+
+[Development]
+- workdir=xueer
+- dbtype=sqlite
+- hostip=127.0.0.1:5000
+- requirement=requirements/dev.txt
+- server=python
+- logfile=None
+
+[Test]
+- workdir=xueer_be
+- dbtype=postgresql
+- hostip=121.41.6.148:5050
+- requirement=requirements/test.txt
+- server=gunicorn
+- logfile=None
+
+[Product]
+- workdir=xueer
+- dbtype=postgresql
+- hostip={
+    nginx: 218.199.196.131:80
+    supervisord{
+        gunicorn: 127.0.0.1:5050
+    }
+}
+- requirement=requirements/pro.txt
+- server=gunicorn
+- logfile={
+    log: /tmp/gunicorn_xueer.log
+    err: /tmp/gunicorn_xueer.err
+}

@@ -8,3 +8,4 @@ flask-moment
 flask-wtf
 flask-httpauth
 flask-whooshalchemy
+flask-paginate
