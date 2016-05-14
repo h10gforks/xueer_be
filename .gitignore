@@ -2,11 +2,12 @@
 *.pyc
 .DS_Store
 xueer.sock
+xueer_test.sqlite
+xueer_dev.sqlite
+supervisor.conf
 -1
 .idea/
 venv/
 migrations/
 whoosh_index/
-xueer_test.sqlite
-xueer_dev.sqlite
-supervisor.conf
+todo/
