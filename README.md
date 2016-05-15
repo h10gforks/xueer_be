@@ -105,7 +105,11 @@ search类用于存储这些分词 并且建立每个分词于原课程／教师�
 
 ### 7. 统一注册登录
 这次学而和以后木犀的其他所有产品会采用统一的账号验证登录, 纳入
-[muxiOOOOOauth](https://github.com/Muxi-Studio/muxiOOOOOauth)管理.
+[muxiOOOOOauth](https://github.com/Muxi-Studio/muxiOOOOOauth)管理.<br/>
+muxiOOOOOauth中使用了一下技术:
+
++ [celery+redis用于异步邮件任务队列](http://blog.miguelgrinberg.com/post/using-celery-with-flask)
++ [semanticUI用于前端界面](http://semantic-ui.com/)
 
 ### 8. 后端功能测试
 
