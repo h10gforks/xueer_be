@@ -69,15 +69,14 @@ def get_courses_id_comments(id):
 
 
 @api.route('/courses/<int:id>/comments/hot/', methods=["GET"])
-# @auth.login_required
 def get_hot_comments(id):
     """
-    获取特定id课程的热门评论(以3作为热门鉴定)
+    获取[特定id课程]的热门评论(以3作为热门鉴定)
     喜欢数大于3作为热门的判定
     :param id: 课程id
     :return: 评论 json 数据
     """
-    hot_comments = Comments.query.order_by(Comments.likes).all()
+    hot_comments = Comments.query.filter_by(course_id=id).order_by(Comments.likes).all()
     return json.dumps(
         [comment.to_json() for comment in hot_comments if comment.likes >= 3],
         ensure_ascii=False,
@@ -228,4 +227,3 @@ def delete_tip_comment(id):
     return jsonify({
         'message': '该评论已经被删除'
     })
-
