@@ -24,14 +24,6 @@ def get_courses():
         current_app.config['XUEER_COURSES_PER_PAGE'] = num
     else:
         current_app.config['XUEER_COURSES_PER_PAGE'] = 20
-    if request.args.get('teacher'):
-        # /api/v1.0/courses/?teacher=1
-        # 获取id为1的老师教学的所有课
-        pagination = Courses.query.filter_by(teacher_id=request.args.get('teacher')).order_by(desc(Courses.id)).paginate(
-            page,
-            per_page=current_app.config['XUEER_COURSES_PER_PAGE'],
-            error_out=False
-        )
     if request.args.get('sort') == 'view':
         if request.args.get('main_cat'):
             if request.args.get('ts_cat'):

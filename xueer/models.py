@@ -91,8 +91,8 @@ class CourseTag(db.Model):
     __tablename__ = 'courses_tags'
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id', ondelete="CASCADE"), primary_key=True)
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE"), primary_key=True)
-    count = db.Column(db.Integer)
-    counts = db.Column(db.Integer)
+    count = db.Column(db.Integer, default=0)
+    counts = db.Column(db.Integer, default=0)
 
 CourseSearch =  db.Table(
     'courses_search',
@@ -261,9 +261,9 @@ class Courses(db.Model):
     # comment(定义和Comments表的一对多关系)
     comment = db.relationship('Comments', backref="courses", lazy='dynamic', cascade='all')
     # count: 课程对应的评论数
-    count = db.Column(db.Integer)
+    count = db.Column(db.Integer, default=0)
     # likes: 课程对应的点赞数
-    likes = db.Column(db.Integer)
+    likes = db.Column(db.Integer, default=0)
     # 定义与标签的多对多关系
     tags = db.relationship("CourseTag", backref="courses", lazy="dynamic", cascade='all')
     users = db.relationship(
@@ -434,7 +434,7 @@ class Comments(db.Model):
     # time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     body = db.Column(db.Text)
-    count = db.Column(db.Integer)  # 客户端能否+1
+    count = db.Column(db.Integer, default=0)  # 客户端能否+1
     likes = db.Column(db.Integer, default=0)  # 评论被点赞的数目
     # is_useful计数
     is_useful = db.Column(db.Integer)
@@ -547,7 +547,7 @@ class Tags(db.Model):
     __searchable__ = ['name']
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    count = db.Column(db.Integer)
+    count = db.Column(db.Integer, default=0)
     courses = db.relationship("CourseTag", backref="tags", lazy="dynamic", cascade='all')
 
     def to_json(self):
