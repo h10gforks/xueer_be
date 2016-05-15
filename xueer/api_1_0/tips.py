@@ -86,7 +86,7 @@ def update_tip(id):
     """
     更新一条tips
     """
-    tip = Tips.get_or_404(id)
+    tip = Tips.query.get_or_404(id)
     if request.method == "PUT":
         tip.title = request.get_json().get('title') or tip.title
         tip.img_url = request.get_json().get('img_url') or tip.img_url
