@@ -18,7 +18,13 @@ def store_rds(keywords):
     将keywords存入redis数据库
     :param keywords: 需存入redis的关键字
     :return None:
-    数据存储在硬盘上
+    数据存储在硬盘上(每3天进行清空)
     """
-    lambda rds: rds.incr(keywords) if rds.get(keywords) else rds.set(keywords, 1)
+    # lambda rds: rds.incr(keywords) if rds.get(keywords) else rds.set(keywords, 1)
+    if rds.get(keywords):
+        count = int(rds.get(keywords))
+        count += 1
+        rds.set(keywords, count)
+    else:
+        rds.set(keywords, 1)
     rds.save()

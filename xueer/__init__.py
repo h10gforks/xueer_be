@@ -29,7 +29,7 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 moment = Moment(app)
 # initial redis database for keywords store
-pool = redis.ConnectionPool(host="121.41.6.148", port=6380, db=0)
+pool = redis.ConnectionPool(host="localhost", port=6380, db=0)
 rds = redis.Redis(connection_pool = pool)
 
 
