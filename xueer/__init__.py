@@ -8,6 +8,7 @@ xueer
 """
 import os
 
+import redis
 from flask import Flask
 from flask_moment import Moment
 from flask_login import LoginManager
@@ -27,6 +28,9 @@ login_manager = LoginManager(app)
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 moment = Moment(app)
+# initial redis database for keywords store
+pool = redis.ConnectionPool(host="121.41.6.148", port=6380, db=0)
+rds = redis.Redis(connection_pool = pool)
 
 
 from hello import hello
@@ -40,4 +44,3 @@ app.register_blueprint(api_1_0_blueprint, url_prefix='/api/v1.0')
 
 from admin import admin as admin_blueprint
 app.register_blueprint(admin_blueprint, url_prefix='/admin')
-
