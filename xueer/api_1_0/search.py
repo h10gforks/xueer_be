@@ -200,10 +200,13 @@ def get_search():
 
 @api.route('/search/hot/', methods=['GET'])
 def hot_search():
-    list = KeyWords.query.all()
-    hots = sorted(list, key=lambda item: item.counts, reverse=True)[:10]
+    counts = []
+    keys = rds.keys()
+    hots = sorted(
+        keys, key=lambda key: int(rds.get(key)), reverse=True
+    )[:10]
     return json.dumps(
-        [keyword.to_json() for keyword in hots],
+        [keyword for keyword in hots],
         ensure_ascii=False,
         indent=1
     ), 200
