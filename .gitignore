@@ -5,6 +5,8 @@ xueer.sock
 xueer_test.sqlite
 xueer_dev.sqlite
 supervisor.conf
+celerybeat-schedule.db
+celerybeat.pid
 -1
 .idea/
 venv/
