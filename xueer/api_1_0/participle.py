@@ -11,6 +11,7 @@
 import jieba
 from xueer import db
 from xueer.models import Courses, Search
+from xueer.decorators import admin_required
 from . import api
 
 
@@ -36,6 +37,7 @@ def participle(course):
 
 
 @api.route('/participle/')
+@admin_required
 def start_participle():
     """
     分词触发函数

@@ -41,4 +41,3 @@ def admin_login(f):
              abort(403)
         return f(*args, **kwargs)
     return decorated
-
