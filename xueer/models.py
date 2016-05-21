@@ -369,7 +369,7 @@ class Courses(db.Model):
         )
 
     def __repr__(self):
-        return '<Courses %r>' % self.name
+        return '<Courses %d>' % self.id
 
 whooshalchemy.whoosh_index(app, Courses)
 
@@ -434,8 +434,8 @@ class Comments(db.Model):
     # time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     body = db.Column(db.Text)
-    count = db.Column(db.Integer, default=0)  # 客户端能否+1
-    likes = db.Column(db.Integer, default=0)  # 评论被点赞的数目
+    count = db.Column(db.Integer, default=0)
+    likes = db.Column(db.Integer, default=0)
     # is_useful计数
     is_useful = db.Column(db.Integer)
     tip_id = db.Column(db.Integer, db.ForeignKey('tips.id'))
@@ -655,7 +655,6 @@ class Search(db.Model):
     """
     分词表: jieba分词
     courses: 课程多对多关系
-    tags: 标签多对多关系
     """
     __tablename__ = 'search'
     __searchable__ = ['name']
@@ -667,12 +666,6 @@ class Search(db.Model):
         backref = db.backref('search', lazy='dynamic'),
         lazy='dynamic', cascade='all'
     )
-    # tags = db.relationship(
-    #   'Tags',
-    #    secondary = TagSearch,
-    #    backref = db.backref('search', lazy='dynamic'),
-    #    lazy='dynamic', cascade='all'
-    # )
 
     def __repr__(self):
         return '<Search %r>' % self.name
@@ -682,7 +675,8 @@ whooshalchemy.whoosh_index(app, Search)
 
 
 class KeyWords(db.Model):
-    """Key Words"""
+    """Key Words
+    热搜词采用分时段统计放到redis里面"""
     __tablename__ = 'keywords'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(164))

@@ -1,10 +1,19 @@
 # coding: utf-8
 """
-这段代码确实有点恶心, 需要重构
-恶心的地方首先是条件太多, 条件太多没办法, 不得不导致面条式的编程
-然后搜索的部分逻辑似乎也添加在了这里, 这个完全可以放到搜索部分完成
-现在搜索的逻辑代码就是 models + API, 能不能划分的更细一点?
-我先把代码整体读一遍, 然后想想如何划分如何重构!
+    search.py
+    ~~~~~~~~~
+
+        学而搜索API
+
+现在这段代码问题很多, 3个函数但是有361行代码,
+而且代码中的层级太多(条件太多导致面条式编程),
+问题解决
+
+    1. 梳理核心逻辑
+    2. 条件太多但是如何减少if...else代码
+    3. 分页部分如何减少重复
+
+现在条件多是因为分页条件+搜索条件...这是问题所在
 """
 
 from flask import jsonify, url_for, request, current_app
@@ -16,7 +25,6 @@ from xueer import db
 import json
 from sqlalchemy import desc
 from flask.ext.paginate import Pagination
-"""关于分页, 有没有对资源的装饰器?如果没有如何实现?"""
 
 
 @api.route('/search/', methods=['GET'])
@@ -29,22 +37,24 @@ def get_search():
     page = request.args.get('page', 1, type=int)
     courses = []; course1 = []; course2 = [] ;course3 = []
     keywords = request.args.get('keywords')
-    # 关键字(搜索词): 查询结果或者写入关键字表
     if keywords:
         k = KeyWords.query.filter_by(name=keywords).first()
+        """Problem #1
+        垃圾回收算法? count相当于引用计数, 最热搜索词需要几个?
+        1. 时间段进行最热词统计
+        2. 缓存替换策略? 最热词和计数可以放到redis队列里面跑
+        我觉得分代回收算法还是适用的, 热搜词分时段是可以的"""
+        """所以这里就采用分时段的热搜词统计, 热搜词跑在redis队列里面"""
         if k is None:
             k = KeyWords(name=keywords)
             db.session.add(k)
             db.session.commit()
         k.counts += 1
-        """keyword 计数: 其实可以写一个类似构造器的东西(重写__new__),
-        这样这部分代码就可以放到models里面"""
         db.session.add(k)
         db.session.commit()
-        """利用whooshalchemy搜索关键字
-        Search表是一个建立分词和课程关系的m2m表"""
         searches = Search.query.whoosh_search(keywords).all()
-        """条件过滤...这一段比较恶心, 但是没什么好的办法"""
+        """这三个条件如何修改?
+        这三个条件有先后顺序"""
         if request.args.get('sort') == 'view':
             if request.args.get('main_cat'):
                 if request.args.get('ts_cat'):
@@ -193,7 +203,7 @@ def get_search():
             page_count = courses_count//current_app.config['XUEER_COURSES_PER_PAGE']
         else:
             page_count = courses_count//current_app.config['XUEER_COURSES_PER_PAGE']+1
-        last = url_for('api.get_search', page=page_count, _external=True) 
+        last = url_for('api.get_search', page=page_count, _external=True)
         courses = courses[(page-1)*20:page*20]
     return json.dumps(
         [course.to_json2() for course in courses],
@@ -365,4 +375,3 @@ def hot_search():
         ensure_ascii=False,
         indent=1
     ), 200
-

@@ -1,5 +1,13 @@
+# coding: utf-8
+"""
+    fenci.py
+    ````````
+
+    学而课程分词脚本
+"""
+
 import requests
-from xueer.models import  Courses
+from xueer.models import Courses
 import base64
 
 token=base64.b64encode('eyJpZCI6MX0.32BFm_OeqXXn558zOr2t9queYDc:')
@@ -23,9 +31,8 @@ for course in Courses.query.all():
                 'sub_category_id':course.subcategory_id,
                 'type_id':course.type_id
               }
-        r=requests.put('http://xueer.ccnuer.cn/api/v1.0/courses/%s/' % str(id),data=str(data),headers=Headers)
-                    # r=requests.put('http://127.0.0.1:8000/api/v1.0/courses/14/data',
-                    # headers=Headers)
+        r=requests.put(
+            'http://xueer.ccnuer.cn/api/v1.0/courses/%s/' % str(id),data=str(data),headers=Headers
+        )
         print r.status_code
         print id
-
