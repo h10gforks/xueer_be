@@ -15,6 +15,7 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from xueer_config import config
+from celery import Celery
 
 
 app = Flask(__name__)
@@ -31,6 +32,11 @@ moment = Moment(app)
 # initial redis database for keywords store
 pool = redis.ConnectionPool(host="localhost", port=6380, db=0)
 rds = redis.Redis(connection_pool = pool)
+# setting up celery
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+from workers.workers import CELERYBEAT_SCHEDULE
+celery.conf.update(app.config)
+celery.conf.update(CELERYBEAT_SCHEDULE)
 
 
 from hello import hello

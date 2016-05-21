@@ -42,6 +42,8 @@ class DevConfig(Config):
     """
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'xueer_dev.sqlite')
+    CELERY_BROKER_URL = 'redis://localhost:6382/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6382/0'
 
 
 class ProConfig(Config):
