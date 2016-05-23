@@ -84,4 +84,3 @@ def register():
         return render_template("hello/mobile/index.html")
     else:
         return render_template("hello/desktop/index.html")
-

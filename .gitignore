@@ -7,6 +7,7 @@ xueer_test.sqlite
 xueer_dev.sqlite
 supervisor.conf
 celerybeat-schedule.db
+celerybeat-schedule
 celerybeat.pid
 workers/workers.db
 -1
