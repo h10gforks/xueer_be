@@ -19,7 +19,7 @@
 from flask import jsonify, url_for, request, current_app
 from flask_login import current_user
 from .authentication import auth
-from ..models import Courses, User, Tags, CourseCategories, Search,  Teachers, KeyWords
+from ..models import Courses, User, Tags, CourseCategories, Search,  Teachers
 from . import api
 from xueer import rds, db
 import json

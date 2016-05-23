@@ -36,6 +36,7 @@ rds = redis.Redis(connection_pool = pool)
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 from workers.workers import CELERYBEAT_SCHEDULE
 celery.conf.update(app.config)
+# 如何吧CELERYBEAR_SCHEDULE添加进celery (beat)?
 celery.conf.update(CELERYBEAT_SCHEDULE)
 
 

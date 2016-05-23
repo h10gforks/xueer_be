@@ -1,6 +1,7 @@
 **/*.pyc
 *.pyc
 .DS_Store
+**/*.rdb
 xueer.sock
 xueer_test.sqlite
 xueer_dev.sqlite
