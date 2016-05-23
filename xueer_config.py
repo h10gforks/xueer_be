@@ -51,6 +51,8 @@ class ProConfig(Config):
     生产环境下配置
     """
     SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+    CELERY_BROKER_URL = 'redis://localhost:6382/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6382/0'
 
 
 class TestConfig(Config):

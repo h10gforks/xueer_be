@@ -37,7 +37,7 @@ def participle(course):
 
 
 @api.route('/participle/')
-@admin_required
+# @admin_required
 def start_participle():
     """
     分词触发函数
