@@ -672,23 +672,3 @@ class Search(db.Model):
 
 
 whooshalchemy.whoosh_index(app, Search)
-
-
-class KeyWords(db.Model):
-    """Key Words
-    热搜词采用分时段统计放到redis里面"""
-    __tablename__ = 'keywords'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(164))
-    counts = db.Column(db.Integer, default=0)
-
-    def to_json(self):
-        json_keywords = {
-            'id': self.id,
-            'key_word': self.name
-        }
-        return json_keywords
-
-    def __repr__(self):
-        return '<KeyWords %r>' % self.name
-
