@@ -50,7 +50,7 @@ class DevConfig(Config):
     CELERYBEAT_SCHEDULE = {
         'restart_redis_every_259200s': {
             'task': 'restart_keywords_redis',
-            'schedule': timedelta(seconds=10)
+            'schedule': timedelta(seconds=259200)
         },
     }
 
@@ -65,7 +65,7 @@ class ProConfig(Config):
     CELERYBEAT_SCHEDULE = {
         'restart_redis_every_259200s': {
             'task': 'restart_keywords_redis',
-            'schedule': timedelta(seconds=10)
+            'schedule': timedelta(seconds=259200)
         },
     }
 
