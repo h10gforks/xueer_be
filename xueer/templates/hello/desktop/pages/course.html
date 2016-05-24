@@ -1,9 +1,0 @@
-{% extends "pages/base.html" %}
-{% block title %}{{ info.course_name }}-学而{% endblock %}
-{% block head %}
-    {{ super() }}
-{% endblock %}
-{% block content %}
-    {% include 'components/course/info.html' %}
-    {% include 'components/course/comments.html' %}
-{% endblock %}

@@ -1,6 +1,7 @@
 var webpack = require("webpack");
 var path = require('path');
 var ExtractTextPlugin =require('extract-text-webpack-plugin');
+var TransferWebpackPlugin = require('transfer-webpack-plugin');
 
 
 var isProduction = function(){
@@ -18,7 +19,7 @@ var devConfig = {
 	},
 	output: {
 		filename: "[name].bundle.js",
-		path: path.join(__dirname,'../static/js'),
+		path: path.join(__dirname,'../static/x_d/js')
 	},
 	module: {
 		loaders: [

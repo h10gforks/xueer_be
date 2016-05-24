@@ -3,7 +3,7 @@
 		<div class="course_class margin_auto">公</div>
 		<div class="list ib">
 			{% for course in top_list %}
-				{%- if loop.index is even %}{% continue %}{% endif %}
+				{% if loop.index is even %}{% else %}{% endif %}
 			<div class="item">
 				<div class="course_name">
 					<span class="list_tag"></span>
@@ -21,7 +21,7 @@
 		<div class="course_class margin_auto">公</div>
 		<div class="list ib">
 			{% for course in top_list %}
-				{%- if loop.index is even %}{% continue %}{% endif %}
+				{%- if loop.index is even %}{% else %}{% endif %}
 			<div class="item">
 				<div class="course_name">
 					<span class="list_tag"></span>
@@ -39,7 +39,7 @@
 		<div class="course_class margin_auto">公</div>
 		<div class="list ib">
 			{% for course in top_list %}
-				{%- if loop.index is even %}{% continue %}{% endif %}
+				{%- if loop.index is even %}{% else %}{% endif %}
 			<div class="item">
 				<div class="course_name">
 					<span class="list_tag"></span>
@@ -57,7 +57,7 @@
 		<div class="course_class">公</div>
 		<div class="list ib">
 			{% for course in top_list %}
-				{%- if loop.index is even %}{% continue %}{% endif %}
+				{%- if loop.index is even %}{% else %}{% endif %}
 			<div class="item">
 				<div class="course_name">
 					<span class="list_tag"></span>

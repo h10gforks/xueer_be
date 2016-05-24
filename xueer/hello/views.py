@@ -21,16 +21,16 @@ def index():
     if flag:
         return render_template("hello/mobile/index.html")
     else:
-        return render_template("hello/desktop/index.html")
+        return render_template("hello/desktop/pages/index.html")
 
 # placehold 路由
-@hello.route('/search_result/', methods=['GET'])
+@hello.route('/search-result/', methods=['GET'])
 def get_search_result():
     """get search result"""
     if is_mobie():
         return render_template("hello/mobile/index.html")
     else:
-        return render_template("hello/desktop/index.html")
+        return render_template("hello/desktop/pages/search-result.html")
 
 
 @hello.route('/course/<int:id>/', methods=['GET'])
@@ -39,7 +39,7 @@ def course(id):
     if is_mobie():
         return render_template("hello/mobile/index.html")
     else:
-        return render_template("hello/desktop/index.html")
+        return render_template("hello/desktop/pages/index.html")
 
 @hello.route('/tip/<int:id>/', methods=['GET'])
 def tip(id):
@@ -56,7 +56,7 @@ def courses():
     if is_mobie():
         return render_template("hello/mobile/index.html")
     else:
-        return render_template("hello/desktop/index.html")
+        return render_template("hello/desktop/pages/courses.html")
 
 
 @hello.route('/user/<string:username>/', methods=['GET'])
@@ -74,7 +74,7 @@ def login():
     if is_mobie():
         return render_template("hello/mobile/index.html")
     else:
-        return render_template("hello/desktop/index.html")
+        return render_template("hello/desktop/pages/login.html")
 
 
 @hello.route('/register/', methods=['GET', 'POST'])
@@ -83,4 +83,4 @@ def register():
     if is_mobie():
         return render_template("hello/mobile/index.html")
     else:
-        return render_template("hello/desktop/index.html")
+        return render_template("hello/desktop/pages/register.html")
