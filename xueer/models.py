@@ -672,3 +672,15 @@ class Search(db.Model):
 
 
 whooshalchemy.whoosh_index(app, Search)
+
+
+class Banner(db.Model):
+    """
+    banners
+    """
+    __tablename__ = 'banner'
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.Text)
+
+    def __repr__(self):
+        return '<Banner %r>' % self.url

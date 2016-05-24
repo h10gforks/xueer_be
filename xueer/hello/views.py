@@ -5,6 +5,7 @@ from flask import Flask
 from flask import render_template,request
 from jinja2 import Environment
 from . import hello
+from xueer.models import Banner, Courses
 
 
 def is_mobie():
@@ -21,7 +22,15 @@ def index():
     if flag:
         return render_template("hello/mobile/index.html")
     else:
-        return render_template("hello/desktop/pages/index.html")
+        banner = Banner.query.all()
+        gong_top_list = sorted(Courses.query.filter_by(category_id=1), lambda x: x.count, reverse=True)
+        zhuan_top_list = sorted(Courses.query.filter_by(category_id=3), lambda x: x.count, reverse=True)
+        tong_top_list = sorted(Courses.query.filter_by(category_id=2), lambda x: x.count, reverse=True)
+        su_top_list = sorted(Courses.query.filter_by(category_id=4), lambda x: x.count, reverse=True)
+        return render_template("hello/desktop/pages/index.html", banner=banner,
+                gong_top_list=gong_top_list, su_top_list=su_top_list
+                zhuan_top_list=zhuan_top_list, tong_top_list=tong_top_list
+                )
 
 # placehold 路由
 @hello.route('/search-result/', methods=['GET'])
@@ -84,3 +93,12 @@ def register():
         return render_template("hello/mobile/index.html")
     else:
         return render_template("hello/desktop/pages/register.html")
+
+
+@hello.route('/category/')
+def category():
+    """ category """
+    if is mobile():
+        return render_template("hello/mobile/index.html")
+    else:
+        return render_template("hello/desktop/pages/category.html")
