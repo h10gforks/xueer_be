@@ -1,8 +1,6 @@
 var webpack = require("webpack");
 var path = require('path');
 var ExtractTextPlugin =require('extract-text-webpack-plugin');
-var TransferWebpackPlugin = require('transfer-webpack-plugin');
-
 
 var isProduction = function(){
 	return process.env.NODE_ENV === 'production';
