@@ -1,0 +1,12 @@
+<div class="banner margin_auto">
+    {% for img in banner %}
+	<div class="item" style="background-color:#717DB5">
+		<img src="{{ img.img_url }}"/>
+	</div>
+	{% endfor %}
+	<div class="dots space">
+		{% for img in banner %}
+		<span class="dot va_top"></span>
+		{% endfor %}
+	</div>
+</div>

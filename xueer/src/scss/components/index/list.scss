@@ -1,0 +1,88 @@
+/***
+ xueer component index_list
+ authored by zindex
+***/
+.hot_courses{
+	width: 1000px;
+	box-sizing: border-box;
+	padding: 40px 80px 40px 100px;
+	margin-bottom: 10px;
+	background: $main_white;
+	.ib{
+		margin-top: 40px;
+	}
+	.item{
+		width: 158px;
+		padding-right: 20px;
+		margin-bottom: 37px;
+	}
+	.list_tag{
+		display: inline-block;
+		border: 3px solid $font_black_deep;
+		border-radius: 3px;
+		margin-right: 5px;
+	}
+	.course_name{
+		font-size: 14px;
+		margin-bottom: 10px;
+		overflow:hidden;
+		white-space:nowrap;
+		text-overflow:ellipsis;
+	}
+	.info{
+		font-size: 18px;
+		color:$font_grey_light;
+		width: 100%;
+	}
+	.teacher{
+		font-size: 12px;
+		margin-left: 10px;
+	}
+	.lists {
+		margin-right: 40px;
+	}
+	.lists{
+		a{
+			color:$font_grey_light;
+		}
+		.more {
+			@include course_class(24px,24px,21px);
+			margin-top: 32px;
+		}
+		.course_class {
+			@include course_class(96px,96px,36px);
+		}
+		.list{
+			font-size: 24px;
+			padding-top: 5px;
+			border-right: 2px solid $border_grey;
+		}
+	}
+	.item:last-child {
+		margin-bottom: 0;
+	}
+	.info:last-child {
+		margin-bottom: 0px;
+	}
+	.lists:last-child {
+		margin-right: 0;
+		.item {
+			padding-right: 0;
+		}
+		.list {
+			border-right: 0;
+		}
+		.course_class {
+			margin-left: 40px;
+		}
+	}
+	.item:hover {
+		.list_tag {
+			border-color: $font_red_deep; 
+		}
+		.teacher,
+		a{
+			color: $font_red_deep;
+		}
+	}
+}

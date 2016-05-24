@@ -1,0 +1,75 @@
+<div class="comments_box  margin_auto margin_b">
+    <div class="comments_cont">
+        <div class="head">
+            <span class="head_txt">热门评论</span>
+        </div>
+        {% for comment in hot_comments %}
+        <div class="comment space">
+            <div class="avatar">
+                <img src="{{ comment.avatar }}" alt="avatar">
+            </div>
+            <div class="content va_top">
+                <div class="top space">
+                    <span class="username">
+                        {{ comment.user_name }}
+                        <span class="hot tc">hot</span>
+                    </span>
+                </div>
+                <div class="body">
+                    {{ comment.body }}
+                </div>
+                <div class="like">
+                    赞同（{{ comment.like }}）
+                </div>
+                <span class="date">
+                    {{ comment.date }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="comments_cont">
+        <div class="head">
+            <span class="head_txt">最新评论</span>
+        </div>
+        {% for comment in hot_comments %}
+        <div class="comment space">
+            <div class="avatar">
+                <img src="{{ comment.avatar }}" alt="avatar">
+            </div>
+            <div class="content">
+                <div class="top space">
+                    <span class="username">
+                        {{ comment.user_name }}
+                    </span>
+                </div>
+                <div class="body">
+                    {{ comment.body }}
+                </div>
+                <div class="like">
+                    赞同（{{ comment.like }}）
+                </div>
+                <span class="date">
+                    {{ comment.date }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+        {% block content %}
+                {% include 'components/search-result/nav-page.html' %}
+        {% endblock %}
+    </div>
+    <div class="comments_cont border_b">
+        <div class="head">
+            <span class="head_txt">写评论</span>
+        </div>
+        <div class="new_comment_cont">
+            <div class="avatar">
+                <img src="">
+            </div>
+            <div class="comment_box comment_box_x">好好 二二 好好</div>
+        </div>
+    </div>
+    
+    <script src="/static/js/comment.bundle.js"></script>
+</div>

@@ -1,0 +1,74 @@
+<div class="hot_courses margin_auto space">
+	<div class="lists va_top space">
+		<div class="course_class margin_auto">公</div>
+		<div class="list ib">
+			{% for course in top_list %}
+				{%- if loop.index is even %}{% continue %}{% endif %}
+			<div class="item">
+				<div class="course_name">
+					<span class="list_tag"></span>
+					<a href="{{ top_list[0].url }}">{{ course.title}}</a>
+				</div>
+				<div class="info left">
+					<span class="teacher">&nbsp;&nbsp;{{ course.teacher}}</span>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		<div class="more tc margin_auto cp">+</div>
+	</div>
+	<div class="lists va_top space">
+		<div class="course_class margin_auto">公</div>
+		<div class="list ib">
+			{% for course in top_list %}
+				{%- if loop.index is even %}{% continue %}{% endif %}
+			<div class="item">
+				<div class="course_name">
+					<span class="list_tag"></span>
+					<a href="{{ top_list[0].url }}">{{ course.title}}</a>
+				</div>
+				<div class="info left">
+					<span class="teacher">&nbsp;&nbsp;{{ course.teacher}}</span>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		<div class="more tc margin_auto cp">+</div>
+	</div>
+	<div class="lists va_top space">
+		<div class="course_class margin_auto">公</div>
+		<div class="list ib">
+			{% for course in top_list %}
+				{%- if loop.index is even %}{% continue %}{% endif %}
+			<div class="item">
+				<div class="course_name">
+					<span class="list_tag"></span>
+					<a href="{{ top_list[0].url }}">{{ course.title}}</a>
+				</div>
+				<div class="info left">
+					<span class="teacher">&nbsp;&nbsp;{{ course.teacher}}</span>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		<div class="more tc margin_auto cp">+</div>
+	</div>
+	<div class="lists va_top space">
+		<div class="course_class">公</div>
+		<div class="list ib">
+			{% for course in top_list %}
+				{%- if loop.index is even %}{% continue %}{% endif %}
+			<div class="item">
+				<div class="course_name">
+					<span class="list_tag"></span>
+					<a href="{{ top_list[0].url }}">{{ course.title}}</a>
+				</div>
+				<div class="info left">
+					<span class="teacher">&nbsp;&nbsp;{{ course.teacher}}</span>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		<div class="more tc margin_auto cp">+</div>
+	</div>
+</div>

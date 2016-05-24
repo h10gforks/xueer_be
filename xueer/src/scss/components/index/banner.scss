@@ -1,0 +1,95 @@
+/***
+ xueer component index_banner
+ authored by xxx
+***/
+
+.banner{
+	width: 1000px;
+	overflow: hidden;
+	position:relative;
+	height: 352px;
+	.item{
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width:100%;
+		height: 100%;
+		visibility: hidden;
+	}
+	.item img{
+		display: block;
+		margin: 0 auto;
+		width: 1000px;
+		min-height: 100%;
+	}
+	.current{
+		visibility:visible;
+	}
+	.dots_container{
+		position:relative;
+		margin: 0 auto;
+		width:960px;
+		height:100%;
+	}
+	.dots{
+		position: absolute;
+		bottom: 20px;
+		right: 25px;
+		height: 15px;
+		text-align: center;
+	}
+	.current_dot{
+		background-color: $main_orange;
+	}
+	.dot{
+		width:10px;
+		height:10px;
+		background-color: $main_white;
+		border-radius: 50%;
+		cursor: pointer;
+		margin: 5px;
+	}
+	.ltr_prev{
+		animation:l_t_r_prev 2s;
+	}
+	.ltr_next{
+		animation:l_t_r_next 2s;
+	}
+	.rtl_next{
+		animation:r_t_l_prev 2s;
+	}
+	.rtl_prev{
+		animation:r_t_l_next 2s;
+	}
+	.top{
+		z-index: 3;
+	}
+	.dot:hover{
+		background-color: $main_orange;
+	}
+}
+
+@keyframes l_t_r_prev{
+	to{
+		transform:translateX(100%);
+	}
+}	
+
+@keyframes l_t_r_next{
+	from{
+		transform:translateX(-100%);
+	}
+}
+
+@keyframes r_t_l_prev{
+	to{
+		transform:translateX(-100%);
+	}
+}
+
+@keyframes r_t_l_next{
+	from{
+		transform:translateX(100%);
+	}
+}
+

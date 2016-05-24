@@ -1,0 +1,74 @@
+.hot_course {
+	width: 1000px;
+	background: $main_white;
+	box-sizing: border-box;
+	padding: 30px 144px;
+	.head {
+		width: 230px;
+		height: 42px;
+		margin-bottom: 20px;
+	}
+	.title {
+		font-size: 18px;
+		line-height: 18px;
+		margin-bottom: 5px;
+		color: $font_black_deep;
+	}
+	.introduce {
+		font-size: 12px;
+		line-height: 12px;
+		color: $main_green;
+	}
+	.course_about {
+		font-weight: lighter;
+	}
+	.course_about,
+	.course_index {
+		width: 140px;
+		height: 103px;
+		line-height: 103px; 
+	}
+	.center_cont {
+		font-size: 14px;
+		line-height: 18px;
+	}
+	.course_about:nth-child(odd) {
+		border: 2px solid $main_green;
+		border-left: 0;
+		border-right: 0;
+	}
+	.course_about:nth-child(even) {
+		border: 2px solid $main_green;
+		border-bottom: 0;
+		border-left: 0;
+		border-right: 0;
+	}
+	.course_index {
+		font-size: 35px;
+		color: $font_red_deep;
+		text-decoration: underline;
+		line-height: 103px
+	}
+	.hot_cont:nth-child(even) {
+		border: 2px;
+		border-color: $main_green;
+		border-top: 2px solid $main_white;
+		border-style:solid;
+	}
+	.hot_cont:nth-child(3) {
+		.course_about {
+			color: $main_white;
+			background: $main_green;
+		}
+	}
+	.hot_cont:last-child {
+		.course_about{
+			border-right: 2px solid $main_green;
+		}
+	}
+	.hot_cont:first-child {
+		.course_about{
+			border-left: 2px solid $main_green;
+		}
+	}
+}
