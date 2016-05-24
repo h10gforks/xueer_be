@@ -16,6 +16,7 @@ venv/
 migrations/
 whoosh_index/
 todo/
-static/x_d/js
-static/x_d/css
+xueer/static/x_d/js
+xueer/static/x_d/css
+xueer/src/node_modules
 
