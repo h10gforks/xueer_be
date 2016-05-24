@@ -2,7 +2,7 @@
     var hintText={user_email:{hint:"邮箱是您登录的唯一账号，请谨慎填写",right:"邮箱格式正确",wrong:"邮箱格式有误，请重新输入"},
             user_name:{hint:"请输入3-12个字符的用户名（包括字母/数字/下划线）",right:"用户名格式正确",wrong:"用户名格式有误，请重新输入"},
             passward:{hint:"请输入6位以上密码",right:"密码格式正确",wrong:"请输入符合格式的密码"},
-            repassward:{hint:"请再次输入密码",right:"再次输入密码正确",wrong:"两次输入不一致，请重新输入或密码格式不正确"}};
+            repassward:{hint:"请再次输入密码",right:"再次输入密码正确",wrong:"两次输入不一致，请重新输入"}};
     var regEvent=function(node, event, func){
         if (node.addEventListener)
             node.addEventListener(event, func);
