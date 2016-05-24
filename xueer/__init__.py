@@ -21,7 +21,6 @@ from celery import Celery
 app = Flask(__name__)
 # app.config.from_object(config['product'])
 app.config.from_object(config['develop'])
-# app.config.from_envvar("XUEER_SERVER_SETTING")
 
 
 db = SQLAlchemy(app)
@@ -32,12 +31,19 @@ moment = Moment(app)
 # initial redis database for keywords store
 pool = redis.ConnectionPool(host="localhost", port=6380, db=0)
 rds = redis.Redis(connection_pool = pool)
+
 # setting up celery
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-from workers.workers import CELERYBEAT_SCHEDULE
-celery.conf.update(app.config)
-# 如何吧CELERYBEAR_SCHEDULE添加进celery (beat)?
-celery.conf.update(CELERYBEAT_SCHEDULE)
+def make_celery(app):
+    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+    class ContextTask(TaskBase):
+        abstract = True
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
+    return celery
 
 
 from hello import hello

@@ -10,6 +10,8 @@
 
 # the root url of this flask application
 import os
+# from workers.workers import restart_keywords_redis
+from datetime import timedelta
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -27,6 +29,7 @@ class Config(object):
     XUEER_USERS_PER_PAGE = 20
     XUEER_TAGS_PER_PAGE = 20
     XUEER_TIPS_PER_PAGE = 5
+    CELERYBEAT_SCHEDULE = {}
 
     @staticmethod
     def init_app(app):
@@ -44,6 +47,12 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'xueer_dev.sqlite')
     CELERY_BROKER_URL = 'redis://localhost:6382/0'
     CELERY_RESULT_BACKEND = 'redis://localhost:6382/0'
+    CELERYBEAT_SCHEDULE = {
+        'restart_redis_every_259200s': {
+            'task': 'restart_keywords_redis',
+            'schedule': timedelta(seconds=10)
+        },
+    }
 
 
 class ProConfig(Config):
@@ -53,6 +62,12 @@ class ProConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
     CELERY_BROKER_URL = 'redis://localhost:6382/0'
     CELERY_RESULT_BACKEND = 'redis://localhost:6382/0'
+    CELERYBEAT_SCHEDULE = {
+        'restart_redis_every_259200s': {
+            'task': 'restart_keywords_redis',
+            'schedule': timedelta(seconds=10)
+        },
+    }
 
 
 class TestConfig(Config):
