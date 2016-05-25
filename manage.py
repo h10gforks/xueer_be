@@ -16,7 +16,7 @@ from flask.ext.migrate import Migrate, MigrateCommand
 from flask import g
 from xueer import db, app
 from xueer.models import Permission, Role, User, AnonymousUser, Courses, CourseCategories, \
-    CourseTypes, Comments, Teachers, Tags, Tips, Search, Banner
+    CourseTypes, Comments, Teachers, Tags, Tips, Search
 
 
 # set encoding utf-8
@@ -45,8 +45,7 @@ def make_shell_context():
         Teachers=Teachers,
         Tags=Tags,
         Tips=Tips,
-        Search=Search,
-        Banner=Banner
+        Search=Search
     )
 
 

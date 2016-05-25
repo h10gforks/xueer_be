@@ -5,8 +5,7 @@ from flask import Flask
 from flask import render_template,request
 from jinja2 import Environment
 from . import hello
-from xueer.models import Banner, Courses
-from xueer.models import CourseCategories
+from xueer.models import Courses, Tips, Tags, CourseCategories, CourseTag
 
 
 def is_mobie():
@@ -23,14 +22,14 @@ def index():
     if flag:
         return render_template("hello/mobile/index.html")
     else:
-        banner = Banner.query.all()
+        tips = sorted(Tips.query.all(), key=lambda x: x.id, reverse=True)[:3]
         gong_list = Courses.query.filter_by(category_id=1).all()
-        gong_top_list = sorted(gong_list, key=lambda x: x.count, reverse=True)[:5]
-        zhuan_top_list = sorted(Courses.query.filter_by(category_id=3).all(), key=lambda x: x.count, reverse=True)[:5]
-        tong_top_list = sorted(Courses.query.filter_by(category_id=2).all(), key=lambda x:x.count, reverse=True)[:5]
-        su_top_list = sorted(Courses.query.filter_by(category_id=4).all(), key=lambda x:x.count, reverse=True)[:5]
+        gong_top_list = sorted(gong_list, key=lambda x: x.count, reverse=True)[:3]
+        zhuan_top_list = sorted(Courses.query.filter_by(category_id=3).all(), key=lambda x: x.count, reverse=True)[:3]
+        tong_top_list = sorted(Courses.query.filter_by(category_id=2).all(), key=lambda x:x.count, reverse=True)[:3]
+        su_top_list = sorted(Courses.query.filter_by(category_id=4).all(), key=lambda x:x.count, reverse=True)[:3]
         return render_template(
-            "hello/desktop/pages/index.html", banner=banner,
+            "hello/desktop/pages/index.html", tips=tips,
             gong_top_list=gong_top_list, su_top_list=su_top_list,
             zhuan_top_list=zhuan_top_list, tong_top_list=tong_top_list
         )
@@ -52,18 +51,19 @@ def course(id):
         return render_template("hello/mobile/index.html")
     else:
         info = Courses.query.get_or_404(id)
+        info_tags = []
+        for course_tag in info.tags.all():
+            info_tags.append(Tags.query.get_or_404(course_tag.tag_id))
         category = {
-            1: "公",
-            2: "通",
-            3: "专",
-            4: "素"
+            1: "公", 2: "通", 3: "专", 4: "素"
         }.get(info.category_id)
-        hot_comments = []
-        new_comments = []
+        hot_comments = []; new_comments = []
         return render_template(
             "hello/desktop/pages/courses.html",
-            info = info, category = category
+            info = info, category = category,
+            info_tags = info_tags
         )
+
 
 @hello.route('/tip/<int:id>/', methods=['GET'])
 def tip(id):
@@ -113,7 +113,11 @@ def register():
 @hello.route('/category/')
 def category():
     """ category """
-    if is_mobile():
+    if is_mobie():
         return render_template("hello/mobile/index.html")
     else:
-        return render_template("hello/desktop/pages/category.html")
+        hot_tags = sorted(Tags.query.all(), key=lambda tag: tag.count, reverse=True)[:12]
+        return render_template(
+            "hello/desktop/pages/category.html",
+            hot_tags = hot_tags
+        )

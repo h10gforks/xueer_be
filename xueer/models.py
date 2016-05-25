@@ -569,14 +569,14 @@ class Tags(db.Model):
 whooshalchemy.whoosh_index(app, Tags)
 
 
-
 class Tips(db.Model):
   # __table_args__ = {'mysql_charset':'utf8'}
     __tablename__ = 'tips'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
     body = db.Column(db.Text)
-    img_url = db.Column(db.String(164))
+    img_url = db.Column(db.Text)
+    banner_url = db.Column(db.Text)
     author = db.Column(db.String(100))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     # likes number
@@ -670,17 +670,4 @@ class Search(db.Model):
     def __repr__(self):
         return '<Search %r>' % self.name
 
-
 whooshalchemy.whoosh_index(app, Search)
-
-
-class Banner(db.Model):
-    """
-    banners
-    """
-    __tablename__ = 'banner'
-    id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.Text)
-
-    def __repr__(self):
-        return '<Banner %r>' % self.url
