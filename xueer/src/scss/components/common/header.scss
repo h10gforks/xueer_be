@@ -43,7 +43,8 @@
        line-height: 80px;
     }
     .log_button {
-        font-size: 18px;
+        font-size: 14px;
+        line-height: 14px;
         @include button(90px,
         40px,
         3px)
@@ -99,8 +100,5 @@
     .last{
         margin-right: 115px;
         color: $font_black_middle;
-    }
-    .item:hover {
-        color: $font_blue_light;
     }
 }

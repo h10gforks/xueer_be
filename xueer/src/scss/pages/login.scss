@@ -2,49 +2,50 @@
 login.scss
 */
 .login_content{
-	width: 100%;
+	width: 1000px;
+	height: 900px;
 	background: $bg_grey_color;
 	form{
-		input{
-			height: 40px;
+		input {
 			width: 240px;
-			line-height: 40px;
+			font-size: 18px;
+			line-height: 18px;
 			box-sizing:border-box;
-			margin: 10px 0;
+			margin-top: 20px;
 		}
 		input[type=text] {
-			font-size: 20px;
 			color: $font_black_middle;
-			padding: 0px 15px;
+			padding: 11px 6px;
 			border: 1px solid $font_black_middle;
 		}
 		input[type=submit] {
 			background: $font_red_deep;
 			color: $main_white;
-			font-size: 18px;
+			padding: 11px 0;
 			margin-top: 25px;
 			cursor: pointer;
 		}
 		.forget{
-			line-height: 20px;
+			margin-top: 5px;
+			font-size: 12px;
+			padding: 3px 0;
 			text-align: right;
 			color: $font_red_deep;
 		}
 	}
 	.login {
 	    width: 1000px;
-	    height: 780px;
-	    position: relative;
-	    line-height: 26px;
+	    height:676px;
+	    position: absolute;
+	   	bottom: 55px;
 	}
 	.content{
-		padding: 30px 50px;
-		height: 426px;
+		padding: 0 50px;
 		width: 340px;
 		background: $main_white;
 		position: absolute;
 		right: 140px;
-		bottom: 230px;
+		bottom: 295px;
 		box-sizing:border-box;
 		box-shadow: 5px 1px 0px #CDCDCD;
 	}
@@ -74,7 +75,7 @@ login.scss
 		width: 85px;
 		height: 135px;
 		position: absolute;
-		bottom: -83px;
+		bottom: -76px;
 		left: -10px;
 	}
 	.trg{
@@ -93,8 +94,9 @@ login.scss
 		text-align: center;
 		color: $font_blue_middle;
 		font-size: 12px;
-		font-weight: light;
-		margin: 40px 42px 10px 0px;
+		font-weight: lighter;
+		margin-top: 50px;
+		margin-bottom: 33px;
 			a{
 				font-size: 16px;
 				font-weight: bold;
@@ -104,14 +106,15 @@ login.scss
 	.login>svg {
 		width:1002px;
 		height:676px;
-	    position: absolute;
-	    bottom: -73px;
+		position: absolute;
+	    bottom: 0;
 	}
 	.log_option{
-		margin: 40px 0 20px;
+		margin: 71px 0 10px;
 		p{
 			color: $font_grey_light;
-			font-size: 22px;
+			font-size: 18px;
+			padding: 3px 0;
 		}
 		p span{
 			display: inline-block;

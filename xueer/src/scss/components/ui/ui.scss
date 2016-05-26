@@ -1,6 +1,5 @@
 @mixin button($width,$height,$radius){
 	width: $width;
-	line-height: $height;
 	border-radius: $radius;
 	color: $main_white;
 	text-align: center;
