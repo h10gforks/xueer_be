@@ -9,6 +9,7 @@ login.scss
 		input {
 			width: 240px;
 			font-size: 18px;
+			font-weight: lighter;
 			line-height: 18px;
 			box-sizing:border-box;
 			margin-top: 20px;
@@ -112,7 +113,7 @@ login.scss
 	.log_option{
 		margin: 71px 0 10px;
 		p{
-			color: $font_grey_light;
+			color: #F44336;
 			font-size: 18px;
 			padding: 3px 0;
 		}
