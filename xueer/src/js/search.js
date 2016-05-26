@@ -133,7 +133,7 @@ class SearchComponent extends React.Component{
 		that = this;
 		if(val !== ""){
 			this.setState({isTyping:true})
-			var url = "/api/hot_tags/" + encodeURIComponent(val)
+			var url = "/api/v1.0/search/?page=1&per_page=20&keywords=" + encodeURIComponent(val)
 			$.get(url).done(function(data){
 				var l_data = JSON.parse(data);
 				if(l_data.length){
@@ -164,4 +164,7 @@ class SearchComponent extends React.Component{
 	}
 }
 
-module.exports = SearchComponent;
+//init search box
+if (document.querySelector(".search_component_inject")){
+	ReactDOM.render( <SearchComponent/> , document.querySelector(".search_component_inject"));
+}

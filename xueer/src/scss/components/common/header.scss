@@ -4,33 +4,35 @@
 ***/
 
 .header {
-    height:80px;
+    height: 80px;
     border-bottom: 1px solid $border_grey;
     background: $main_white;
 }
-.nav:after{
+
+.nav:after {
     content: "";
-    display:inline-block;
+    display: inline-block;
     vertical-align: middle;
-    width:0;
-    height:100%;
+    width: 0;
+    height: 100%;
 }
+
 .header {
     .container {
         width: 1000px;
     }
     .head {
-        height:80px;
+        height: 80px;
         line-height: 80px;
     }
     .nav {
-        height:100%;
+        height: 100%;
     }
-    .rbt_logo{
-        width:40px;
-        height:40px;
+    .rbt_logo {
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
-        margin-right:20px;
+        margin-right: 20px;
     }
     .logo {
         width: 95px;
@@ -40,7 +42,7 @@
     .search {
         width: 390px;
         height: 80px;
-       line-height: 80px;
+        line-height: 80px;
     }
     .log_button {
         font-size: 14px;
@@ -53,39 +55,66 @@
         background-color: $main_green;
     }
 }
+
 .search {
-    .input{
-        font-size: 18px;
-        padding-left: 12px;
-    }
     .search_button {
         line-height: 32px;
-        height: 32px;
-        width:80px;
+        height: 34px;
+        width: 80px;
         background-color: $font_red_deep;
-        border-radius: 0px 3px 3px 0px;
     }
-    .search_icon{
-        width:26px;
-        height:26px;
+    .search_icon {
+        width: 26px;
+        height: 26px;
     }
-    .search_container{
+    .search_container {
         position: relative;
     }
-    .input_warpper{
+    .input {
         height: 30px;
         padding: 0 10px;
-        width: 228px;
+        width: 247px;
         font-size: 14px;
-        border-radius: 3px 0px 0px 3px;
-        border: 1px solid $font_red_deep;
+        border: 2px solid $font_red_deep;
         border-right: none;
     }
+    .pop_box {
+        width: 100%;
+        height: auto;
+        box-sizing: border-box;
+        border: 1px solid $font_grey_light;
+        position: absolute;
+        top: 59px;
+        left: 0px;
+        z-index: 2;
+        background-color: #fff;
+    }
+    .hot_tags {
+        padding: 22px 12px 32px;
+        color: $font_grey_light;
+    }
+    .tag_title {
+        font-size: 12px;
+    }
+    .pop_list a.item {
+        display: block;
+        font-size: 14px;
+        line-height: 25px;
+        padding: 0px 12px;
+    }
+    .pop_list a.item:hover {
+        background-color: $font_grey_deep;
+    }
+    .pop_list a,
+    .tag_title a {
+        color: $font_grey_light;
+    }
 }
+
 .nav {
     .item {
-        height:100%;
-        line-height:75px;
+        height: 100%;
+        line-height: 75px;
         box-sizing: border-box;
         border-top: 5px solid $main_white;
         font-size: 20px;
@@ -93,11 +122,11 @@
     .active {
         border-top-color: $font_red_deep;
     }
-    .first{
-         margin-right: 70px;
+    .first {
+        margin-right: 70px;
         color: $font_red_deep;
     }
-    .last{
+    .last {
         margin-right: 115px;
         color: $font_black_middle;
     }

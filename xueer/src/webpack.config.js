@@ -13,7 +13,8 @@ var devConfig = {
 		banner: './js/banner.js',
 		comment: './js/comment.js',
 		search: './js/search.js',
-		register: './js/register.js'
+		register: './js/register.js',
+		vendor: ["jquery", "react", "react-dom","react-addons-css-transition-group"]
 	},
 	output: {
 		filename: "[name].bundle.js",
@@ -47,7 +48,8 @@ var devConfig = {
 	plugins: [
 	  new webpack.NoErrorsPlugin(),
 	  new webpack.optimize.OccurenceOrderPlugin(),
-	  new ExtractTextPlugin("../css/[name].css")
+	  new ExtractTextPlugin("../css/[name].css"),
+	  new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"vendor", /* filename= */"vendor.bundle.js")
 	],
 	devtool: isProduction()?null:'source-map',
 };
