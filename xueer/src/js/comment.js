@@ -10,8 +10,8 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-var  ReactCSSTransitionGroup = require('../node_modules/react/lib/ReactCSSTransitionGroup');
-
+//var  ReactCSSTransitionGroup = require('../node_modules/react/lib/ReactCSSTransitionGroup');
+var  ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 class TagDeletable extends React.Component{
 	constructor(){
 		super()
@@ -128,9 +128,4 @@ class CommentBox extends React.Component {
 if (document.querySelector(".comment_box_x")){
 	var tags = document.querySelector(".comment_box_x").innerHTML.split(" ");
 	ReactDOM.render( <CommentBox  hot_tags={tags}/> , document.querySelector(".comment_box_x"));
-}
-
-//init search box
-if (document.querySelector("#xinput_warpper")){
-	ReactDOM.render( <SearchComponent/> , document.querySelector("#input_warpper"));
 }
