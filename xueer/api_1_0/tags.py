@@ -1,7 +1,7 @@
 # coding:utf-8
 
 from flask import jsonify, url_for, request, current_app
-from ..models import Tags, Courses, Search
+from ..models import Tags, Courses
 from . import api
 from xueer import db
 import json

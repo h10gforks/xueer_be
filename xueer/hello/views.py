@@ -28,6 +28,7 @@ def index():
         zhuan_top_list = sorted(Courses.query.filter_by(category_id=3).all(), key=lambda x: x.count, reverse=True)[:3]
         tong_top_list = sorted(Courses.query.filter_by(category_id=2).all(), key=lambda x:x.count, reverse=True)[:3]
         su_top_list = sorted(Courses.query.filter_by(category_id=4).all(), key=lambda x:x.count, reverse=True)[:3]
+        # hot_five = sorted(Courses.query.all)
         return render_template(
             "hello/desktop/pages/index.html", tips=tips,
             gong_top_list=gong_top_list, su_top_list=su_top_list,

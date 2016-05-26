@@ -3,9 +3,8 @@
 from flask import jsonify, url_for, request, current_app
 # from flask_login import current_user
 from .authentication import auth
-from .participle import participle
 from sqlalchemy import desc
-from ..models import Courses, User, Tags, CourseCategories, CourseTypes, Permission, Search
+from ..models import Courses, User, Tags, CourseCategories, CourseTypes, Permission
 from . import api
 from xueer import db
 import json
@@ -149,10 +148,6 @@ def put_course(id):
         course.type_id = data_dict.get('type_id', course.type_id)
         db.session.add(course)
         db.session.commit()
-        if data_dict.get('name') or data_dict.get('teacher'):
-            # 仅当搜索相关的内容更新
-            # 才进行课程分词
-            participle(course)
     return jsonify({'update': id}), 200
 
 

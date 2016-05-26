@@ -5,13 +5,10 @@ from flask_login import UserMixin, AnonymousUserMixin, current_user
 from . import login_manager, app, db
 from flask import current_app, url_for, g, request
 from werkzeug.security import generate_password_hash, check_password_hash
-# from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import URLSafeSerializer as Serializer
 from .exceptions import ValidationError
 from . import app
-import flask.ext.whooshalchemy as whooshalchemy
 import base64
-import jieba
 
 
 class Permission:
@@ -93,18 +90,6 @@ class CourseTag(db.Model):
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE"), primary_key=True)
     count = db.Column(db.Integer, default=0)
     counts = db.Column(db.Integer, default=0)
-
-CourseSearch =  db.Table(
-    'courses_search',
-    db.Column('course_id', db.Integer, db.ForeignKey('courses.id', ondelete="CASCADE")),
-    db.Column('search_id', db.Integer, db.ForeignKey('search.id', ondelete="CASCADE"))
-)
-
-TagSearch = db.Table(
-    'tags_search',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE")),
-    db.Column('search_id', db.Integer, db.ForeignKey('search.id', ondelete="CASCADE"))
-)
 
 
 class User(UserMixin, db.Model):
@@ -241,8 +226,6 @@ def load_user(user_id):
 
 class Courses(db.Model):
     """Courses model"""
-    __searchable__ = ['teacher']
-    # __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(280))
@@ -370,8 +353,6 @@ class Courses(db.Model):
 
     def __repr__(self):
         return '<Courses %d>' % self.id
-
-whooshalchemy.whoosh_index(app, Courses)
 
 
 # CourseCategories
@@ -544,7 +525,6 @@ class Teachers(db.Model):
 class Tags(db.Model):
   # __table_args__ = {'mysql_charset':'utf8'}
     __tablename__ = 'tags'
-    __searchable__ = ['name']
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     count = db.Column(db.Integer, default=0)
@@ -565,8 +545,6 @@ class Tags(db.Model):
 
     def __repr__(self):
         return '<Tags %r>' % self.name
-
-whooshalchemy.whoosh_index(app, Tags)
 
 
 class Tips(db.Model):
@@ -649,25 +627,3 @@ class Tips(db.Model):
 
     def __repr__(self):
         return '<Tips %r>' % self.title
-
-
-class Search(db.Model):
-    """
-    分词表: jieba分词
-    courses: 课程多对多关系
-    """
-    __tablename__ = 'search'
-    __searchable__ = ['name']
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(280))
-    courses = db.relationship(
-        'Courses',
-        secondary = CourseSearch,
-        backref = db.backref('search', lazy='dynamic'),
-        lazy='dynamic', cascade='all'
-    )
-
-    def __repr__(self):
-        return '<Search %r>' % self.name
-
-whooshalchemy.whoosh_index(app, Search)
