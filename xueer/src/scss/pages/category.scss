@@ -9,8 +9,8 @@
 		margin-bottom: 20px;
 	}
 	.tag_item {
-		@include tag(18px);
-		line-height: 24px;
+		@include tag(18px,6px,10px);
+		display: inline-block;
 		font-weight: lighter;
 		color: $main_white; 
 		background: $main_green
