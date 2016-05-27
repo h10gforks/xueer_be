@@ -7,8 +7,8 @@
 {% include 'hello/desktop/svg/cactus.html' %}
 {% include 'hello/desktop/svg/bg_people.html' %}
 {% include 'hello/desktop/svg/floder.html' %}
-<div class="login_content">
-	<div class="login margin_auto">
+<div class="login_content margin_auto">
+	<div class="login">
 		<svg>
 			<use xlink:href="#bg_people"/>
 		</svg>
@@ -18,14 +18,14 @@
 				<div class="band_b"></div>
 			</div>
 			<div class="log_option">
-				<p  class="tc"><span>登录</span></p>
+				<p  class="tc"><span>账号登录</span></p>
 			</div>
 			<form action="#" method="post">
-				<input type="text" placeholder="输入账号" tabindex="1" />
+				<input type="text" placeholder="输入通行证" tabindex="1" />
 				<input type="text" placeholder="密码" tabindex="1" />
-				<p class="forget">忘记密码？</p>
+				<a href=""><p class="forget">忘记密码？</p></a>
 				<input type="submit" class="cp" value="登 录" />
-				<p class="bottom_line tc">没有账户？<a href="http://127.0.0.1:5000/register">立即注册</a></p>
+				<p class="bottom_line margin_auto tc">没有账户？<a href="http://127.0.0.1:5000/register">立即注册</a></p>
 			</form>
 			<svg class="folder">
 				<use xlink:href="#folder"/>

@@ -6,18 +6,19 @@
                     {{ category }}
                 </div>
                 <div class="course_intro">
+                    <button>去评课</button>
                     <ul>
-                        <li class="course_name"><span class="disc"></span>{{ info.name }}</li>
-                        <li class="teacher_name"><span class="disc"></span>{{ info.teacher }}</li>
+                        <li class="course_name"><span class="disc"></span><span class="class_name">{{ info.name }}</span></li>
+                        <li class="teacher_name"><span class="disc"></span><span class="teacher">{{ info.teacher }}</span></li>
                     </ul>
                     <div class="course_message">
                         {{ info.introduction }}
                     </div>
                 </div>
             </div>
-            <div class="tags tc space">
+            <div class="tags space">
             {% for tag in info_tags %}
-                <div class="tag cp">
+                <div class="tag va_top cp">
                     {{ tag.name }}
                 </div>
             {% endfor %}
@@ -25,9 +26,9 @@
         </div>
         <div class="like va_top">
             <div class="count tc space">
-                <div class="count_text margin_b">这门课被</div>
-                <div class="num margin_b">{{ info.likes }}人</div>
-                <div class="count_text margin_b">喜欢</div>
+                <div class="count_text">这门课被</div>
+                <div class="num">{{ info.likes }}人</div>
+                <div class="count_text">喜欢</div>
             </div>
             <div class="like_bt tc cp">
                 +1

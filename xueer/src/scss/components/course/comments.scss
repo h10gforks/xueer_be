@@ -6,16 +6,18 @@
 .comments_box {
     width: 1000px;
 }
-
 .comments_cont {
     width: 800px;
     box-sizing: border-box;
     margin-top: 10px;
     margin-right: 200px;
     background: $main_white;
-    padding: 42px 38px 60px 76px;
+    padding: 42px 38px 60px 75px;
     .head {
         padding-bottom: 20px;
+    }
+    .no_comment {
+        margin: 73px 183px 78px 145px;
     }
     .head_txt {
         font-size: 18px;

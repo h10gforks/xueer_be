@@ -8,10 +8,13 @@
 		height: 42px;
 		margin-bottom: 20px;
 	}
+	.title,
+	.introduce {
+		padding: 3px 0;
+	}
 	.title {
 		font-size: 18px;
 		line-height: 18px;
-		margin-bottom: 5px;
 		color: $font_black_deep;
 	}
 	.introduce {

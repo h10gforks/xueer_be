@@ -6,7 +6,6 @@ from . import api
 from xueer import db
 import json
 from xueer.api_1_0.authentication import auth
-import jieba
 
 
 @api.route('/tags/', methods=["GET"])

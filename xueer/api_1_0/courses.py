@@ -9,7 +9,6 @@ from . import api
 from xueer import db
 import json
 from xueer.decorators import admin_required
-import jieba
 
 
 @api.route('/courses/', methods=["GET"])  # ?string=sort&main_cat&ts_cat

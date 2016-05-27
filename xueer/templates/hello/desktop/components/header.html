@@ -9,9 +9,8 @@
                 <a href="/category" class="item va_item last">分类查看</a>
             </div>
             <div class="search va_item">
-                <form action="#" class="form space">
-                    <input class="input_warpper va_item" id="input_warpper">
-                    </input>
+                <form action="/search/" class="form space">
+                    <div class="search_component_inject va_item"></div>
                     <button type="submit" class="search_button tc va_item">
                         <svg class="search_icon va_item">
                             <use xlink:href="#search">
@@ -27,7 +26,7 @@
             {% else %}
                 <div class="rbt_logo va_item">
                 </div>
-                <a href="/login" class="login log_button va_item">退出</a>
+                <a href="/login" class="login log_button va_item">登录/注册</a>
             {% endif %}
         </div>
     </div>

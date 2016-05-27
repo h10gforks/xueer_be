@@ -5,56 +5,54 @@
 .hot_courses{
 	width: 1000px;
 	box-sizing: border-box;
-	padding: 40px 80px 40px 100px;
+	padding: 40px 56px 48px 55px;
 	margin-bottom: 10px;
 	background: $main_white;
-	.ib{
-		margin-top: 40px;
-	}
 	.item{
-		width: 158px;
-		padding-right: 20px;
-		margin-bottom: 37px;
+		margin-bottom: 5px;
 	}
 	.list_tag{
 		display: inline-block;
+		vertical-align: middle;
 		border: 3px solid $font_black_deep;
 		border-radius: 3px;
-		margin-right: 5px;
-	}
-	.course_name{
-		font-size: 14px;
-		margin-bottom: 10px;
-		overflow:hidden;
-		white-space:nowrap;
-		text-overflow:ellipsis;
+		margin-right: 10px;
 	}
 	.info{
-		font-size: 18px;
+		font-size: 12px;
 		color:$font_grey_light;
 		width: 100%;
-	}
-	.teacher{
-		font-size: 12px;
-		margin-left: 10px;
+		padding: 3px 10px;
 	}
 	.lists {
-		margin-right: 40px;
+		font-size: 14px;
+		width: 220px;
 	}
 	.lists{
 		a{
+			width: 112px;
+			padding: 3px 0;
+			display: inline-block;
+			vertical-align: middle;
+			font-size: 14px;
+			overflow:hidden;
+			white-space:nowrap;
+			text-overflow:ellipsis;
 			color:$font_grey_light;
 		}
 		.more {
-			@include course_class(24px,24px,21px);
+			@include course_class(24px,24px,24px);
+			border-width: 1px;
 			margin-top: 32px;
 		}
 		.course_class {
 			@include course_class(96px,96px,36px);
 		}
 		.list{
-			font-size: 24px;
-			padding-top: 5px;
+			margin: 0 45px;
+		}
+		.list_cont {
+			margin: 40px 0 30px;
 			border-right: 2px solid $border_grey;
 		}
 	}
@@ -69,18 +67,15 @@
 		.item {
 			padding-right: 0;
 		}
-		.list {
+		.list_cont {
 			border-right: 0;
-		}
-		.course_class {
-			margin-left: 40px;
 		}
 	}
 	.item:hover {
 		.list_tag {
 			border-color: $font_red_deep; 
 		}
-		.teacher,
+		.info,
 		a{
 			color: $font_red_deep;
 		}
