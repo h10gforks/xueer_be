@@ -49,10 +49,6 @@ def memcached():
         return jsonify({
             'set_memcached': '1'
         })
-    else:
-        return jsonify({
-            'set_memcached': '0'
-        })
 
 
 @api.route('/memcached/<int:id>/', methods=['GET', 'POST'])
@@ -66,10 +62,6 @@ def memcached_course(id):
         return jsonify({
             'update_memcached': '1'
         })
-    else:
-        return jsonify({
-            'update_memcached': '0'
-        })
 
 
 @api.route('/memcached/<int:id>/', methods=['GET', 'DELETE'])
@@ -82,8 +74,4 @@ def delete_memcached_course(id):
         delete_course_memcached(id)
         return jsonify({
             'delete_memcached': '1'
-        })
-    else:
-        return jsonify({
-            'delete_memcached': '0'
         })
