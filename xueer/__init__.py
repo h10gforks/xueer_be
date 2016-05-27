@@ -31,6 +31,10 @@ moment = Moment(app)
 # initial redis database for keywords store
 pool = redis.ConnectionPool(host="localhost", port=6380, db=0)
 rds = redis.Redis(connection_pool = pool)
+# initial redis database for LRU cache
+lru_pool = redis.ConnectionPool(host="localhost", port=6385, db=0)
+lru = redis.Redis(connection_pool = lru_pool)
+
 
 # setting up celery
 def make_celery(app):
