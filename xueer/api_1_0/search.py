@@ -85,6 +85,11 @@ def search():
     current = pagination_lit[0]
     next_page = pagination_lit[1][0]
     last_page = pagination_lit[1][1]
+    # 排序规则
+    if sort == 'views':
+        current = sorted(current, key = lambda json: json.get('views'), reverse=True)
+    elif sort == 'likes':
+        current = sorted(current, key = lambda json: json.get('likes'), reverse=True)
     return json.dumps(
         current,
         ensure_ascii=False,
