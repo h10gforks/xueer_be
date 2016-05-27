@@ -45,6 +45,7 @@ def memcached():
     将录课数据读入缓存
     """
     if request.method == 'POST':
+        lru.flushdb()
         read_data2_memcached()
         return jsonify({
             'set_memcached': '1'
