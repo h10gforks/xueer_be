@@ -5,9 +5,10 @@
 	color: $main_white;
 	text-align: center;
 }
-@mixin tag($font-size){
-	font-size: $font-size;
-	padding: 3px 14px;
+@mixin tag($font_size,$pd_y,$pd_x){
+	line-height: $font_size;
+	font-size: $font_size;
+	padding: $pd_y $pd_x;
 	text-align: center;
 }
 @mixin course_class($width,$height,$size){

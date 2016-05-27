@@ -81,7 +81,7 @@
         font-weight: lighter;
     }
     .tag {
-        @include tag(14px);
+        @include tag(14px,5px,12px);
         margin-right: 20px;
         border:2px solid $main_white;
         background: $bg_orange_middle;
