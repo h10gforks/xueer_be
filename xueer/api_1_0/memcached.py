@@ -15,7 +15,7 @@ def read_data2_memcached():
     courses = Courses.query.all()
     tags = Tags.query.all()
     for course in courses:
-        lru.set(course, [course.name, course.teacher])
+        lru.set(course.to_json(), [course.name, course.teacher])
     lru.save()  # 永久数据
 
 
@@ -25,7 +25,7 @@ def update_course_memcached(id):
     """
     course = Courses.query.get_or_404(id)
     lru.delete(course)
-    lru.set(course, [course.name, course.teacher])
+    lru.set(course.to_json(), [course.name, course.teacher])
     lru.save()
 
 
@@ -39,7 +39,7 @@ def delete_course_memcached(id):
 
 
 @api.route('/memcached/', methods=['GET', 'POST'])
-@admin_required
+# @admin_required
 def memcached():
     """
     将录课数据读入缓存

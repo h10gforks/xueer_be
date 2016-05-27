@@ -12,4 +12,4 @@ from flask import Blueprint
 api = Blueprint('api', __name__)
 
 from . import authentication, comments, courses, decorators, errors, register,\
-    tags, teachers, tips, users, like, category, test, sure, data
+    tags, teachers, tips, users, like, category, test, sure, data, search, memcached

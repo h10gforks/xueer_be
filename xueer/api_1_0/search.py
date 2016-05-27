@@ -24,19 +24,18 @@ def search():
     ts_cat = request.args.get('ts_cat')             # 二级分类(仅限通识课)
     # 搜索匹配
     results = []
-    courses = lru.keys()
-    for course in courses:
-        searchs = lru.get(course)
-        for search in searchs:
+    for course_json in lru.keys():
+        searchs = lru.get(course_json)
+        for search in eval(searchs):
             if keywords in search:
-                result.append(course)
+                results.append(eval(course_json))
     # 热搜词存储
     rds.set(keywords, 1) \
         if rds.get(keywords) is None \
         else rds.incr(keywords)
     # 结果集返回
     return json.dumps(
-        [course.to_json() for course in results],
+        results,
         ensure_ascii=False,
         indent=1
     ), 200
