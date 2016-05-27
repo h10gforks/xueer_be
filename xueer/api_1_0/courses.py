@@ -6,7 +6,7 @@ from .authentication import auth
 from sqlalchemy import desc
 from ..models import Courses, User, Tags, CourseCategories, CourseTypes, Permission
 from . import api
-from xueer import db
+from xueer import db, lru
 import json
 from xueer.decorators import admin_required
 
@@ -162,6 +162,9 @@ def delete_course(id):
     if request.method == "DELETE":
         db.session.delete(course)
         db.session.commit()
+        # 自动清除缓存
+        lru.delete(course)
+        lru.save()
         return jsonify({
             'message': '该课程已被删除'
         })
