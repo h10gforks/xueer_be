@@ -10,7 +10,7 @@ celerybeat-schedule.db
 celerybeat-schedule
 celerybeat.pid
 workers/workers.db
-npm-debug.log
+**/*npm-debug.log
 -1
 .idea/
 venv/
