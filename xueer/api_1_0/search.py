@@ -40,3 +40,13 @@ def search():
         ensure_ascii=False,
         indent=1
     ), 200
+
+
+@api.route('/search/hot/', methods=['GET'])
+def hot():
+    """
+    返回最热的10个搜索词
+    """
+    words = rds.keys()
+    hot_words = sorted(words, key=lambda w: int(rds.get(w)), reverse=True)[:10]
+    return json.dumps(hot_words), 200
