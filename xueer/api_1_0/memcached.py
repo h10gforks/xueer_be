@@ -1,28 +1,89 @@
 # coding: utf-8
 
-import memcache
+from xueer.decorators import admin_required
 from xueer.models import Courses, Tags
-
-
-memc = memcache.Client(['127.0.0.1:11211'])
+from xueer import lru
+from . import api
+from flask import jsonify, request
 
 
 def read_data2_memcached():
+    """
+    将postgresql数据库中的课程搜索数据
+    读入LRU并写入硬盘(数据库读取开销)
+    """
     courses = Courses.query.all()
     tags = Tags.query.all()
-    """
-    {
-    <courses object>:
-        ['teacher', 'name']
-    }
+    for course in courses:
+        lru.set(course, [course.name, course.teacher])
+    lru.save()  # 永久数据
 
-    keywords = request.args.get(keywords)
-    ----------- search things -------------
-    for key in keys: ?
-        searchs(search set) = memc.get(key)
-        for search in searchs:
-            if keywords in search
-                return key
-    so, how the key loop, but not read data from database
-    """
 
+def update_course_memcached(id):
+    """
+    更新特定id课程的缓存
+    """
+    course = Courses.query.get_or_404(id)
+    lru.delete(course)
+    lru.set(course, [course.name, course.teacher])
+    lru.save()
+
+
+def delete_course_memcached(id):
+    """
+    删除特定课程的缓存(课程被删除后自动执行)
+    """
+    course = Courses.query.get_or_404(id)
+    lru.delete(course)
+    lru.save()
+
+
+@api.route('/memcached/', methods=['GET', 'POST'])
+@admin_required
+def memcached():
+    """
+    将录课数据读入缓存
+    """
+    if request.method == 'POST':
+        read_data2_memcached()
+        return jsonify({
+            'set_memcached': '1'
+        })
+    else:
+        return jsonify({
+            'set_memcached': '0'
+        })
+
+
+@api.route('/memcached/<int:id>/', methods=['GET', 'POST'])
+@admin_required
+def memcached_course(id):
+    """
+    更新特定课程的缓存
+    """
+    if request.method == 'POST':
+        update_course_memcached(id)
+        return jsonify({
+            'update_memcached': '1'
+        })
+    else:
+        return jsonify({
+            'update_memcached': '0'
+        })
+
+
+@api.route('/memcached/<int:id>/', methods=['GET', 'DELETE'])
+@admin_required
+def delete_memcached_course(id):
+    """
+    删除特定课程的缓存数据
+    """
+    if request.method == 'DELETE':
+        delete_course_memcached(id)
+        return jsonify({
+            'delete_memcached': '1'
+        })
+    else:
+        return jsonify({
+            'delete_memcached': '0'
+        })
