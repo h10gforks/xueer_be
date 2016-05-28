@@ -19,8 +19,8 @@ from celery import Celery
 
 
 app = Flask(__name__)
-# app.config.from_object(config['product'])
-app.config.from_object(config['develop'])
+app.config.from_object(config['product'])
+# app.config.from_object(config['develop'])
 
 
 db = SQLAlchemy(app)
@@ -31,7 +31,7 @@ moment = Moment(app)
 # initial redis database for keywords store
 rds = redis.StrictRedis(host='localhost', port=6380, db=0)
 # initial redis database for LRU cache
-lru = redis.StrictRedis(host='localhost', port=6385, db=0)
+lru = redis.StrictRedis(host='localhost', port=6385, db=1)
 
 
 # setting up celery

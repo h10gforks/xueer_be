@@ -45,8 +45,8 @@ class DevConfig(Config):
     """
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('XUEER_POSTGRES_URI') or 'sqlite:///' + os.path.join(basedir, 'xueer_dev.sqlite')
-    CELERY_BROKER_URL = 'redis://localhost:6382/0'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6382/0'
+    CELERY_BROKER_URL = 'redis://localhost:6382/2'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6382/2'
     CELERYBEAT_SCHEDULE = {
         'restart_redis_every_259200s': {
             'task': 'restart_keywords_redis',
@@ -60,8 +60,8 @@ class ProConfig(Config):
     生产环境下配置
     """
     SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
-    CELERY_BROKER_URL = 'redis://localhost:6382/0'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6382/0'
+    CELERY_BROKER_URL = 'redis://localhost:6382/2'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6382/2'
     CELERYBEAT_SCHEDULE = {
         'restart_redis_every_259200s': {
             'task': 'restart_keywords_redis',
