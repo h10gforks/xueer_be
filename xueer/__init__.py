@@ -29,11 +29,9 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 moment = Moment(app)
 # initial redis database for keywords store
-pool = redis.ConnectionPool(host="localhost", port=6380, db=0)
-rds = redis.Redis(connection_pool = pool)
+rds = redis.StrictRedis(host='localhost', port=6380, db=0)
 # initial redis database for LRU cache
-lru_pool = redis.ConnectionPool(host="localhost", port=6385, db=0)
-lru = redis.Redis(connection_pool = lru_pool)
+lru = redis.StrictRedis(host='localhost', port=6385, db=0)
 
 
 # setting up celery

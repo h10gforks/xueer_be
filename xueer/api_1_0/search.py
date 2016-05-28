@@ -9,6 +9,7 @@
 from . import api
 from flask import request, url_for
 from xueer import rds, lru
+from xueer.models import Tags, Courses
 import json
 
 
@@ -54,12 +55,21 @@ def category_catch(keywords, main_cat_id=0, ts_cat_id=0):
                 if eval(course_json).get('sub_category') == subcategory)
     else:
         gen = lru.keys()
-    results = []
+    results = []; courses = []
     for course_json in gen:
         searchs = lru.get(course_json)
         for search in eval(searchs):
             if keywords in search:
                 results.append(eval(course_json))
+    if len(results) == 0:
+        tag = Tags.query.filter_by(name=keywords).first()
+        course_tags = tag.courses.all()
+        for course_tag in course_tags:
+            courses.append(Courses.query.get_or_404(course_tag.course_id))
+            for course in courses:
+                # here I set memcache
+                lru.set(course.to_json(), [course.name, course.teacher, keywords])
+                results.append(course.to_json())
     return results
 
 
@@ -69,9 +79,9 @@ def search():
     搜索API
     """
     keywords = request.args.get('keywords')
-    page = int(request.args.get('page')) or 1
-    per_page = int(request.args.get('per_page'))
-    sort = request.args.get('sort')
+    page = request.args.get('page') or '1'
+    per_page = request.args.get('per_page') or '20'
+    sort = request.args.get('sort') or 'view'
     main_cat = request.args.get('main_cat') or '0'
     ts_cat = request.args.get('ts_cat') or '0'
     # 搜索条件匹配
@@ -80,16 +90,16 @@ def search():
     rds.set(keywords, 1) \
         if rds.get(keywords) is None \
         else rds.incr(keywords)
+    # 排序规则
+    if sort == 'view':
+        results = sorted(results, key = lambda json: json.get('views'), reverse=True)
+    elif sort == 'like':
+        results = sorted(results, key = lambda json: json.get('likes'), reverse=True)
     # 对结果集分页返回返回
-    pagination_lit = pagination(results, page, per_page)
+    pagination_lit = pagination(results, int(page), int(per_page))
     current = pagination_lit[0]
     next_page = pagination_lit[1][0]
     last_page = pagination_lit[1][1]
-    # 排序规则
-    if sort == 'views':
-        current = sorted(current, key = lambda json: json.get('views'), reverse=True)
-    elif sort == 'likes':
-        current = sorted(current, key = lambda json: json.get('likes'), reverse=True)
     return json.dumps(
         current,
         ensure_ascii=False,

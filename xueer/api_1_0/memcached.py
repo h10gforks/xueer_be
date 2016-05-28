@@ -13,10 +13,9 @@ def read_data2_memcached():
     读入LRU并写入硬盘(数据库读取开销)
     """
     courses = Courses.query.all()
-    tags = Tags.query.all()
     for course in courses:
-        lru.set(course.to_json(), [course.name, course.teacher])
-    lru.save()  # 永久数据
+       lru.set(course.to_json(), [course.name, course.teacher])
+    lru.save()  # 数据存储硬盘
 
 
 def update_course_memcached(id):
