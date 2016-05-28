@@ -51,16 +51,16 @@ def get_courses_id_comments(id):
     comments = pagination.items
     prev = ""
     if pagination.has_prev:
-        prev = url_for('api.get_courses_id_comments', id=id, page=page - 1, _external=True)
+        prev = url_for('api.get_courses_id_comments', id=id, page=page - 1)
     next = ""
     if pagination.has_next:
-        next = url_for('api.get_courses_id_comments', id=id, page=page + 1, _external=True)
+        next = url_for('api.get_courses_id_comments', id=id, page=page + 1)
     comments_count = len(Comments.query.filter_by(course_id=id).all())
     if comments_count % current_app.config["XUEER_COMMENTS_PER_PAGE"]:
         page_count = comments_count//current_app.config["XUEER_COMMENTS_PER_PAGE"]
     else:
         page_count = comments_count//current_app.config["XUEER_COMMENTS_PER_PAGE"] + 1
-    last = url_for('api.get_courses_id_comments', id=id, page=page_count, _external=True)
+    last = url_for('api.get_courses_id_comments', id=id, page=page_count)
     return json.dumps(
         [comment.to_json() for comment in comments],
         ensure_ascii=False,
@@ -174,13 +174,13 @@ def get_tip_id_comments(id):
     comments = pagination.items
     prev = ""
     if pagination.has_prev:
-        prev = url_for('api.get_tip_id_comments', id=id, page=page - 1, _external=True)
+        prev = url_for('api.get_tip_id_comments', id=id, page=page - 1)
     next = ""
     if pagination.has_next:
-        next = url_for('api.get_tip_id_comments', id=id, page=page + 1, _external=True)
+        next = url_for('api.get_tip_id_comments', id=id, page=page + 1)
     comments_count = len(Comments.query.filter_by(course_id=id).all())
     page_count = comments_count//current_app.config["XUEER_COMMENTS_PER_PAGE"] + 1
-    last = url_for('api.get_tip_id_comments', id=id, page=page_count, _external=True)
+    last = url_for('api.get_tip_id_comments', id=id, page=page_count)
     return json.dumps(
         [comment.to_json() for comment in comments],
         ensure_ascii=False,
