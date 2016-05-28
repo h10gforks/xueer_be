@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from flask import jsonify, url_for, request, current_app
-# from flask_login import current_user
 from .authentication import auth
 from sqlalchemy import desc
 from ..models import Courses, User, Tags, CourseCategories, CourseTypes, Permission
@@ -9,97 +8,48 @@ from . import api
 from xueer import db, lru
 import json
 from xueer.decorators import admin_required
+from .paginate import pagination
 
 
-@api.route('/courses/', methods=["GET"])  # ?string=sort&main_cat&ts_cat
+def get_cat_courses(main_cat=0, ts_cat=0):
+    """
+    根据特定类别id获取特定类别课程集
+    """
+    if main_cat and not ts_cat:
+        courses = Courses.query.filter_by(category_id=main_cat)
+    elif main_cat and ts_cat:
+        courses = Courses.query.filter_by(subcategory_id=ts_cat)
+    else:
+        courses = Courses.query.all()
+    return courses
+
+
+@api.route('/courses/', methods=["GET"])
 def get_courses():
     """
     获取全部课程
     """
-    global pagination
-    page = request.args.get('page', 1, type=int)
-    num = request.args.get('num', type=int)
-    if num:
-        current_app.config['XUEER_COURSES_PER_PAGE'] = num
-    else:
-        current_app.config['XUEER_COURSES_PER_PAGE'] = 20
-    if request.args.get('sort') == 'view':
-        if request.args.get('main_cat'):
-            if request.args.get('ts_cat'):
-                pagination = Courses.query.filter_by(
-                        type_id=request.args.get('ts_cat'),
-                        category_id=request.args.get('main_cat')
-                ).order_by(desc(Courses.count)).paginate(
-                        page,
-                        per_page=current_app.config['XUEER_COURSES_PER_PAGE'],
-                        error_out=False
-                )
-            else:
-                pagination = Courses.query.filter_by(
-                        category_id=request.args.get('main_cat')
-                ).paginate(
-                        page,
-                        per_page=current_app.config['XUEER_COURSES_PER_PAGE'],
-                        error_out=False
-                )
-        else:
-            pagination = Courses.query.order_by(desc(Courses.count)).paginate(
-                page,
-                per_page=current_app.config['XUEER_COURSES_PER_PAGE'],
-                error_out=False
-            )
-    elif request.args.get('sort') == 'like':
-        if request.args.get('main_cat'):
-            if request.args.get('ts_cat'):
-                pagination = Courses.query.filter_by(
-                        type_id=request.args.get('ts_cat'),
-                        category_id=request.args.get('main_cat')
-                ).paginate(
-                        page,
-                        per_page=current_app.config['XUEER_COURSES_PER_PAGE'],
-                        error_out=False
-                )
-            else:
-                pagination = Courses.query.filter_by(
-                        category_id=request.args.get('main_cat')
-                ).paginate(
-                        page,
-                        per_page=current_app.config['XUEER_COURSES_PER_PAGE'],
-                        error_out=False
-                )
-        else:
-            pagination = Courses.query.order_by(desc(Courses.likes)).paginate(
-                page,
-                per_page=current_app.config['XUEER_COURSES_PER_PAGE'],
-                error_out=False
-            )
-    else:
-        pagination = Courses.query.paginate(
-            # 查询对象query具有paginate属性
-            page,
-            per_page=current_app.config['XUEER_COURSES_PER_PAGE'],
-            error_out=False
-        )
-    courses = pagination.items
-    # <> 当页面不存在是返回空
-    prev = ""  # should init
-    if pagination.has_prev:
-        prev = url_for('api.get_courses', page=page - 1)
-    next = ""
-    if pagination.has_next:
-        next = url_for('api.get_courses', page=page + 1)
-    courses_count = len(Courses.query.all())
-    if courses_count%current_app.config['XUEER_COURSES_PER_PAGE'] == 0:
-        page_count = courses_count//current_app.config['XUEER_COURSES_PER_PAGE']
-    else:
-        page_count = courses_count//current_app.config['XUEER_COURSES_PER_PAGE']+1
-    last = url_for('api.get_courses', page=page_count, _external=True)
-    # courses = sorted(courses, key=lambda x: x.id, reverse=True)
+    global paginate
+    main_cat = request.args.get('main_cat') or '0'
+    ts_cat = request.args.get('ts_cat') or '0'
+    page = request.args.get('page', 1, type=int) or '1'
+    per_page = request.args.get('per_page', type=int) or '20'
+    sort = request.args.get('sort') or 'view'
+    current_app.config['XUEER_COURSES_PER_PAGE'] = int(per_page)
+    courses = get_cat_courses(int(main_cat), int(ts_cat))
+    if sort == 'view':
+        courses = sorted(courses, key=lambda c: c.count, reverse=True)
+    elif sort == 'like':
+        courses = sorted(courses, key=lambda c: c.likes, reverse=True)
+    pagination_lit = pagination(courses, int(page), int(per_page))
+    current = pagination_lit[0]
+    next_page = pagination_lit[1][0]
+    last_page = pagination_lit[1][1]
     return json.dumps(
         [course.to_json2() for course in courses],
         ensure_ascii=False,
         indent=1
-    ), 200, {'link': '<%s>; rel="next", <%s>; rel="last"' % (next, last)}
+    ), 200, {'link': '<%s>; rel="next", <%s>; rel="last"' % (next_page, last_page)}
 
 
 @api.route('/courses/<int:id>/', methods=["GET"])
@@ -180,17 +130,17 @@ def get_tags_id_courses(id):
     # 根据id获取tag
     tag = Tags.query.get_or_404(id)
     page = request.args.get('page', 1, type=int)
-    pagination = tag.courses.paginate(
+    paginate = tag.courses.paginate(
         page,
         per_page=current_app.config["XUEER_COURSES_PER_PAGE"],
         error_out=False
     )
-    courses = pagination.items  # 获取分页的courses对象
+    courses = paginate.items  # 获取分页的courses对象
     prev = ""
-    if pagination.has_prev:
+    if paginate.has_prev:
         prev = url_for('api.get_tags_id_courses', id=id, page=page-1)
     next = ""
-    if pagination.has_next:
+    if paginate.has_next:
         next = url_for('api.get_tags_id_courses', id=id, page=page+1)
     courses_count = tag.courses.count()
     if courses_count % current_app.config['XUEER_TAGS_PER_PAGE'] == 0:
