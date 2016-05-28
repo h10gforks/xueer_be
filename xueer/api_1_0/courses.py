@@ -8,7 +8,28 @@ from . import api
 from xueer import db, lru
 import json
 from xueer.decorators import admin_required
-from .paginate import pagination
+
+
+def pagination(lit, page, perpage):
+    """
+    返回当前分页的列表对象,
+    next、last链接
+    {current: next_lit}
+    """
+    _yu = len(lit) % perpage
+    _chu = len(lit) // perpage
+    if _yu == 0:
+        last = _chu
+    else:
+        last = _chu + 1
+    current = lit[perpage*(page-1): perpage*page]
+    next_page = ""
+    if page < last:
+        next_page = url_for('api.get_courses', page=page+1)
+    elif page == last:
+        next_page = ""
+    last_page = url_for('api.get_courses', page=last)
+    return [current, (next_page, last_page)]
 
 
 def get_cat_courses(main_cat=0, ts_cat=0):
