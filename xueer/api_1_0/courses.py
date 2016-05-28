@@ -1,4 +1,10 @@
 # coding: utf-8
+"""
+    api~courses
+    ```````````
+
+    课程API
+"""
 
 from flask import jsonify, url_for, request, current_app
 from .authentication import auth
@@ -156,7 +162,8 @@ def get_tags_id_courses(id):
         per_page=current_app.config["XUEER_COURSES_PER_PAGE"],
         error_out=False
     )
-    courses = paginate.items  # 获取分页的courses对象
+    course_tags = paginate.items  # 获取分页的courses对象
+    courses = []
     prev = ""
     if paginate.has_prev:
         prev = url_for('api.get_tags_id_courses', id=id, page=page-1)
@@ -169,6 +176,8 @@ def get_tags_id_courses(id):
     else:
         page_count = courses_count//current_app.config['XUEER_TAGS_PER_PAGE']+1
     last = url_for('api.get_tags_id_courses', id=id, page=page_count)
+    for course_tag in course_tags:
+        courses.append(Courses.query.get_or_404(course_tag.course_id))
     return json.dumps(
         [course.to_json2() for course in courses],
         ensure_ascii=False,

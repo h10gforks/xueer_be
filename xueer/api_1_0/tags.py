@@ -15,13 +15,13 @@ def get_tags():
     :return:
     """
     page = request.args.get('page', 1, type=int)
-    # pagination = Tags.query.order_by(Tags.courses.count()).paginate(
     pagination = Tags.query.paginate(
         page,
         per_page=current_app.config['XUEER_TAGS_PER_PAGE'],
         error_out=False
     )
     tags = pagination.items
+    tags = sorted(tags, key=lambda k: k.count, reverse=True)
     prev = ""
     if pagination.has_prev:
         prev = url_for('api.get_tags', page=page-1, _external=True)

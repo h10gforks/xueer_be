@@ -92,7 +92,7 @@ def new_comment(id):
     :param id: 课程id
     :return:
     """
-    comment = Comments.from_json(request.json)
+    comment = Comments.from_json(request.get_json())
     comment.user_id = g.current_user.id
     comment.course_id = id
     db.session.add(comment)
