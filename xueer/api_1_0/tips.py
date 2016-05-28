@@ -1,11 +1,10 @@
 # coding: utf-8
 
 """
-tips.py
-~~~~~~~
+    api~tips.py
+    ```````````
 
-    首页tips CRUD 操作API
-
+    首页tips api
 """
 
 from flask import jsonify, url_for, request, current_app

@@ -19,7 +19,6 @@ def permission_required(permission):
 
 
 def admin_required(f):
-    # "Basic Base64("token:")"
     @wraps(f)
     def decorated(*args, **kwargs):
         token_header = request.headers.get('authorization', None)
