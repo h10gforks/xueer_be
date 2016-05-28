@@ -42,13 +42,14 @@ def category_catch(keywords, main_cat_id=0, ts_cat_id=0):
                 results.append(eval(course_json))
     if len(results) == 0:
         tag = Tags.query.filter_by(name=keywords).first()
-        course_tags = tag.courses.all()
-        for course_tag in course_tags:
-            courses.append(Courses.query.get_or_404(course_tag.course_id))
-            for course in courses:
-                # here I set memcache
-                lru.set(course.to_json(), [course.name, course.teacher, keywords])
-                results.append(course.to_json())
+        if tag:
+            course_tags = tag.courses.all()
+            for course_tag in course_tags:
+                courses.append(Courses.query.get_or_404(course_tag.course_id))
+                for course in courses:
+                    # here I set memcache
+                    lru.set(course.to_json(), [course.name, course.teacher, keywords])
+                    results.append(course.to_json())
     return results
 
 
