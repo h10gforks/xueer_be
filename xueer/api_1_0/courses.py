@@ -46,7 +46,7 @@ def get_courses():
     next_page = pagination_lit[1][0]
     last_page = pagination_lit[1][1]
     return json.dumps(
-        [course.to_json2() for course in courses],
+        [course.to_json2() for course in current],
         ensure_ascii=False,
         indent=1
     ), 200, {'link': '<%s>; rel="next", <%s>; rel="last"' % (next_page, last_page)}
