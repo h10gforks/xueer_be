@@ -11,5 +11,8 @@
 + 移动端源码: https://github.com/Muxi-Studio/Xueer_Moblie
 + API接口源码: https://github.com/Muxi-Studio/xueer_be/xueer/api_1_0
 
+### 学而管理后台📝 源码
++ 管理后台源码: https://github.com/Muxi-Studio/xueer_management
+
 ### 华中师范大学```(ง •_•)ง``[木犀团队](http://muxistudio.com)
 ![muxi](https://avatars2.githubusercontent.com/u/10476331?v=3&s=200)
