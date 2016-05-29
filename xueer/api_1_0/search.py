@@ -11,6 +11,7 @@ from flask import request, url_for
 from xueer import rds, lru
 from xueer.models import Tags, Courses
 from .paginate import pagination
+from .kmp import kmp
 import json
 
 
@@ -34,12 +35,18 @@ def category_catch(keywords, main_cat_id=0, ts_cat_id=0):
                 if eval(course_json).get('sub_category') == subcategory)
     else:
         gen = lru.keys()
-    results = []; courses = []
+    results = []; courses = []; sort = {};
     for course_json in gen:
         searchs = lru.get(course_json)
-        for search in eval(searchs):
-            if keywords in search:
-                results.append(eval(course_json))
+        if keywords in eval(searchs)[0]:
+            sort[course_json] = kmp(eval(searchs)[0], keywords)
+            sorted_list = sorted(sort.iteritems(), key=lambda d: d[1])
+            results = [eval(c_json[0]) for c_json in sorted_list]
+        elif keywords in eval(searchs)[1]:
+            results.append(eval(course_json))
+        elif len(eval(searchs)) == 3 and \
+            keywords == eval(searchs)[2]:
+            results.append(eval(course_json))
     if len(results) == 0:
         tag = Tags.query.filter_by(name=keywords).first()
         if tag:
