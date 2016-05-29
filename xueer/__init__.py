@@ -19,8 +19,8 @@ from celery import Celery
 
 
 app = Flask(__name__)
-app.config.from_object(config['product'])
-# app.config.from_object(config['develop'])
+# app.config.from_object(config['product'])
+app.config.from_object(config['develop'])
 
 
 db = SQLAlchemy(app)
