@@ -19,6 +19,7 @@ def make_next(t, next):
             j = j+1
         next.append(j)
 
+
 def kmp(s, t):
     """
     s: target string
@@ -32,10 +33,8 @@ def kmp(s, t):
         while (s[i] == t[j]):
             i += 1
             j += 1
-            if (j == n - 1):
-                return (i-j+1)
             if (j == n):
-                break
+                return (i-j)
         else:
             j = next[j]
     return False
