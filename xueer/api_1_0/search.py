@@ -68,7 +68,6 @@ def search():
     keywords = request.args.get('keywords')
     page = request.args.get('page') or '1'
     per_page = request.args.get('per_page') or '20'
-    sort = request.args.get('sort') or 'view'
     main_cat = request.args.get('main_cat') or '0'
     ts_cat = request.args.get('ts_cat') or '0'
     # 搜索条件匹配
@@ -77,11 +76,6 @@ def search():
     rds.set(keywords, 1) \
         if rds.get(keywords) is None \
         else rds.incr(keywords)
-    # 排序规则
-    if sort == 'view':
-        results = sorted(results, key = lambda json: json.get('views'), reverse=True)
-    elif sort == 'like':
-        results = sorted(results, key = lambda json: json.get('likes'), reverse=True)
     # 对结果集分页返回返回
     pagination_lit = pagination(results, int(page), int(per_page))
     current = pagination_lit[0]
