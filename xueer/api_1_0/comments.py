@@ -21,6 +21,38 @@ from xueer.api_1_0.authentication import auth
 from xueer.decorators import admin_required
 
 
+@api.route('/comments/', methods=["GET"])
+@admin_required
+def get_comments():
+    """
+    返回所有评论: 分页
+    """
+    page = request.args.get('page', 1, type=int)
+    pagination = Comments.query.order_by(desc(Comments.timestamp)).paginate(
+        page, per_page=current_app.config['XUEER_ALL_COMMENTS_PER_PAGE'],
+        error_out=False
+    )
+    comments = pagination.items
+    prev = ""
+    if pagination.has_prev:
+        prev = url_for('api.get_comments', page=page - 1)
+    next = ""
+    if pagination.has_next:
+        next = url_for('api.get_comments', page=page + 1)
+    comments_count = len(Comments.query.all())
+    if comments_count % current_app.config["XUEER_ALL_COMMENTS_PER_PAGE"]:
+        page_count = comments_count//current_app.config["XUEER_ALL_COMMENTS_PER_PAGE"]
+    else:
+        page_count = comments_count//current_app.config["XUEER_ALL_COMMENTS_PER_PAGE"] + 1
+    last = url_for('api.get_comments', page=page_count)
+    return json.dumps(
+        [comment.to_json() for comment in comments],
+        ensure_ascii=False,
+        indent=1
+    ), 200, {'link': '<%s>; rel="next", <%s>; rel="last"' % (next, last)}
+
+
+
 @api.route('/comments/<int:id>/', methods=['GET'])
 @auth.login_required
 def get_id_comment(id):
