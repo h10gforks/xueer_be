@@ -1,1 +1,3 @@
-echo "this is pgdump.sh file"
+back_dir=./
+date_now='date + %Y%m%d'
+
