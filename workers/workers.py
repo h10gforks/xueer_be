@@ -9,6 +9,7 @@
 from xueer import make_celery
 from xueer import app
 from xueer import rds
+import os
 
 
 celery = make_celery(app)
@@ -22,3 +23,12 @@ def restart_keywords_redis():
     # 清空搜索词中的所有记录
     rds.flushdb()
     rds.save()
+
+
+@celery.task(name='dump_progres_db')
+def dump_progresql_db():
+    """
+    每天12点定时备份学而数据库
+    ~~~> pg_dump
+    """
+    os.system('sh ../shell/pgdump.sh')

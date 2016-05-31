@@ -10,7 +10,6 @@
 
 # the root url of this flask application
 import os
-# from workers.workers import restart_keywords_redis
 from datetime import timedelta
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -67,6 +66,10 @@ class ProConfig(Config):
             'task': 'restart_keywords_redis',
             'schedule': timedelta(seconds=259200)
         },
+        'backup_xueer_pgsql_db': {
+            'task': 'dump_progres_db',
+            'schedule': timedelta(seconds=10)
+        }
     }
 
 
