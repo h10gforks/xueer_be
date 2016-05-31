@@ -38,7 +38,7 @@ def delete_course_memcached(id):
 
 
 @api.route('/memcached/', methods=['GET', 'POST'])
-# @admin_required
+@admin_required
 def memcached():
     """
     将录课数据读入缓存

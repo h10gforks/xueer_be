@@ -31,4 +31,4 @@ def dump_progresql_db():
     每天12点定时备份学而数据库
     ~~~> pg_dump
     """
-    os.system('sh ../shell/pgdump.sh')
+    # 转交给 postgres 用户的 crontab 处理

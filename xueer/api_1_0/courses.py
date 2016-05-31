@@ -102,7 +102,6 @@ def new_course():
         course = Courses.from_json(request.get_json())
         db.session.add(course)
         db.session.commit()
-        participle(course)
         return jsonify({
             'id': course.id
         }), 201
