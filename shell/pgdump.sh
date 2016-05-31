@@ -1,7 +1,7 @@
 #########################################################################
 #                            shell variables                            #
 #########################################################################
-date_now='data + %Y%m%d'
+date_now=`date +%Y-%m-%d`
 back_dir=/var/lib/pgsql/backups
 back_log_dir="$back_dir/backup.log"
 rmback_log_dir="$back_dir/rmback.log"
@@ -14,7 +14,7 @@ rmback_log_dir="$back_dir/rmback.log"
 if [ $? = 0 ]; then
     echo "$date_now xueer database backup success✅  " >> $back_log_dir
     echo "" >> $back_log_dir
-else:
+else
     echo "$data_now xueer database backup failed❌  " >> $back_log_dir
     echo "" >> $back_log_dir
 fi

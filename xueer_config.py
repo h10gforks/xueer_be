@@ -66,10 +66,6 @@ class ProConfig(Config):
             'task': 'restart_keywords_redis',
             'schedule': timedelta(seconds=259200)
         },
-        'backup_xueer_pgsql_db': {
-            'task': 'dump_progres_db',
-            'schedule': timedelta(seconds=10)
-        }
     }
 
 
