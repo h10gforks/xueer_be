@@ -1,11 +1,18 @@
 # coding: utf-8
-
 """
     config.py
-    ~~~~~~~~~
+    `````````
 
-        配置文件
-        返回一个配置字典
+    : 学而后端配置文件
+    : -- Config:        配置基类
+    : -- DevConfig:     开发环境配置
+    : -- ProConfig:     生产环境配置
+    : -- TestConfig:    测试环境配置
+    : default: 开发环境配置
+    ................
+
+    : copyright: (c) 2016 by MuxiStudio
+    : license: MIT
 """
 
 # the root url of this flask application

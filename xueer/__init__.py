@@ -1,9 +1,15 @@
 # coding: utf-8
 """
-xueer
-~~~~~
+    __init__.py
+    ```````````
 
-    华中师范大学评课系统
+    : Flask app创建
+    : Flask 扩展初始化
+    : Flask 蓝图注册
+    .................
+
+    : copyright: (c) 2016 by MuxiStudio
+    : license: MIT
 
 """
 import os

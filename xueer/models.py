@@ -1,4 +1,26 @@
 # coding:utf-8
+"""
+    models.py
+    `````````
+
+    : SQL数据库模块
+    : -- Permission             权限
+    : -- AnonymousUser          匿名用户
+    : -- Comments               评论
+    : -- CourseCategories       课程主分类
+    : -- CourseTag              课程标签中间表
+    : -- CourseTypes            学分类别
+    : -- Courses                课程
+    : -- CoursesSubCategories   课程二级分类
+    : -- Role                   用户角色
+    : -- Tags                   标签
+    : -- Teachers               老师类
+    : -- Tips                   运营文章
+    : -- User                   用户
+
+    : copyright: (c) 2016 by MuxiStudio
+    : license: MIT
+"""
 
 from datetime import datetime
 from flask_login import UserMixin, AnonymousUserMixin, current_user
@@ -13,6 +35,8 @@ import base64
 
 class Permission:
     """
+    Permission 权限
+
     1. COMMENT: 0x01
     2. MODERATE_COMMENTS: 0x02
     3. ADMINISTER: 0x04
@@ -24,9 +48,13 @@ class Permission:
 
 class Role(db.Model):
     """
+    Role: 用户角色
+
     1. User: COMMENT
     2. Moderator: MODERATE_COMMENTS
     3. Administrator: ADMINISTER
+
+    :func insert_roles: 创建用户角色, 默认是普通用户
     """
     #__table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'roles'
@@ -84,18 +112,47 @@ UTLike = db.Table(
 
 
 class CourseTag(db.Model):
+    """
+    CourseTag: 课程标签中间表
+
+    (course_id, tag_id) 二元组作为主键
+    :var course_id: 指向课程的外键(多对多关系), CASCADE: 级联
+    :var tag_id: 指向标签的外键, CASCADE: 级联
+    :var count: 纪录(课程, 标签)的引用次数, 作为热门标签的统计
+    """
     #__table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'courses_tags'
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id', ondelete="CASCADE"), primary_key=True)
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE"), primary_key=True)
     count = db.Column(db.Integer, default=0)
-    counts = db.Column(db.Integer, default=0)
 
 
 class User(UserMixin, db.Model):
     """
-    id, username, password, like(Courses), comment(Comment),
-    UserLike: m to m
+    User: 用户
+
+    :var id: 主键
+    :var username: 用户名
+    :var role_id: 外键, 与用户角色的一对多关系
+    :var email: 邮箱
+    :var qq: qq
+    :var major: 专业
+    :var password_hash: 密码的hash值, 单向加密
+    :var comments: 关系, 多对一, 用户发表的评论
+    :var phone: 电话
+    :var school: 学院
+
+    :property password: 不允许读取用户密码明文
+    :property password set: 设置用户密码, 单向加密hash值
+
+    :func verify_password: 根据密码明文验证密码, 实际比对hash值
+    :func generate_auth_token: 结合密钥, 根据用户的id生成token, 用于HTTP Basic验证
+    :func verify_auth_token: 结合密钥, 根据用户的token解析用户,进行相关操作
+    :func can: 权限判断
+    :func is_administrator: 管理员判断
+    :func to_json: API json数据显示
+    :func to_json2: API json数据显示
+    :func from_json: API 读取json数据
     """
     # __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'users'
@@ -109,12 +166,6 @@ class User(UserMixin, db.Model):
     comments = db.relationship("Comments", backref='users', lazy="dynamic", cascade='all')
     phone = db.Column(db.String(200), default=None)
     school = db.Column(db.String(200), index=True, default=None)
-
-    def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
-        if self.role is None:
-            if self.username == 'neo1218':
-                self.role = Role.query.filter_by(permissions=0x04).first()
 
     @property
     def password(self):
@@ -155,10 +206,6 @@ class User(UserMixin, db.Model):
     def is_administrator(self):
         # is administrator
         return (self.role_id == 2)
-
-    def ping(self):
-        self.last_seen = datetime.utcnow()
-        db.session.add(self)
 
     def to_json(self):
         json_user = {
@@ -204,7 +251,19 @@ class User(UserMixin, db.Model):
 
 
 class AnonymousUser(AnonymousUserMixin):
-  # __table_args__ = {'mysql_charset': 'utf8'}
+    """
+    AnonymousUser: 匿名用户
+
+    :func can:
+        权限判断, 匿名用户没有任何权限
+
+    :func is_administrator:
+        是否是管理员, 返回False
+
+    :generate_auth_token:
+        生成验证token, 匿名用户没有id, 不生成token
+    """
+    # __table_args__ = {'mysql_charset': 'utf8'}
 
     def can(self, permissions):
         return False
@@ -225,29 +284,42 @@ def load_user(user_id):
 
 
 class Courses(db.Model):
-    """Courses model"""
+    """
+    Courses: 课程
+
+    :var id: 主键
+    :var name: 课程名
+    :var category_id: 指向CourseCategory的外键, 课程主分类
+    :var subcategory_id: 指向CoursesSubCategories的外键, 课程二级分类
+    :var type_id: 指向CourseType的外键, 学分类别
+    :var credit: 学分
+    :var teacher: 老师姓名
+    :var introduction: 课程介绍
+    :var comment: 课程对应的评论关系: 一对多关系
+    :var count: 课程对应的评论数
+    :var likes: 课程对应的点赞数
+    :var tags: 课程与标签的多对多关系, cascade级联删除
+    :var users: 课程与用户点赞的多对多关系, cascade级联删除
+
+    :property liked: 当前用户是否点赞了这门课
+    :property hot_tags: 该课最热门(引用最多)的四个标签
+
+    :func to_json: API json表示
+    :func to_json2: API json表示
+    :func from_json: API 读取json数据
+    """
     __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(280))
-    # 按专必公必分类 category_id(外键)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     subcategory_id = db.Column(db.Integer, db.ForeignKey('subcategory.id'))
-    # 按文理艺体分类
     type_id = db.Column(db.Integer, db.ForeignKey('type.id'))
-    # credit记录学分
     credit = db.Column(db.Integer)
-    # just teacher's name
     teacher = db.Column(db.String(164))
-    # introduction(课程介绍)
     introduction = db.Column(db.Text)
-
-    # comment(定义和Comments表的一对多关系)
     comment = db.relationship('Comments', backref="courses", lazy='dynamic', cascade='all')
-    # count: 课程对应的评论数
     count = db.Column(db.Integer, default=0)
-    # likes: 课程对应的点赞数
     likes = db.Column(db.Integer, default=0)
-    # 定义与标签的多对多关系
     tags = db.relationship("CourseTag", backref="courses", lazy="dynamic", cascade='all')
     users = db.relationship(
         "User",
@@ -256,7 +328,6 @@ class Courses(db.Model):
         lazy='dynamic',
         cascade='all'
     )
-    #search定义和search表的多对多关系
 
     @property
     def liked(self):
@@ -279,7 +350,6 @@ class Courses(db.Model):
         用空格隔开、组成4个字符串
         """
         # 查询记录
-
         s = ""
         ct = CourseTag.query.filter_by(course_id=self.id).all()
         sct = sorted(ct, lambda x, y: cmp(y.count, x.count))
@@ -361,7 +431,7 @@ class Courses(db.Model):
 #   3     专业课
 #   4     素质课
 class CourseCategories(db.Model):
-  # __table_args__ = {'mysql_charset': 'utf8'}
+    # __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
@@ -377,7 +447,7 @@ class CourseCategories(db.Model):
 # 1     通识核心课
 # 2     通识选修课
 class CoursesSubCategories(db.Model):
-  # __table_args__ = {'mysql_charset': 'utf8'}
+    # __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'subcategory'
     id = db.Column(db.Integer, primary_key=True)
     main_category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
@@ -395,7 +465,7 @@ class CoursesSubCategories(db.Model):
 #   3     艺体
 #   4     工科
 class CourseTypes(db.Model):
-  # __table_args__ = {'mysql_charset': 'utf8'}
+    # __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'type'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
@@ -406,16 +476,33 @@ class CourseTypes(db.Model):
 
 
 class Comments(db.Model):
-  # __table_args__ = {'mysql_charset': 'utf8'}
+    """
+    Comments: 评论
+
+    :var id: 主键, 唯一
+    :var course_id: 指向课程的外键, 与课程的多对一关系
+    :var user_id: 指向用户的外键, 与用户的多对一关系
+    :var timestamp: 时间戳, 默认是系统时间(datetime.utcnow)
+    :var body: 评论体(数据库直接存储html)
+    :var likes: 点赞数
+    :var is_useful: 
+    :var tip_id: 指向tip的外键, 与tip的多对一关系
+    :var user: 与用户点赞的多对多关系
+
+    :property time: 时间格式化
+    :property liked: 当前用户是否点赞, 匿名用户默认返回False
+
+    :func to_json: API json格式转换
+    :func from_json: API json读取
+    """
+    # __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     # user外键关联到user表的username
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    # time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     body = db.Column(db.Text)
-    count = db.Column(db.Integer, default=0)
     likes = db.Column(db.Integer, default=0)
     # is_useful计数
     is_useful = db.Column(db.Integer)
@@ -448,13 +535,6 @@ class Comments(db.Model):
         else:
             return False
 
-    @staticmethod
-    def test_json():
-        json_test = {
-            'token_headers': request.headers.get('authorization', None)
-        }
-        return json_test
-
     def to_json(self):
         json_comments = {
             'id': self.id,
@@ -481,6 +561,9 @@ class Comments(db.Model):
 
 
 class Teachers(db.Model):
+    """
+    Teachers 老师类: 目前没有使用
+    """
     __tablename__ = 'teachers'
     # __table_args__ = {'mysql_charset':'utf8'}
     id = db.Column(db.Integer, primary_key=True)
@@ -523,7 +606,18 @@ class Teachers(db.Model):
 
 
 class Tags(db.Model):
-  # __table_args__ = {'mysql_charset':'utf8'}
+    """
+    Tags: 标签
+
+    :var id: 主键
+    :var name: 标签名称
+    :var count: 标签计数, 用于全站热门标签统计
+    :var courses: 标签和课程的多对多关系
+
+    :func to_json: API json数据
+    :func from_json: API 读取json数据
+    """
+    # __table_args__ = {'mysql_charset':'utf8'}
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
@@ -548,7 +642,27 @@ class Tags(db.Model):
 
 
 class Tips(db.Model):
-  # __table_args__ = {'mysql_charset':'utf8'}
+    """
+    Tips: 运营文章
+    :var id: 主键
+    :var title: 标题
+    :var body: 运营文章(直接存储html)
+    :var img_url: 文章对应的图片
+    :var banner_url: 桌面版banner
+    :var author: 运营妹子
+    :var timestamp: 时间戳, 默认是系统时间
+    :var likes: 文章对应的点赞数
+    :var views: 文章的浏览量
+    :var users: 文章和用户点赞的多对多关系
+
+    :property time: 时间格式化
+    :property liked: 用户是否点赞了这篇文章
+
+    :func to_json: API json数据显示
+    :func to_json2: API json数据显示
+    :func from_json: API 读取json数据
+    """
+    # __table_args__ = {'mysql_charset':'utf8'}
     __tablename__ = 'tips'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
