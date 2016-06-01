@@ -4,8 +4,6 @@
 ***/
 
 .header {
-    height: 80px;
-    border-bottom: 1px solid $border_grey;
     background: $main_white;
 }
 
@@ -22,8 +20,7 @@
         width: 1000px;
     }
     .head {
-        height: 80px;
-        line-height: 80px;
+
     }
     .nav {
         height: 100%;
@@ -41,8 +38,6 @@
     }
     .search {
         width: 390px;
-        height: 80px;
-        line-height: 80px;
     }
     .log_button {
         @include button(90px,
@@ -69,6 +64,7 @@
         position: relative;
     }
     .input {
+        display:block;
         height: 30px;
         padding: 0 10px;
         width: 247px;
@@ -80,12 +76,13 @@
         width: 100%;
         height: auto;
         box-sizing: border-box;
-        border: 1px solid $font_grey_light;
+        border: 1px solid $font_red_deep;
         position: absolute;
-        top: 59px;
+        top: 34px;
         left: 0px;
         z-index: 2;
         background-color: #fff;
+        border-top:0;
     }
     .hot_tags {
         padding: 22px 12px 32px;

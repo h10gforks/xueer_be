@@ -2,7 +2,7 @@
 	margin: 0 auto;
 }
 .space{
-	font-size: 0rem;
+	font-size: 0;
 }
 .va_item{  
 	display: inline-block;
@@ -23,4 +23,12 @@
 }
 .margin_b {
     margin-bottom: 200px;
+}
+.va_after:after{
+	height:100%;
+	width: 0;
+	content:'';
+	visibility: hidden;
+	display:inline-block;
+	vertical-align:middle;
 }

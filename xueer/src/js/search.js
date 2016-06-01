@@ -15,7 +15,7 @@ class SearchBox extends React.Component{
 		super();
 	}
 	render(){
-		return <input id="inputBox" type="text" className="input va_item" placeholder="课程名、标签" onFocus={this.props.onFocusHandler}  onBlur={this.props.onBlurHandler} onChange={this.props.onChangeHandler}/>
+		return <input id="inputBox" type="text" className="input" placeholder="课程名、标签" onFocus={this.props.onFocusHandler}  onBlur={this.props.onBlurHandler} onChange={this.props.onChangeHandler}/>
 	}
 }
 
