@@ -8,22 +8,25 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-var $ = require("jquery");
+const $ = require("jquery");
 
-class SearchBox extends React.Component{
-	constructor(){
-		super();
-	}
-	render(){
-		return <input id="inputBox" type="text" className="input" placeholder="课程名、标签" onFocus={this.props.onFocusHandler}  onBlur={this.props.onBlurHandler} onChange={this.props.onChangeHandler}/>
-	}
+const SearchBox = (props) => {
+	return <input id="inputBox" type="text" className="input" placeholder="课程名、标签" onFocus={props.onFocusHandler}  onBlur={props.onBlurHandler} onChange={props.onChangeHandler}/>
 }
 
-class PopBox extends React.Component{
-	constructor(){
-		super();
-	}
-	render(){
+const PopBox = (props) => {
+		const styles = { 
+			show:{
+				display:"block"
+			},
+			hide:{
+				display:"none"
+			}
+		}
+		return <div style={((!props.isFocus)&&(!props.isBoxClicked))?styles.hide:styles.show} className="pop_box">{ props.children }</div>
+}
+
+const PopList = (props) => {
 		var styles = {
 			show:{
 				display:"block"
@@ -32,16 +35,19 @@ class PopBox extends React.Component{
 				display:"none"
 			}
 		}
-		return <div style={((!this.props.isFocus)&&(!this.props.isBoxClicked))?styles.hide:styles.show} className="pop_box">{ this.props.children }</div>
-	}
+		return <div style={props.hasResult?styles.show:styles.hide} className="pop_list">{ props.children }</div>
 }
 
-class PopList extends React.Component{
-	constructor(){
-		super();
-	}
-	render(){
-		var styles = {
+const PopListItem = (props) => {
+	return <a className="item" href={ props.data.url }>{ props.data.title }</a>
+}
+
+const TagBox = (props) => {
+	return <div className="tag"><a href={ props.data.url }>{ props.data.title }</a></div>
+}
+
+const HotTags = (props) => {
+	var styles = {
 			show:{
 				display:"block"
 			},
@@ -49,49 +55,14 @@ class PopList extends React.Component{
 				display:"none"
 			}
 		}
-		return <div style={this.props.hasResult?styles.show:styles.hide} className="pop_list">{ this.props.children }</div>
-	}
-}
-
-class PopListItem extends React.Component{
-	constructor(){
-		super();
-	}
-	render(){
-		return <a className="item" href={ this.props.data.url }>{ this.props.data.title }</a>
-	}
-}
-
-class TagBox extends React.Component{
-	constructor(){
-		super();
-	}
-	render(){
-		return <div className="tag"><a href={ this.props.data.url }>{ this.props.data.title }</a></div>
-	}
-}
-
-class HotTags extends React.Component{
-	constructor(){
-		super();
-	}
-	render(){
-		var styles = {
-			show:{
-				display:"block"
-			},
-			hide:{
-				display:"none"
-			}
-		}
-		return <div style={this.props.isTyping&&this.props.hasResult?styles.hide:styles.show} className="hot_tags">
-			   	<div className="tag_title" onClick={this.props.onClickHandler} ><a href="/login">大家都在搜</a></div>
+		return <div style={props.isTyping&&props.hasResult?styles.hide:styles.show} className="hot_tags">
+			   	<div className="tag_title" onClick={props.onClickHandler} ><a href="/login">大家都在搜</a></div>
 			   	<div className="tag_list">
-					{ this.props.children }
+					{ props.children }
 			   	</div>
 			   </div>
-	}
 }
+
 
 
 class SearchComponent extends React.Component{
@@ -133,7 +104,7 @@ class SearchComponent extends React.Component{
 		that = this;
 		if(val !== ""){
 			this.setState({isTyping:true})
-			var url = "/api/v1.0/search/?page=1&per_page=20&keywords=" + encodeURIComponent(val)
+			var url = "http://121.41.6.148:5050/api/v1.0/search/?page=1&per_page=20&keywords=" + encodeURIComponent(val)
 			$.get(url).done(function(data){
 				var l_data = JSON.parse(data);
 				if(l_data.length){
