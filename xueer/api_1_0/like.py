@@ -1,7 +1,20 @@
 # coding: utf-8
-
 """
-    点赞API
+    like.py
+    ```````
+
+    : 点赞API
+
+    : login: /api/v1.0/courses/id/like/
+    : -- POST: 向特定id的课程点赞
+    : -- DELETE: 取消特定id的课程点赞
+    : login: /api/v1.0/comments/id/like/
+    : -- POST: 向特定id的评论点赞
+    : -- DELETE: 取消特定id的评论点赞
+    : login: /api/v1.0/tip/id/like/
+    : -- POST: 向特定id的tip点赞
+    : -- DELETE: 取消特定id的tip点赞
+    ......................................
 
 """
 from . import api
@@ -11,15 +24,9 @@ from xueer.api_1_0.authentication import auth
 from xueer.models import Courses, Comments, Tips
 
 
-# 需要登录
 @api.route('/courses/<int:id>/like/', methods=["GET", "POST", "DELETE"])
 @auth.login_required
 def new_courses_id_like(id):
-    """
-    点赞特定id的课程
-    :param id:
-    :return:
-    """
     course = Courses.query.get_or_404(id)
     if request.method == "POST":
         if course.liked:
@@ -39,11 +46,6 @@ def new_courses_id_like(id):
         }), 201
 
     elif request.method == "DELETE":
-        """
-        删除特定id的评论
-        :param id:
-        :return:
-        """
         if course.liked:
             course.users.remove(g.current_user)
             db.session.add(course)
@@ -64,11 +66,6 @@ def new_courses_id_like(id):
 @api.route('/comments/<int:id>/like/', methods=["GET", "POST", "DELETE"])
 @auth.login_required
 def new_comments_id_like(id):
-    """
-    点赞特定id的课程
-    :param id:
-    :return:
-    """
     comment = Comments.query.get_or_404(id)
     if request.method == "POST":
         if comment.liked:
@@ -86,12 +83,8 @@ def new_comments_id_like(id):
             return jsonify({
               'likes': comment.likes
             }), 201
+
     elif request.method == "DELETE":
-        """
-        删除特定id的评论点赞
-        :param id:
-        :return:
-        """
         if comment.liked:
             comment.user.remove(g.current_user)
             db.session.add(comment)
@@ -112,11 +105,6 @@ def new_comments_id_like(id):
 @api.route('/tip/<int:id>/like/', methods=["GET", "POST", "DELETE"])
 @auth.login_required
 def new_tips_id_like(id):
-    """
-    点赞特定id对应的贴士
-    :param id:
-    :return:
-    """
     tip = Tips.query.get_or_404(id)
     if request.method == "POST":
         if tip.liked:
@@ -134,12 +122,8 @@ def new_tips_id_like(id):
             return jsonify({
                 'likes': tip.likes
             }), 201
+
     elif request.method == "DELETE":
-        """
-        删除特定id的贴士点赞
-        :param id:
-        :return:
-        """
         if tip.liked:
             tip.users.remove(g.current_user)
             db.session.add(tip)
@@ -155,4 +139,3 @@ def new_tips_id_like(id):
             return jsonify({
                 "error": "你还没有点赞这个贴士哦!"
             }), 403
-

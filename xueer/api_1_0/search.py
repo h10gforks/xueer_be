@@ -3,7 +3,12 @@
     search.py
     `````````
 
-    xueer search api
+    : xueer search api
+
+    : GET /api/v1.0/search/: 返回搜索结果集
+    : GET /api/v1.0/search/hot/: 返回全站热搜词
+    ............................................
+
 """
 
 from . import api

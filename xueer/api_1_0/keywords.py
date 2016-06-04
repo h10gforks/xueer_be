@@ -3,11 +3,13 @@
     keywords.py
     ```````````
 
-    学而热搜词统计
+    : 学而热搜词统计
 
-    目前的想法是使用redis键值对存储热搜词和计数,
-    每三天进行一次重启清空
-    将redis任务放到celery队列中进行管理, 方便redis进程的调度
+    : 目前的想法是使用redis键值对存储热搜词和计数,
+    : 每三天进行一次重启清空
+    : 将redis任务放到celery队列中进行管理, 方便redis进程的调度
+    ...........................................................
+
 """
 
 from xueer import rds
@@ -20,7 +22,8 @@ def store_rds(keywords):
     :return None:
     数据存储在硬盘上(每3天进行清空)
     """
-    # lambda rds: rds.incr(keywords) if rds.get(keywords) else rds.set(keywords, 1)
+    # lambda rds: rds.incr(keywords) \
+    # if rds.get(keywords) else rds.set(keywords, 1)
     if rds.get(keywords):
         count = int(rds.get(keywords))
         count += 1

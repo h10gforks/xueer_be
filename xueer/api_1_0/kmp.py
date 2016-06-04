@@ -4,7 +4,8 @@
     kmp算法
     ```````
 
-    实现搜索排序(字符粒度)
+    : 实现搜索排序(字符粒度)
+
 """
 
 
@@ -26,7 +27,8 @@ def kmp(s, t):
     t: pattern string
     """
     j = 0
-    m = len(s); n = len(t)
+    m = len(s)
+    n = len(t)
     next = []
     make_next(t, next)
     for i in range(m-n+1):

@@ -1,15 +1,22 @@
 # coding: utf-8
 """
-    api~courses
-    ```````````
+    courses.py
+    ``````````
 
-    课程API
+    : 课程API
+
+    : GET /api/v1.0/courses/: 获取全部课程信息
+    : GET /api/v1.0/courses/id/: 获取特定id课程信息
+    : POST(admin) /api/v1.0/courses/: 创建一个新的课程 admin
+    : PUT(admin) /api/v1.0/courses/id/: 更新特定id课程的信息
+    : DELETE(admin) /api/v1.0/courses/id/: 删除特定id课程
+    : GET /api/v1.0/tags/id/courses/: 获取特定id tag的所有课程
+    .........................................................
+
 """
 
 from flask import jsonify, url_for, request, current_app
-from .authentication import auth
-from sqlalchemy import desc
-from ..models import Courses, User, Tags, CourseCategories, CourseTypes, Permission
+from ..models import Courses, Tags
 from . import api
 from xueer import db, lru
 import json
@@ -53,9 +60,6 @@ def get_cat_courses(main_cat=0, ts_cat=0):
 
 @api.route('/courses/', methods=["GET"])
 def get_courses():
-    """
-    获取全部课程
-    """
     global paginate
     main_cat = request.args.get('main_cat') or '0'
     ts_cat = request.args.get('ts_cat') or '0'
@@ -76,16 +80,13 @@ def get_courses():
         [course.to_json2() for course in current],
         ensure_ascii=False,
         indent=1
-    ), 200, {'link': '<%s>; rel="next", <%s>; rel="last"' % (next_page, last_page)}
+    ), \
+        200, {'link': '<%s>; rel="next", <%s>; rel="last"'
+     % (next_page, last_page)}
 
 
 @api.route('/courses/<int:id>/', methods=["GET"])
 def get_course_id(id):
-    """
-    获取特定id课程的信息
-    :param id:
-    :return:
-    """
     course = Courses.query.get_or_404(id)
     return jsonify(course.to_json())
 
@@ -93,11 +94,6 @@ def get_course_id(id):
 @api.route('/courses/', methods=["GET", "POST"])
 @admin_required
 def new_course():
-    """
-    创建一个新的课程
-    :return:
-    """
-    # request.get_json.get('item', 'default')
     if request.method == "POST":
         course = Courses.from_json(request.get_json())
         db.session.add(course)
@@ -110,16 +106,15 @@ def new_course():
 @api.route('/courses/<int:id>/', methods=["GET", "PUT"])
 @admin_required
 def put_course(id):
-    """
-    更新一门课
-    """
     course = Courses.query.get_or_404(id)
     if request.method == "PUT":
+        # eval is evil:( but
         data_dict = eval(request.data)
         course.name = data_dict.get('name', course.name)
         course.teacher = data_dict.get('teacher', course.teacher)
         course.category_id = data_dict.get('category_id', course.category_id)
-        course.subcategory_id = data_dict.get('sub_category_id', course.subcategory_id)
+        course.subcategory_id = data_dict.get('sub_category_id',
+            course.subcategory_id)
         course.type_id = data_dict.get('type_id', course.type_id)
         db.session.add(course)
         db.session.commit()
@@ -129,11 +124,6 @@ def put_course(id):
 @api.route('/courses/<int:id>/', methods=['GET', 'DELETE'])
 @admin_required
 def delete_course(id):
-    """
-    删除一个课程
-    :param id:
-    :return:
-    """
     course = Courses.query.get_or_404(id)
     if request.method == "DELETE":
         db.session.delete(course)
@@ -148,25 +138,18 @@ def delete_course(id):
 
 @api.route('/tags/<int:id>/courses/')
 def get_tags_id_courses(id):
-    """
-    获取特定id的tag对应的所有课程
-    :param id: tag的id
-    :return: 该id tag对应的所有课程
-    """
-    # 根据id获取tag
     tag = Tags.query.get_or_404(id)
     page = request.args.get('page', 1, type=int)
     paginate = tag.courses.paginate(
-        page,
-        per_page=current_app.config["XUEER_COURSES_PER_PAGE"],
-        error_out=False
+        page, error_out=False,
+        per_page=current_app.config["XUEER_COURSES_PER_PAGE"]
     )
     course_tags = paginate.items  # 获取分页的courses对象
     courses = []
     prev = ""
+    next = ""
     if paginate.has_prev:
         prev = url_for('api.get_tags_id_courses', id=id, page=page-1)
-    next = ""
     if paginate.has_next:
         next = url_for('api.get_tags_id_courses', id=id, page=page+1)
     courses_count = tag.courses.count()

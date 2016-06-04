@@ -1,30 +1,37 @@
 # coding:utf-8
+"""
+    tags.py
+    ```````
 
+    : 标签API
+
+    : GET /api/v1.0/tags/: 获取所有标签信息
+    : GET /api/v1.0/tags/id/: 获取特定id标签信息
+    : DELETE(admin) /api/v1.0/tags/id/: 删除特定id标签
+    : GET /api/v1.0/courses/id/tags/: 获取特定id课程的所有标签
+    ..........................................................
+
+"""
 from flask import jsonify, url_for, request, current_app
+from xueer.decorators import admin_required
 from ..models import Tags, Courses
 from . import api
 from xueer import db
 import json
-from xueer.api_1_0.authentication import auth
 
 
 @api.route('/tags/', methods=["GET"])
 def get_tags():
-    """
-    获取所有标签信息
-    :return:
-    """
     page = request.args.get('page', 1, type=int)
     pagination = Tags.query.order_by(-(Tags.count)).paginate(
-        page,
-        per_page=current_app.config['XUEER_TAGS_PER_PAGE'],
-        error_out=False
+        page, error_out=False,
+        per_page=current_app.config['XUEER_TAGS_PER_PAGE']
     )
     tags = pagination.items
     prev = ""
+    next = ""
     if pagination.has_prev:
         prev = url_for('api.get_tags', page=page-1, _external=True)
-    next = ""
     if pagination.has_next:
         next = url_for('api.get_tags', page=page+1, _external=True)
     tags_count = len(Tags.query.all())
@@ -50,6 +57,7 @@ def get_tags_id(id):
 
 
 @api.route('/tags/<int:id>', methods=["GET", "DELETE"])
+@admin_required
 def delete_tags(id):
     tag = Tags.query.get_or_404(id)
     if request.method == "DELETE":
