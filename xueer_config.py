@@ -27,7 +27,6 @@ class Config(object):
         密钥配置、数据库配置、管理员配置、参数配置
     """
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'I hate flask hahahaha'
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'xueer_test.sqlite')
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     XUEER_COMMENTS_PER_PAGE = 10
@@ -51,7 +50,8 @@ class DevConfig(Config):
         测试管理员账号
     """
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('XUEER_POSTGRES_URI') or 'sqlite:///' + os.path.join(basedir, 'xueer_dev.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('XUEER_POSTGRES_URI') or \
+        'sqlite:///' + os.path.join(basedir, 'xueer_dev.sqlite')
     CELERY_BROKER_URL = 'redis://localhost:6382/2'
     CELERY_RESULT_BACKEND = 'redis://localhost:6382/2'
     CELERYBEAT_SCHEDULE = {

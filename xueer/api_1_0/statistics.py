@@ -1,4 +1,14 @@
 # coding: utf-8
+"""
+    statistics.py
+    `````````````
+
+    : 全站部分状态API
+
+    : GET(admin) /api/v1.0/statistics/: 显示部分集合状态
+    ....................................................
+
+"""
 
 from . import api
 from xueer.decorators import admin_required

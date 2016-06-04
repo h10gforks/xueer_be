@@ -3,103 +3,70 @@
     manage.py
     ~~~~~~~~~
 
-    xueer backend management
+    : [intro]
+    : -- xueer backend management
+
+    : [shell]
+      -- python manage.py db init
+      -- python manage.py db migrate
+      -- python manage.py db upgrade
+      -- python manage.py runserver
+      -- python manage.py test
+      -- python manage.py adduser (username) (email)
+      -- python manage.py freeze
 
 """
-
-from getpass import getpass
-import sys
 import os
+import sys
 import base64
-from flask.ext.script import Manager, Shell
-from flask.ext.migrate import Migrate, MigrateCommand
+from getpass import getpass
+
+from xueer import create_app, db
 from flask import g
-from xueer import db, app
-from xueer.models import Permission, Role, User, AnonymousUser, Courses, CourseCategories, \
-    CourseTypes, Comments, Teachers, Tags, Tips
+from flask_script import Manager, Shell
+from flask_migrate import Migrate, MigrateCommand
+from xueer.models import Permission, Role, User, AnonymousUser, Courses, \
+    CourseCategories, CourseTypes, Comments, Teachers, Tags, Tips
 
 
-# set encoding utf-8
+# set encoding to utf-8
+# but reload is evil:)
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
+app = create_app(os.getenv('XUEER_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
 
 def make_shell_context():
-    """自动加载环境"""
-    return dict(
-        g=g,
-        app=app,
-        db=db,
-        Permission=Permission,
-        Role=Role,
-        User=User,
-        AnonymousUser=AnonymousUser,
-        Courses=Courses,
-        CourseCategories=CourseCategories,
-        CourseTypes=CourseTypes,
-        Comments=Comments,
-        Teachers=Teachers,
-        Tags=Tags,
-        Tips=Tips,
-    )
-
-
-manager.add_command("shell", Shell(make_context=make_shell_context))
+    shell_ctx = dict(app=app, db=db, Permission=Permission, Role=Role,
+                     User=User, AnonymousUser=AnonymousUser, Courses=Courses,
+                     g=g, CourseCategories=CourseCategories,
+                     CourseTypes=CourseTypes, Comments=Comments,
+                     Teachers=Teachers, Tags=Tags, Tips=Tips)
+    return shell_ctx
+manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
 
 @manager.command
-def config():
-    """项目配置"""
-    pass
+def adduser():
+    name = raw_input('Username> ')
+    email = raw_input('Email> ')
+    input_password = getpass('Password> ')
+    role = input('Role(2:admin, 3:user)> ')
 
-
-
-# 后台数据库管理界面
-# admin.add_view(ModelView([models], db.session))
-@manager.command
-def adduser(username, email):
-    """添加用户"""
-    password = getpass('password ')
-    confirm = getpass('confirm ')
-    if password == confirm:
-        u = User(
-            email=email,
-            username=username,
-            password=base64.b64encode(password)
-        )
-        db.session.add(u)
-        db.session.commit()
-        print "user %s add in database! " % username
-    else:
-        print "password not confirmed!"
-        exit(0)
-
-
-@manager.command
-def test():
-    """运行测试"""
-    import unittest
-    tests = unittest.TestLoader().discover('test')
-    unittest.TextTestRunner(verbosity=2).run(tests)
-
-
-@manager.command
-def freeze():
-    """首页静态化"""
-    from xueer.hello import hello
-    from flask_frozen import Freezer
-
-    freezer = Freezer(hello)
-
-    if __name__ == '__main__':
-        freezer.freeze()
+    password = base64.b64encode(input_password)
+    new = User(name=name, email=email,
+               password=password, role=role)
+    db.session.add(new)
+    db.session.commit()
+    print "new user <{name}> created".format(name)
 
 
 if __name__ == '__main__':
-    app.debug = True
+    if sys.argv[1] == 'test' or sys.argv[1] == 'lint':
+        os.environ['XUEER_CONFIG'] = 'test'
     manager.run()

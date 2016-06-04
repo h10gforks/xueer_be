@@ -1,13 +1,13 @@
 # coding: utf-8
-
 """
-  sure.py
-  ~~~~~~~
-    根据邮箱确定用户是否存在
+    sure.py
+    ```````
 
+    : 根据邮箱确定用户是否存在
+
+    : GET /api/v1.0/sure/: 根据邮箱确定用户是否存在
 """
 
-from xueer.decorators import admin_required
 from xueer.models import User
 from . import api
 from flask import request, jsonify

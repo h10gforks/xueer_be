@@ -1,5 +1,11 @@
 # coding: utf-8
-from . import api
+"""
+    paginate.py
+    ```````````
+
+    : 分页api
+
+"""
 from flask import url_for
 
 

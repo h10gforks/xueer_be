@@ -1,7 +1,19 @@
 # coding: utf-8
+"""
+    memcached.py
+    ````````````
+
+    : redis lru memcached
+
+    : GET(admin): /api/v1.0/memcached/: 将课程的搜索集读入缓存
+    : GET(admin): /api/v1.0/memcached/id/: 将特定id课程的搜索集读入缓存
+    : DELETE(admin): /api/v1.0/memcached/id/: 移除缓存特定id课程的搜索集
+    ....................................................................
+
+"""
 
 from xueer.decorators import admin_required
-from xueer.models import Courses, Tags
+from xueer.models import Courses
 from xueer import lru
 from . import api
 from flask import jsonify, request
@@ -14,7 +26,7 @@ def read_data2_memcached():
     """
     courses = Courses.query.all()
     for course in courses:
-       lru.set(course.to_json(), [course.name, course.teacher])
+        lru.set(course.to_json(), [course.name, course.teacher])
     lru.save()  # 数据存储硬盘
 
 
