@@ -27,8 +27,13 @@ from xueer.api_1_0.authentication import auth
 from xueer.decorators import admin_required
 
 
-global comments_per_page
-comments_per_page = current_app.config['XUEER_COMMENTS_PER_PAGE']
+comments_per_page = 10
+
+
+@api.route('/for_app_ctx/')
+def for_app_ctx():
+    global comments_per_page
+    comments_per_page = current_app.config['XUEER_COMMENTS_PER_PAGE']
 
 
 def add_tags(course):
