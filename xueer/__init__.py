@@ -21,6 +21,8 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from celery import Celery
 
+from xueer_config import config
+
 
 # Flask extensions
 db = SQLAlchemy()
@@ -43,8 +45,9 @@ def create_app(config_name=None, main=True):
     :param main: 主进程模块名称
     """
     if config_name is None:
-        config_name = os.environ.get('XUEER_CONFIG', 'develop')
+        config_name = os.environ.get('XUEER_CONFIG', 'default')
     app = Flask(__name__)
+    app.config.from_object(config[config_name])
 
     # Initial flask extensions
     db.init_app(app)

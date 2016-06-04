@@ -50,8 +50,7 @@ class DevConfig(Config):
         测试管理员账号
     """
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('XUEER_POSTGRES_URI') or \
-        'sqlite:///' + os.path.join(basedir, 'xueer_dev.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('XUEER_POSTGRES_URI')
     CELERY_BROKER_URL = 'redis://localhost:6382/2'
     CELERY_RESULT_BACKEND = 'redis://localhost:6382/2'
     CELERYBEAT_SCHEDULE = {
