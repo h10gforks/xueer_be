@@ -71,7 +71,7 @@ def create_app(config_name=None, main=True):
 
 
 # xueer app
-app = create_app(os.getenv('XUEER_CONFIG') or 'default')
+app = create_app(config_name = os.getenv('XUEER_CONFIG') or 'default')
 
 
 # setting up celery
