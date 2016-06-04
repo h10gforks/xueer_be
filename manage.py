@@ -21,7 +21,7 @@ import sys
 import base64
 from getpass import getpass
 
-from xueer import create_app, db
+from xueer import app, db
 from flask import g
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
@@ -35,7 +35,6 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
-app = create_app(os.getenv('XUEER_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
 

@@ -23,13 +23,12 @@
 """
 
 from datetime import datetime
-from flask_login import UserMixin, AnonymousUserMixin, current_user
-from . import login_manager, app, db
-from flask import current_app, url_for, g, request
+from flask_login import UserMixin, AnonymousUserMixin
+from . import login_manager, db
+from flask import current_app, url_for, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeSerializer as Serializer
 from .exceptions import ValidationError
-from . import app
 import base64
 
 
@@ -56,13 +55,14 @@ class Role(db.Model):
 
     :func insert_roles: 创建用户角色, 默认是普通用户
     """
-    #__table_args__ = {'mysql_charset': 'utf8'}
+    # __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     default = db.Column(db.Boolean, default=False, index=True)
     permissions = db.Column(db.Integer)
-    users = db.relationship('User', backref='role', lazy='dynamic', cascade='all')
+    users = db.relationship('User', backref='role',
+                            lazy='dynamic', cascade='all')
 
     @staticmethod
     def insert_roles():
@@ -94,20 +94,26 @@ class Role(db.Model):
 # 多对多关系的中间表
 UCLike = db.Table(
     'user_like',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete="CASCADE")),
-    db.Column('course_id', db.Integer, db.ForeignKey('courses.id', ondelete="CASCADE"))
+    db.Column('user_id', db.Integer,
+              db.ForeignKey('users.id', ondelete="CASCADE")),
+    db.Column('course_id', db.Integer,
+              db.ForeignKey('courses.id', ondelete="CASCADE"))
 )
 
 UCMLike = db.Table(
     'user_comment_like',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete="CASCADE")),
-    db.Column('comment_id', db.Integer, db.ForeignKey('comments.id', ondelete="CASCADE"))
+    db.Column('user_id', db.Integer,
+              db.ForeignKey('users.id', ondelete="CASCADE")),
+    db.Column('comment_id', db.Integer,
+              db.ForeignKey('comments.id', ondelete="CASCADE"))
 )
 
 UTLike = db.Table(
     'user_tips_like',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete="CASCADE")),
-    db.Column('tips_id', db.Integer, db.ForeignKey('tips.id', ondelete="CASCADE"))
+    db.Column('user_id', db.Integer,
+              db.ForeignKey('users.id', ondelete="CASCADE")),
+    db.Column('tips_id', db.Integer,
+              db.ForeignKey('tips.id', ondelete="CASCADE"))
 )
 
 
@@ -120,10 +126,14 @@ class CourseTag(db.Model):
     :var tag_id: 指向标签的外键, CASCADE: 级联
     :var count: 纪录(课程, 标签)的引用次数, 作为热门标签的统计
     """
-    #__table_args__ = {'mysql_charset': 'utf8'}
+    # __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'courses_tags'
-    course_id = db.Column(db.Integer, db.ForeignKey('courses.id', ondelete="CASCADE"), primary_key=True)
-    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE"), primary_key=True)
+    course_id = db.Column(db.Integer,
+                          db.ForeignKey('courses.id', ondelete="CASCADE"),
+                          primary_key=True)
+    tag_id = db.Column(db.Integer,
+                       db.ForeignKey('tags.id', ondelete="CASCADE"),
+                       primary_key=True)
     count = db.Column(db.Integer, default=0)
 
 
@@ -163,7 +173,8 @@ class User(UserMixin, db.Model):
     qq = db.Column(db.String(164), index=True)
     major = db.Column(db.String(200), index=True)
     password_hash = db.Column(db.String(128))
-    comments = db.relationship("Comments", backref='users', lazy="dynamic", cascade='all')
+    comments = db.relationship("Comments", backref='users',
+                               lazy="dynamic", cascade='all')
     phone = db.Column(db.String(200), default=None)
     school = db.Column(db.String(200), index=True, default=None)
 
@@ -244,7 +255,8 @@ class User(UserMixin, db.Model):
             raise ValidationError('请输入密码！')
         if email is None or email == '':
             raise ValidationError('请输入邮箱地址！')
-        return User(username=username, password=password, email=email, role_id=role_id)
+        return User(username=username, password=password,
+                    email=email, role_id=role_id)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -317,10 +329,12 @@ class Courses(db.Model):
     credit = db.Column(db.Integer)
     teacher = db.Column(db.String(164))
     introduction = db.Column(db.Text)
-    comment = db.relationship('Comments', backref="courses", lazy='dynamic', cascade='all')
+    comment = db.relationship('Comments', backref="courses",
+                              lazy='dynamic', cascade='all')
     count = db.Column(db.Integer, default=0)
     likes = db.Column(db.Integer, default=0)
-    tags = db.relationship("CourseTag", backref="courses", lazy="dynamic", cascade='all')
+    tags = db.relationship("CourseTag", backref="courses",
+                           lazy="dynamic", cascade='all')
     users = db.relationship(
         "User",
         secondary=UCLike,
@@ -361,21 +375,27 @@ class Courses(db.Model):
         if CourseTypes.query.filter_by(id=self.type_id).first() is None:
             credit_category = "无分类"
         else:
-            credit_category = CourseTypes.query.filter_by(id=self.type_id).first().name
-        if CoursesSubCategories.query.filter_by(id=self.subcategory_id).first() is None:
+            credit_category = CourseTypes.query.filter_by(
+                id=self.type_id).first().name
+        if CoursesSubCategories.query.filter_by(
+                id=self.subcategory_id).first() is None:
             sub_category = "无分类"
         else:
-            sub_category = CoursesSubCategories.query.filter_by(id=self.subcategory_id).first().name
+            sub_category = CoursesSubCategories.query.filter_by(
+                id=self.subcategory_id).first().name
         json_courses = {
             'id': self.id,
             'title': self.name,
             'teacher': self.teacher,
-            'comment_url': url_for('api.get_courses_id_comments', id=self.id, _external=True),
+            'comment_url': url_for('api.get_courses_id_comments',
+                                   id=self.id, _external=True),
             'hot_tags': self.hot_tags,
             'likes': self.likes,  # 点赞的总数
-            'like_url': url_for('api.new_courses_id_like', id=self.id, _external=True),  # 给一门课点赞
+            'like_url': url_for('api.new_courses_id_like',
+                                id=self.id, _external=True),
             'liked': self.liked,  # 查询的用户是否点赞了
-            'main_category': CourseCategories.query.filter_by(id=self.category_id).first().name,
+            'main_category': CourseCategories.query.filter_by(
+                id=self.category_id).first().name,
             'sub_category': sub_category,
             'credit_category': credit_category,
             'views': self.count  # 浏览量其实是评论数
@@ -386,18 +406,22 @@ class Courses(db.Model):
         if CourseTypes.query.filter_by(id=self.type_id).first() is None:
             credit_category = "无分类"
         else:
-            credit_category = CourseTypes.query.filter_by(id=self.type_id).first().name
-        if CoursesSubCategories.query.filter_by(id=self.subcategory_id).first() is None:
+            credit_category = CourseTypes.query.filter_by(
+                id=self.type_id).first().name
+        if CoursesSubCategories.query.filter_by(
+                id=self.subcategory_id).first() is None:
             sub_category = "无分类"
         else:
-            sub_category = CoursesSubCategories.query.filter_by(id=self.subcategory_id).first().name
+            sub_category = CoursesSubCategories.query.filter_by(
+                id=self.subcategory_id).first().name
         json_courses2 = {
             'id': self.id,
             'title': self.name,
             'teacher': self.teacher,
-            'views': self.count, # 浏览量其实是评论数
-            'likes': self.likes,  # 点赞的总数
-            'main_category': CourseCategories.query.filter_by(id=self.category_id).first().name,
+            'views': self.count,
+            'likes': self.likes,
+            'main_category': CourseCategories.query.filter_by(
+                id=self.category_id).first().name,
             'sub_category': sub_category,
             'credit_category': credit_category
         }
@@ -435,9 +459,12 @@ class CourseCategories(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
-    courses = db.relationship("Courses", backref="category", lazy="dynamic", cascade='all')
-    subcategories = db.relationship("CoursesSubCategories", backref="category", lazy="dynamic", cascade='all')
-
+    courses = db.relationship("Courses", backref="category",
+                              lazy="dynamic", cascade='all')
+    subcategories = db.relationship("CoursesSubCategories",
+                                    backref="category",
+                                    lazy="dynamic",
+                                    cascade='all')
 
     def __repr__(self):
         return '<CourseCategory %r>' % self.name
@@ -452,7 +479,8 @@ class CoursesSubCategories(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     main_category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     name = db.Column(db.String(640))
-    courses = db.relationship('Courses', backref='subcategory', lazy='dynamic', cascade='all')
+    courses = db.relationship('Courses', backref='subcategory',
+                              lazy='dynamic', cascade='all')
 
     def __repr__(self):
         return "<SubCategory %r> % self.name"
@@ -469,7 +497,8 @@ class CourseTypes(db.Model):
     __tablename__ = 'type'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
-    courses = db.relationship("Courses", backref="type", lazy="dynamic", cascade='all')
+    courses = db.relationship("Courses", backref="type",
+                              lazy="dynamic", cascade='all')
 
     def __repr__(self):
         return '<CourseType %r>' % self.name
@@ -485,7 +514,7 @@ class Comments(db.Model):
     :var timestamp: 时间戳, 默认是系统时间(datetime.utcnow)
     :var body: 评论体(数据库直接存储html)
     :var likes: 点赞数
-    :var is_useful: 
+    :var is_useful:
     :var tip_id: 指向tip的外键, 与tip的多对一关系
     :var user: 与用户点赞的多对多关系
 
@@ -538,14 +567,16 @@ class Comments(db.Model):
     def to_json(self):
         json_comments = {
             'id': self.id,
-            'user_name': User.query.filter_by(id=self.user_id).first().username,
-            'avatar' : 'http://7xj431.com1.z0.glb.clouddn.com/1-140G2160520962.jpg', # 占位
+            'user_name': User.query.filter_by(
+                id=self.user_id).first().username,
+            'avatar': 'http://7xj431.com1.z0.glb.clouddn.com/1-140G2160520962.jpg',
             'date': self.time,
             'body': self.body,
             'is_useful': self.is_useful,
             'likes': self.likes,
             'liked': self.liked,
-            'like_url': url_for('api.new_comments_id_like', id=self.id, _external=True)
+            'like_url': url_for('api.new_comments_id_like',
+                                id=self.id, _external=True)
         }
         return json_comments
 
@@ -582,7 +613,8 @@ class Teachers(db.Model):
             'introduction': self.introduction,
             'phone': self.phone,
             'weibo': self.weibo,
-            'courses': url_for('api.get_courses', teacher=self.id, _external=True)
+            'courses': url_for('api.get_courses', teacher=self.id,
+                               _external=True)
         }
         return json_teacher
 
@@ -622,7 +654,8 @@ class Tags(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     count = db.Column(db.Integer, default=0)
-    courses = db.relationship("CourseTag", backref="tags", lazy="dynamic", cascade='all')
+    courses = db.relationship("CourseTag", backref="tags", lazy="dynamic",
+                              cascade='all')
 
     def to_json(self):
         json_tag = {
@@ -634,7 +667,7 @@ class Tags(db.Model):
 
     @staticmethod
     def from_json(json_tag):
-        name=json_tag.get('name')
+        name = json_tag.get('name')
         return Tags(name=name)
 
     def __repr__(self):
