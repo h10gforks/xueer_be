@@ -39,11 +39,11 @@ const PopList = (props) => {
 }
 
 const PopListItem = (props) => {
-	return <a className="item" href={ props.data.url }>{ props.data.title }</a>
+	return <a className="item" href={ '/search/?keywords=' + props.data.title }>{ props.data.title }</a>
 }
 
 const TagBox = (props) => {
-	return <div className="tag"><a href={ props.data.url }>{ props.data.title }</a></div>
+	return <div className="tag"><a href={ '/search/?keywords=' + props.data }>{ props.data }</a></div>
 }
 
 const HotTags = (props) => {
@@ -73,7 +73,8 @@ class SearchComponent extends React.Component{
 			isBoxClicked:false,
 			isTyping:false,
 			hasResult:false,
-			list:[]
+			list:[],
+			hot_tags: []
 		};
 		this._onFocusHandler = this._onFocusHandler.bind(this);
 		this._onBlurHandler = this._onBlurHandler.bind(this);
@@ -82,6 +83,9 @@ class SearchComponent extends React.Component{
 	}
 	componentDidMount() {
     	window.addEventListener('mousedown', this._onMouseDownHandler, true);
+    	$.get("api/v1.0/search/hot/").done((res) => {
+    		that.setState({hot_tags: res})
+    	})
 	}
 	_onFocusHandler(){
 		this.setState({isFocus:true})
@@ -119,12 +123,14 @@ class SearchComponent extends React.Component{
 		}
 	}
 	render(){
-		var pop_list = [];
+		let pop_list = [];
+    let hot_tags = [];
 		this.state.list.map((x,i) => pop_list.push(<PopListItem key={i} data={x} id={i} />));
+		this.state.hot_tags.map((x,i) => hot_tags.push(<TagBox key={i} data={x} id={i} />));
 		return <div className="search_container">
 					<PopBox isFocus={this.state.isFocus} isBoxClicked={this.state.isBoxClicked} >
 						<HotTags isTyping={this.state.isTyping} hasResult={this.state.hasResult}>
-
+							{hot_tags}
 						</HotTags>
 						<PopList hasResult={this.state.hasResult}>
 							{pop_list}

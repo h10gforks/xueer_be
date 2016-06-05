@@ -13,7 +13,7 @@ var devConfig = {
 		banner: './js/banner.js',
 		comment: './js/comment.js',
 		search: './js/search.js',
-		register: './js/register.js',
+		course: './js/course.js',
 		vendor: ["jquery", "react", "react-dom","react-addons-css-transition-group"]
 	},
 	output: {
