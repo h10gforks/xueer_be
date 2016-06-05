@@ -11,3 +11,4 @@ note:
 
 + 学而现在使用supervisor和redispapa进行管理, start.sh/stop.sh已经不再使用
 + 学而使用github webhook自动部署
++ github webhook用的是Python Flask编写的脚本
