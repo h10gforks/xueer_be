@@ -3,80 +3,80 @@
  authored by StephenLiu
 ***/
 
-.result{
-	width: 1000px;	
-	.head{
-		line-height: 50px;
-		margin-bottom: 8px;
-		background: $main_white;
-		border-bottom: 3px solid $border_grey;
-	}
-	.head_txt{
-		font-size: 18px;
-		color: $font_grey_light;
-		background: $main_white;
-	}
-	.no-result{
-		margin-top: 40px;
-	}
-	.list_title {
-		display: block;
-		width: 560px;
-		color: $font_grey_light;
-		font-size: 20px;
-		line-height: 20px;
-	}
-	.like{
-		width: 193px;
-		padding: 20px 0;
-		font-size: 18px;
-		display: inline-block;
-	}
-	.count {
-		color: $font_red_deep;
-	}
-	.like_text {
-		color: $font_black_deep;
-	}
-	.count,
-	.like_text {
-		padding: 5px 0 0 60px;
-	}
-	.result_cont{
-		background: $main_white;
-		padding: 0 50px 30px;
-		.course_cont {
-			padding: 20px 0;
-			border-bottom: 1px solid $border_grey;
-		}
-		.course_intro{
-			margin-left: 20px;
-			padding-left: 20px;
-			vertical-align: top;
-		}
-		.course_msg {
-			font-size: 14px;
-			font-weight: lighter;
-			color: $font_black_light;
-		}
-		.course_class {
-			@include course_class(80px,80px,36px);
-		}
-		.course_class,
-		.course_message {
-			display: inline-block;
-		}
-		.line {
-			margin: 0 10px 2px;
-			border-right: 2px solid $font_black_middle;
-		}
-	}
-	.list_title{
-		&:hover{
-			color: $footer_bg;
-		}
-		.line {
-			border-color: $footer_bg; 
-		}
-	}
+.result {
+  width: 1000px;
+  .head {
+    line-height: 50px;
+    margin-bottom: 8px;
+    background: $main_white;
+    border-bottom: 3px solid $border_grey;
+  }
+  .head_txt {
+    font-size: 18px;
+    color: $font_grey_light;
+    background: $main_white;
+  }
+  .no-result {
+    margin-top: 40px;
+  }
+  .list_title {
+    display: block;
+    width: 560px;
+    color: $font_grey_light;
+    font-size: 20px;
+    line-height: 20px;
+  }
+  .like {
+    width: 193px;
+    padding: 20px 0;
+    font-size: 18px;
+    display: inline-block;
+  }
+  .count {
+    color: $font_red_deep;
+  }
+  .like_text {
+    color: $font_black_deep;
+  }
+  .count,
+  .like_text {
+    padding: 5px 0 0 60px;
+  }
+  .result_cont {
+    background: $main_white;
+    padding: 0 50px 30px;
+    .course_cont {
+      padding: 20px 0;
+      border-bottom: 1px solid $border_grey;
+    }
+    .course_intro {
+      margin-left: 20px;
+      padding-left: 20px;
+      vertical-align: top;
+    }
+    .course_msg {
+      font-size: 14px;
+      font-weight: lighter;
+      color: $font_black_light;
+    }
+    .course_class {
+      @include course_class(80px, 80px, 36px);
+    }
+    .course_class,
+    .course_message {
+      display: inline-block;
+    }
+    .line {
+      margin: 0 10px 2px;
+      border-right: 2px solid $font_black_middle;
+    }
+  }
+  .list_title {
+    &:hover {
+      color: $footer_bg;
+    }
+    .line {
+      border-color: $footer_bg;
+    }
+  }
 }

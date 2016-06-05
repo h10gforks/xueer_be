@@ -1,28 +1,40 @@
-.pager{
-    	text-align: right;
-        margin-top: 40px;
-        color: $main_white;
-        font-size: 14px;
-    .item{
+.pager
+{
+    font-size: 14px;
+
+    margin-top: 40px;
+
+    text-align: right;
+
+    color: $main_white;
+    .item
+    {
         line-height: 30px;
-    	margin-left:15px;
+
         display: inline-block;
+
         width: 30px;
         height: 30px;
+        margin-left: 15px;
+
         background: #cdcdcd;
     }
-    .current {
+    .current
+    {
         background: $main_green;
     }
-    .more {
+    .more
+    {
         color: #cdcdcd;
         background: $main_white;
     }
-    .check_bt{
+    .check_bt
+    {
         display: inline-block;
+
         width: 60px;
         height: 30px;
-        background: $main_green;
-    }	
-}
 
+        background: $main_green;
+    }
+}

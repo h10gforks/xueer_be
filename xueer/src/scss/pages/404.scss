@@ -1,29 +1,28 @@
 .not_found {
-	width: 1000px;
-	position: relative;
-	background: $main_white;
-	.not_found_bg {
-		width: 854px;
-		height: 305px;
-		display: block;
-	}
-	.result_cont {
-		height: 270px;
-		padding-top: 80px;
-		box-sizing: border-box;
-		.result {
-			font-size: 24px;
-			margin-bottom: 20px;
-		}
-		.result,
-		.count {
-			color: $font_red_deep;
-		}
-		.time {
-			font-size: 18px;
-			font-weight: lighter;
-			color: $font_blue_light;
-		}
-	}
+    width: 1000px;
+    position: relative;
+    background: $main_white;
+    .not_found_bg {
+        width: 854px;
+        height: 305px;
+        display: block;
+    }
+    .result_cont {
+        height: 270px;
+        padding-top: 80px;
+        box-sizing: border-box;
+        .result {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .result,
+        .count {
+            color: $font_red_deep;
+        }
+        .time {
+            font-size: 18px;
+            font-weight: lighter;
+            color: $font_blue_light;
+        }
+    }
 }
-
