@@ -50,7 +50,7 @@ class DevConfig(Config):
         测试管理员账号
     """
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('XUEER_POSTGRES_URI')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('XUEER_ORM_URI')
     CELERY_BROKER_URL = 'redis://localhost:6382/2'
     CELERY_RESULT_BACKEND = 'redis://localhost:6382/2'
     CELERYBEAT_SCHEDULE = {
@@ -65,7 +65,7 @@ class ProConfig(Config):
     """
     生产环境下配置
     """
-    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI = os.getenv("XUEER_ORM_URI")
     CELERY_BROKER_URL = 'redis://localhost:6382/2'
     CELERY_RESULT_BACKEND = 'redis://localhost:6382/2'
     CELERYBEAT_SCHEDULE = {
