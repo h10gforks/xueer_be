@@ -5,7 +5,7 @@ xueer shell脚本
 + start.sh: 启动学而和Nginx服务
 + stop.sh: 关闭学而和Nginx服务
 + pgdump.sh: 结合crontab定时(每晚23:30)备份
-+ post-receive: 自动部署脚本
++ post-receive: 学而自动部署脚本
 
 note:
 
