@@ -43,6 +43,13 @@
 }
 
 .search {
+    .search_component_inject{
+        height:34px;
+        width:269px;
+        box-sizing:border-box;
+        border: 2px solid $font_red_deep;
+        border-right: none;
+    }
     .search_button {
         line-height: 32px;
         height: 34px;
@@ -62,17 +69,16 @@
         padding: 0 10px;
         width: 247px;
         font-size: 14px;
-        border: 2px solid $font_red_deep;
-        border-right: none;
+        
     }
     .pop_box {
-        width: 100%;
+        width: 271px;
         height: auto;
         box-sizing: border-box;
-        border: 1px solid $font_red_deep;
+        border: 2px solid $font_red_deep;
         position: absolute;
-        top: 34px;
-        left: 0px;
+        top: 32px;
+        left: -2px;
         z-index: 2;
         background-color: #fff;
         border-top:0;

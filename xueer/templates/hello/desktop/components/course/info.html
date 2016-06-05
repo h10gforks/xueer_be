@@ -6,7 +6,7 @@
                     {{ category }}
                 </div>
                 <div class="course_intro">
-                    <button>去评课</button>
+                    <a class="write_comment_link" href="#write_comment">去评课</a>
                     <ul>
                         <li class="course_name"><span class="disc"></span><span class="class_name">{{ info.name }}</span></li>
                         <li class="teacher_name"><span class="disc"></span><span class="teacher">{{ info.teacher }}</span></li>
@@ -30,9 +30,11 @@
                 <div class="num">{{ info.likes }}人</div>
                 <div class="count_text">喜欢</div>
             </div>
-            <div class="like_bt tc cp">
+            {% if info.liked == false %}
+            <div class="like_bt tc cp" data-cid={{ info.id }}>
                 +1
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
