@@ -58,11 +58,15 @@ def course(id):
         category = {
             1: "公", 2: "通", 3: "专", 4: "素"
         }.get(info.category_id)
-        hot_comments = []; new_comments = []
+        hot_comments = []; comments = []
         return render_template(
             "hello/desktop/pages/courses.html",
             info = info, category = category,
-            info_tags = info_tags
+            info_tags = info_tags,
+            hot_comments = hot_comments,
+            comments = comments,
+            hot_comments_len = len(hot_comments),
+            comments_len = len(comments)
         )
 
 

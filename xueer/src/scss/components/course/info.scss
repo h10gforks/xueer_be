@@ -13,7 +13,7 @@
     ul {
         margin: 0;
     }
-    button {
+    .write_comment_link {
         @include button(90px,30px,14px);
         background: $font_red_deep;
         position: absolute;
