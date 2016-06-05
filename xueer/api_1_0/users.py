@@ -1,10 +1,25 @@
 # coding: utf-8
+"""
+    users.py
+    ````````
+
+    : 用户API
+
+    : GET /api/v1.0/users/ 获取所有用户信息
+    : GET /api/v1.0/users/id/ 获取特定id用户信息
+    : POST(admin) /api/v1.0/users/ 创建一个用户
+    : PUT(login) /api/v1.0/users/ 更新特定id用户信息
+    : DELETE(admin) /api/v1.0/users/id/ 删除特定id的用户
+    : GET /api/v1.0/courses/id/users/ 获取给特定id课程点赞的所有用户
+    : GET /api/v1.0/comments/id/users/ 获取给特定id评论点赞的所有用户
+    .................................................................
+
+"""
 
 from flask import current_app, request, url_for, jsonify
 from . import api
 from werkzeug.security import generate_password_hash
 from ..models import User, Courses, Comments
-from xueer.api_1_0.authentication import auth
 from xueer.decorators import admin_required
 from xueer import db
 import json
@@ -12,10 +27,6 @@ import json
 
 @api.route('/users/', methods=["GET"])
 def get_users():
-    """
-    获取所有标签信息
-    :return:
-    """
     page = request.args.get('page', 1, type=int)
     if request.args.get('roleid'):
         roleid = request.args.get('roleid')
@@ -49,11 +60,6 @@ def get_users():
 
 @api.route('/users/<int:id>/')
 def get_user_id(id):
-    """
-    获取特定id用户的信息
-    :param id:
-    :return:
-    """
     user = User.query.get_or_404(id)
     return jsonify(user.to_json2())
 
@@ -61,10 +67,6 @@ def get_user_id(id):
 @api.route('/users/', methods=["GET", "POST"])
 @admin_required
 def new_user():
-    """
-    创建一个用户
-    :return:
-    """
     user = User.from_json(request.json)
     db.session.add(user)
     db.session.commit()
@@ -74,19 +76,17 @@ def new_user():
 
 
 @api.route('/users/<int:id>/', methods=["GET", "PUT"])
-@auth.login_required
+@admin_required
 def update_user(id):
-    """
-    更新一个用户
-    :return:
-    """
     user = User.query.get_or_404(id)  # 待更新的用户
     if request.method == 'PUT':
         data_dict = eval(request.data)
         user.username = data_dict.get('username', user.username)
         user.email = data_dict.get('email', user.email)
         if data_dict.get('password'):
-            user.password_hash = generate_password_hash(data_dict.get('password'))
+            user.password_hash = generate_password_hash(
+                data_dict.get('password')
+            )
         user.qq = data_dict.get('qq', user.qq)
         user.phone = data_dict.get('phone', user.phone)
         user.major = data_dict.get('major', user.major)
@@ -100,11 +100,6 @@ def update_user(id):
 @api.route('/users/<int:id>/', methods=["DELETE", "GET"])
 @admin_required
 def delete_user(id):
-    """
-    删除一个用户
-    :param id:
-    :return:
-    """
     user = User.query.filter_by(id=id).first()
     if request.method == "DELETE":
         db.session.delete(user)
@@ -116,11 +111,6 @@ def delete_user(id):
 
 @api.route('/courses/<int:id>/users/', methods=["GET"])
 def get_like_courses_id_users(id):
-    """
-    获取点赞特定id课程的用户
-    :param id:
-    :return:
-    """
     courses = Courses.query.get_or_404(id)
     return jsonify({
         'users': [user.to_json() for user in courses.users.all()]
@@ -129,12 +119,6 @@ def get_like_courses_id_users(id):
 
 @api.route('/comments/<int:id>/users/', methods=["GET"])
 def get_comments_id_users(id):
-    """
-    获取特定id的评论的作者
-    :param id:
-    :return:
-    """
     comments = Comments.query.get_or_404(id)
     user = User.query.filter_by(id=comments.user_id).first()
     return jsonify(user.to_json())
-

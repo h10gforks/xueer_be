@@ -4,16 +4,20 @@
     api~tips.py
     ```````````
 
-    首页tips api
-"""
+    : 首页tips api
 
+    : GET /api/v1.0/tips/ 获取首页每日tip
+    : GET /api/v1.0/tips/id/ 获取特定id的tip
+    : POST(admin) /api/v1.0/tips/ 发布一条新贴士
+    : PUT(admin) /api/v1.0/tips/id/ 更新一条新贴士
+    : DElETE(admin) /api/v1.0/tip/id/ 删除一条特定的贴士
+
+"""
 from flask import jsonify, url_for, request, current_app
-from sqlalchemy import desc
 from ..models import Tips
 from . import api
 from xueer import db
 import json
-from xueer.api_1_0.authentication import auth
 from xueer.decorators import admin_required
 
 
@@ -36,7 +40,7 @@ def get_tips():
     if pagination.has_next:
         next = url_for('api.get_tips', page=page + 1, _external=True)
     tips_count = len(Tips.query.all())
-    if tips_count%current_app.config['XUEER_TIPS_PER_PAGE'] == 0:
+    if tips_count % current_app.config['XUEER_TIPS_PER_PAGE'] == 0:
         page_count = tips_count//current_app.config['XUEER_TIPS_PER_PAGE']
     else:
         page_count = tips_count//current_app.config['XUEER_TIPS_PER_PAGE']+1
@@ -70,7 +74,6 @@ def new_tip():
     """
     发布一条新贴士
     :param id: 贴士id
-    :return:
     """
     if request.method == "POST":
         tip = Tips.from_json(request.get_json())
@@ -100,12 +103,11 @@ def update_tip(id):
 
 
 @api.route('/tip/<int:id>/', methods=['GET', 'DELETE'])
-@auth.login_required
+@admin_required
 def delete_tip(id):
     """
     删除一个贴士
     :param id: 贴士id
-    :return:
     """
     tip = Tips.query.get_or_404(id)
     if request.method == "DELETE":
@@ -114,4 +116,3 @@ def delete_tip(id):
         return jsonify({
             'delete': tip.id
         })
-

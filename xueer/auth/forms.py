@@ -1,24 +1,33 @@
 # -*- coding:utf-8 -*
+"""
+    forms.py
+    ````````
+
+    : 同步登录模块表单
+
+"""
 from flask.ext.wtf import Form
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
 from wtforms import ValidationError
 from ..models import User
 
 
 class LoginForm(Form):
-    email = StringField('Email', validators=[DataRequired(), Length(1, 64), Email()])
+    email = StringField('Email', validators=[
+        DataRequired(), Length(1, 64), Email()
+    ])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Log In')
 
 
 class RegistrationForm(Form):
     email = StringField('Email', validators=[DataRequired(), Length(1, 64),
-                                           Email()])
+                                             Email()])
     username = StringField('Username', validators=[
         DataRequired(), Length(1, 64), Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
-                                          'Usernames must have only letters, '
-                                          'numbers, dots or underscores')])
+                                              'Usernames must only letters,'
+                                              'numbers, dots or underscores')])
     password = PasswordField('Password', validators=[
         DataRequired(), EqualTo('password2', message='Passwords must match.')])
     password2 = PasswordField('Confirm password', validators=[DataRequired()])

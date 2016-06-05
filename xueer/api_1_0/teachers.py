@@ -1,10 +1,16 @@
 # coding: utf-8
+"""
+    teachers.py
+    ```````````
 
-from flask import jsonify, request, current_app, url_for
+    : 老师CRUD API
+    : 暂时没有作用
+
+"""
+from flask import jsonify, request, url_for
 from . import api
 from ..models import Teachers
 from xueer import db
-from xueer.api_1_0.authentication import auth
 
 
 @api.route('/teachers/<int:id>/', methods=["GET"])
@@ -28,7 +34,9 @@ def new_teacher():
     db.session.add(teacher)
     db.session.commit()
     return jsonify({'id': teacher.id}), 201, {
-        'location': url_for('api.get_teacher_id', id=teacher.id, _external=True)
+        'location': url_for(
+            'api.get_teacher_id', id=teacher.id, _external=True
+        )
     }
 
 
@@ -69,4 +77,3 @@ def delete_teacher(id):
         return jsonify({
             'message': '这个老师已经被删了'
         })
-
