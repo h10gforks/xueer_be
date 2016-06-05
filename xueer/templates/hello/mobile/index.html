@@ -18,6 +18,15 @@
     <meta charset="UTF-8">
     <script src="/static/x_m/flexible.js"></script>
     <title>学而</title>
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?48c34e69d0550c8ab1154db481526bbd";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
 </head>
 
 <body>
@@ -287,7 +296,7 @@
             <div class="copyright">Proudly Prowered by Backbone & Flask</div>
         </div>
     </div>
-    <div id="token" style="display:none">ZXlKcFpDSTZNWDAuMzJCRm1fT2VxWFhuNTU4ek9yMnQ5cXVlWURjOg==</div>
+    <div id="token" style="display:none">ZXlKcFpDSTZNVEY5LlljM0pTbElmRktPd0tKY3g0QXZwX2Y0bEZvUTo=</div>
     <div id="grantToken" style="display:none">ZXlKamJHbGxiblJmYVdRaU9qSjkua0hQbmFvZGJHdE5iUUtNN21vN2YydmlzbFhnOg==</div>
     <script type="text/template" id="nav_template">
         <div class="container">
@@ -380,7 +389,9 @@
                     <p class="title">大家都在搜</p>
                     <div class="items space">
                         <% _.each(hot_search, function(i) { %>
-                            <span data-link="/search_result?page=1&type=search&keywords=<%= i.key_word %>" class="item"><%= i.key_word %></span>
+                            <span data-link="/search_result?page=1&type=search&keywords=<%= i %>" class="item">
+                                <%= i %>
+                            </span>
                         <% }); %>
                     </div>
                 </div>
@@ -470,9 +481,9 @@
                 <div class="time"><%= date %></div>
                 <div class="body">
                  <% if (fold){ %> 
-                    <%= _.escape(body_short) %> 
+                    <%= body_short %> 
                  <% } else { %>
-                    <%= _.escape(body) %> 
+                    <%= body %> 
                  <% } %>
                 </div>
                 <div class="like">
@@ -621,7 +632,7 @@
             <div class="container">
                 <form>
                     <div class="row<% if (authFail[0]){ %> auth_fail<% } %>">
-                        <div class="label">用户名:</div>
+                        <div class="label">邮箱:</div>
                         <input type="text"class="input username" id="username" value="<%= username %>" />
                         <div class="message">
                             <%= message[0] %>
