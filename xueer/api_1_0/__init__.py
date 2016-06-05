@@ -16,6 +16,6 @@ from flask import Blueprint
 api = Blueprint('api', __name__)
 
 
-from . import authentication, comments, courses, decorators, errors, register,\
-    tags, teachers, tips, users, like, category, test, sure, data, search,\
+from . import authentication, comments, courses, errors, register,\
+    tags, teachers, tips, users, like, category, sure, search,\
     memcached, statistics
