@@ -177,6 +177,7 @@ class User(UserMixin, db.Model):
                                lazy="dynamic", cascade='all')
     phone = db.Column(db.String(200), default=None)
     school = db.Column(db.String(200), index=True, default=None)
+    avatar = db.Column(db.String(200))
 
     @property
     def password(self):
