@@ -18,20 +18,20 @@
                     </span>
                 </div>
                 <div class="body">
-                    {{ comment.body }}
+                    {{ comment.body|safe }}
                 </div>
                 <div class="like">
-                    赞同（{{ comment.like }}）
+                    赞同（{{ comment.likes }}）
                 </div>
                 <span class="date">
-                    {{ comment.date }}
+                    {{ comment.c_time }}
                 </span>
             </div>
         </div>
         {% endfor %}
     </div>
     {% endif %}
-    <div class="comments_cont">
+    <div class="comments_cont" id="comments">
         <div class="head">
             <span class="head_txt">最新评论</span>
         </div>
@@ -41,7 +41,7 @@
             <div>竟然没有评论，快去下方评论吧～</div>
         </div>
         {% endif %}
-        {% for comment in hot_comments %}
+        {% for comment in comments %}
         <div class="comment space">
             <div class="avatar">
                 <img src="{{ comment.avatar }}" alt="avatar">
@@ -53,13 +53,13 @@
                     </span>
                 </div>
                 <div class="body">
-                    {{ comment.body }}
+                    {{ comment.body|safe }}
                 </div>
                 <div class="like">
-                    赞同（{{ comment.like }}）
+                    赞同（{{ comment.likes }}）
                 </div>
                 <span class="date">
-                    {{ comment.date }}
+                    {{ comment.c_time }}
                 </span>
             </div>
         </div>
@@ -76,7 +76,11 @@
             <div class="avatar">
                 <img src="">
             </div>
-            <div class="comment_box comment_box_x">好好 二二 好好</div>
+            <form method="POST" action="/add_comments/">
+               <input type="hidden" value="{{ info.id }}" name="cid"/>
+               <div class="comment_box comment_box_x">好好 二二 好好</div>
+            </form>
         </div>
+
     </div>
 </div>
