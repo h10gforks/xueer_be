@@ -15,7 +15,6 @@ workers/workers.db
 -1
 .idea/
 venv/
-migrations/
 whoosh_index/
 todo/
 xueer/static/x_m
