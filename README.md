@@ -23,8 +23,3 @@
 
     --> 《黑客与画家》
 <hr/>
-
-### Xueer Developement Hackers
-![neo1218](https://avatars2.githubusercontent.com/u/10671733?v=3&s=460) |  ![zxc0328](https://avatars1.githubusercontent.com/u/10339692?v=3&s=460) | ![wanzifa](https://avatars2.githubusercontent.com/u/13436370?v=3&s=460) | ![no1024](https://avatars0.githubusercontent.com/u/14539308?v=3&s=460)| 
-:---:|:---:|:---:|:---:|:---:
-[neo1218](http://github.com/neo1218) | [zxc0328](https://github.com/zxc0328) | [wanzifa](https://github.com/wanzifa) | [no1024](https://github.com/no1024) 
