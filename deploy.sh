@@ -1,4 +1,3 @@
-## 更新
 ###############  学而自动部署脚本 #################
 supervisorctl stop xueer
 python manage.py db migrate
