@@ -1,12 +1,10 @@
 <div class="comments_box  margin_auto margin_b">
+    {% if hot_comments_len > 0 %}
     <div class="comments_cont">
         <div class="head">
             <span class="head_txt">热门评论</span>
         </div>
-        <div class="no_comment tc">
-            <div>∑(っ °Д °;)っ</div>
-            <div>竟然没有评论，快去下方评论吧～</div>
-        </div>
+        
         {% for comment in hot_comments %}
         <div class="comment space">
             <div class="avatar">
@@ -32,10 +30,17 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
     <div class="comments_cont">
         <div class="head">
             <span class="head_txt">最新评论</span>
         </div>
+        {% if comments_len == 0  %}
+        <div class="no_comment tc">
+            <div>∑(っ °Д °;)っ</div>
+            <div>竟然没有评论，快去下方评论吧～</div>
+        </div>
+        {% endif %}
         {% for comment in hot_comments %}
         <div class="comment space">
             <div class="avatar">
@@ -63,7 +68,7 @@
                 {% include 'hello/desktop/components/search-result/nav-page.html' %}
         {% endblock %}
     </div>
-    <div class="comments_cont border_b">
+    <div class="comments_cont border_b" id="write_comment">
         <div class="head">
             <span class="head_txt">写评论</span>
         </div>
