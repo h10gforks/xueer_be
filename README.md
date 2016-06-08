@@ -1,4 +1,6 @@
-# 🏫 [学而](http://xueer.ccnuer.cn)
+# 🏫 [学而](http://xueer.ccnuer.cn) <br/>
+
+![travis](https://api.travis-ci.org/Muxi-Studio/xueer_be.svg) <br/>
 
 华师评课平台, 华师***课程经验收割机***<br/>
 
