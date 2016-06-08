@@ -17,6 +17,12 @@
 
 """
 import os
+COV = None
+if os.environ.get('XUEER_COVERAGE'):
+    import coverage
+    COV = coverage.coverage(branch=True, include='xueer/*')
+    COV.start()
+
 import sys
 import base64
 from getpass import getpass
@@ -48,6 +54,24 @@ def make_shell_context():
     return shell_ctx
 manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
+
+
+@manager.command
+def test(coverage=False):
+    """Run the unit tests."""
+    if coverage and not os.environ.get('XUEER_COVERAGE'):
+        import sys
+        os.environ['XUEER_COVERAGE'] = '1'
+        os.execvp(sys.executable, [sys.executable] + sys.argv)
+    import unittest
+    tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner(verbosity=2).run(tests)
+    if COV:
+        COV.stop()
+        COV.save()
+        print('Coverage Summary:')
+        COV.report()
+        COV.erase()
 
 
 @manager.command

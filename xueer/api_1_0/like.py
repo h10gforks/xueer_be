@@ -32,7 +32,7 @@ def new_courses_id_like(id):
         if course.liked:
             return jsonify({
                 'error': '你已经点赞过该课程'
-            })
+            }), 403
         else:
             course.users.append(g.current_user)
             db.session.add(course)
@@ -54,9 +54,9 @@ def new_courses_id_like(id):
             db.session.add(course)
             db.session.commit()
             course = Courses.query.get_or_404(id)
-            return jsonify(
-                course.to_json()
-            ), 200
+            return jsonify({
+                'info': '已取消点赞'
+            }), 200
         else:
             return jsonify({
                 "error": "你还没有点赞这门课程哦!"
@@ -71,7 +71,7 @@ def new_comments_id_like(id):
         if comment.liked:
             return jsonify({
                 'error': '你已经点赞过该评论'
-            })
+            }), 403
         else:
             comment.user.append(g.current_user)
             db.session.add(comment)
@@ -110,7 +110,7 @@ def new_tips_id_like(id):
         if tip.liked:
             return jsonify({
                 'error': '你已经点赞过该贴士'
-            })
+            }), 403
         else:
             tip.users.append(g.current_user)
             db.session.add(tip)

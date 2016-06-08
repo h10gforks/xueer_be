@@ -75,7 +75,7 @@ auth.error_handler:
 @auth.error_handler
 def auth_error():
     """
-    验证错误处理
+    401验证错误处理
     """
     return unauthorized('Invalid credentials')
 
@@ -89,8 +89,8 @@ def not_found_error():
 
 
 @auth.error_handler
-def server_error():
+def server_error_error():
     """
     500错误处理
     """
-    return server_error('Server error')
+    return server_error('server error')
