@@ -1,4 +1,4 @@
-# 🏫 [学而](http://xueer.ccnuer.cn) <br/>
+# 🏫 [学而](http://xueer.ccnuer.cn) ![](http://www.animatedimages.org/data/media/271/animated-ship-image-0059.gif)<br/>
 
 ![travis](https://api.travis-ci.org/Muxi-Studio/xueer_be.svg) [![Coverage Status](https://coveralls.io/repos/github/Muxi-Studio/xueer_be/badge.svg?branch=master)](https://coveralls.io/github/Muxi-Studio/xueer_be?branch=master)
 
