@@ -773,7 +773,7 @@ class Tips(db.Model):
             body=body,
             img_url=img_url,
             author=author,
-            banner_url=banner_url
+            banner_url=banner
         )
 
     def __repr__(self):
