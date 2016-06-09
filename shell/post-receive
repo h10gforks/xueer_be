@@ -1,4 +1,0 @@
-#!/bin/sh
-unset GIT_DIR
-cd /xgb/xueer
-git pull origin master

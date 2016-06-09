@@ -5,8 +5,8 @@
 
     : redis lru memcached
 
-    : GET(admin): /api/v1.0/memcached/: 将课程的搜索集读入缓存
-    : GET(admin): /api/v1.0/memcached/id/: 将特定id课程的搜索集读入缓存
+    : POST(admin): /api/v1.0/memcached/: 将课程的搜索集读入缓存
+    : POST(admin): /api/v1.0/memcached/id/: 将特定id课程的搜索集读入缓存
     : DELETE(admin): /api/v1.0/memcached/id/: 移除缓存特定id课程的搜索集
     ....................................................................
 

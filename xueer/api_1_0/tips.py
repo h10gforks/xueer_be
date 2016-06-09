@@ -92,6 +92,7 @@ def update_tip(id):
     if request.method == "PUT":
         tip.title = request.get_json().get('title') or tip.title
         tip.img_url = request.get_json().get('img_url') or tip.img_url
+        tip.banner_url = request.get_json().get('banner_url') or tip.banner_url
         tip.body = request.get_json().get('body') or tip.body
         tip.author = request.get_json().get('author') or tip.author
         db.session.add(tip)

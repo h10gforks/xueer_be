@@ -55,7 +55,7 @@ class Role(db.Model):
 
     :func insert_roles: 创建用户角色, 默认是普通用户
     """
-    # __table_args__ = {'mysql_charset': 'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
@@ -126,7 +126,7 @@ class CourseTag(db.Model):
     :var tag_id: 指向标签的外键, CASCADE: 级联
     :var count: 纪录(课程, 标签)的引用次数, 作为热门标签的统计
     """
-    # __table_args__ = {'mysql_charset': 'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'courses_tags'
     course_id = db.Column(db.Integer,
                           db.ForeignKey('courses.id', ondelete="CASCADE"),
@@ -164,7 +164,7 @@ class User(UserMixin, db.Model):
     :func to_json2: API json数据显示
     :func from_json: API 读取json数据
     """
-    # __table_args__ = {'mysql_charset': 'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(164), unique=True, index=True)
@@ -177,6 +177,7 @@ class User(UserMixin, db.Model):
                                lazy="dynamic", cascade='all')
     phone = db.Column(db.String(200), default=None)
     school = db.Column(db.String(200), index=True, default=None)
+    avatar = db.Column(db.String(200))
 
     @property
     def password(self):
@@ -275,7 +276,7 @@ class AnonymousUser(AnonymousUserMixin):
     :generate_auth_token:
         生成验证token, 匿名用户没有id, 不生成token
     """
-    # __table_args__ = {'mysql_charset': 'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
 
     def can(self, permissions):
         return False
@@ -455,7 +456,7 @@ class Courses(db.Model):
 #   3     专业课
 #   4     素质课
 class CourseCategories(db.Model):
-    # __table_args__ = {'mysql_charset': 'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
@@ -474,7 +475,7 @@ class CourseCategories(db.Model):
 # 1     通识核心课
 # 2     通识选修课
 class CoursesSubCategories(db.Model):
-    # __table_args__ = {'mysql_charset': 'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'subcategory'
     id = db.Column(db.Integer, primary_key=True)
     main_category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
@@ -493,7 +494,7 @@ class CoursesSubCategories(db.Model):
 #   3     艺体
 #   4     工科
 class CourseTypes(db.Model):
-    # __table_args__ = {'mysql_charset': 'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'type'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
@@ -524,7 +525,7 @@ class Comments(db.Model):
     :func to_json: API json格式转换
     :func from_json: API json读取
     """
-    # __table_args__ = {'mysql_charset': 'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
@@ -596,7 +597,7 @@ class Teachers(db.Model):
     Teachers 老师类: 目前没有使用
     """
     __tablename__ = 'teachers'
-    # __table_args__ = {'mysql_charset':'utf8'}
+    __table_args__ = {'mysql_charset':'utf8'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     department = db.Column(db.String(150))
@@ -649,7 +650,7 @@ class Tags(db.Model):
     :func to_json: API json数据
     :func from_json: API 读取json数据
     """
-    # __table_args__ = {'mysql_charset':'utf8'}
+    __table_args__ = {'mysql_charset':'utf8'}
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
@@ -695,7 +696,7 @@ class Tips(db.Model):
     :func to_json2: API json数据显示
     :func from_json: API 读取json数据
     """
-    # __table_args__ = {'mysql_charset':'utf8'}
+    __table_args__ = {'mysql_charset':'utf8'}
     __tablename__ = 'tips'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
@@ -744,7 +745,8 @@ class Tips(db.Model):
             'views': self.views,
             'likes': self.likes,
             'date': self.time,
-            'img_url': self.img_url
+            'img_url': self.img_url,
+            'banner_url': self.banner_url
         }
         return json_tips
 
@@ -755,7 +757,9 @@ class Tips(db.Model):
             'author': self.author,
             'body': self.body,
             'likes': self.likes,
-            'date': self.time
+            'date': self.time,
+            'banner_url': self.banner_url,
+            'img_url': self.img_url
         }
         return json_tips2
 
@@ -765,11 +769,13 @@ class Tips(db.Model):
         img_url = json_tips.get('img_url')
         body = json_tips.get('body')
         author = json_tips.get('author')
+        banner = json_tips.get('banner_url')
         return Tips(
             title=title,
             body=body,
             img_url=img_url,
-            author=author
+            author=author,
+            banner_url=banner
         )
 
     def __repr__(self):
