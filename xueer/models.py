@@ -757,7 +757,9 @@ class Tips(db.Model):
             'author': self.author,
             'body': self.body,
             'likes': self.likes,
-            'date': self.time
+            'date': self.time,
+            'banner_url': self.banner_url,
+            'img_url': self.img_url
         }
         return json_tips2
 
