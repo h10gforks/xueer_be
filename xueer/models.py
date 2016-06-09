@@ -745,7 +745,8 @@ class Tips(db.Model):
             'views': self.views,
             'likes': self.likes,
             'date': self.time,
-            'img_url': self.img_url
+            'img_url': self.img_url,
+            'banner_url': self.banner_url
         }
         return json_tips
 
@@ -766,11 +767,13 @@ class Tips(db.Model):
         img_url = json_tips.get('img_url')
         body = json_tips.get('body')
         author = json_tips.get('author')
+        banner = json_tips.get('banner_url')
         return Tips(
             title=title,
             body=body,
             img_url=img_url,
-            author=author
+            author=author,
+            banner_url=banner_url
         )
 
     def __repr__(self):
