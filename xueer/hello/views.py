@@ -7,7 +7,7 @@ from jinja2 import Environment
 from . import hello
 from xueer import db
 from xueer.models import Courses, Tips, Tags, CourseCategories, CourseTag, User, Comments
-from flask_login import login_user
+from flask_login import login_user, current_user
 import requests
 import base64
 
@@ -149,7 +149,7 @@ def add_comment():
     cid = int(request.form.get('cid'))
     comment = Comments(
         body = request.form.get('body'),
-        user_id = 3,#g.current_user.id,
+        user_id = current_user.id,
         course_id = cid
     )
     db.session.add(comment)
