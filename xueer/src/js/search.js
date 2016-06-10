@@ -39,7 +39,7 @@ const PopList = (props) => {
 }
 
 const PopListItem = (props) => {
-	return <a className="item" href={ '/search/?keywords=' + props.data.title }>{ props.data.title }</a>
+	return <a className="item" href={ '/course/' + props.data.id + '/'}>{ props.data.title }</a>
 }
 
 const TagBox = (props) => {
@@ -74,7 +74,7 @@ class SearchComponent extends React.Component{
 			isTyping:false,
 			hasResult:false,
 			list:[],
-			hot_tags: []
+			hot_tags:[]
 		};
 		this._onFocusHandler = this._onFocusHandler.bind(this);
 		this._onBlurHandler = this._onBlurHandler.bind(this);
@@ -83,8 +83,8 @@ class SearchComponent extends React.Component{
 	}
 	componentDidMount() {
     	window.addEventListener('mousedown', this._onMouseDownHandler, true);
-    	$.get("api/v1.0/search/hot/").done((res) => {
-    		that.setState({hot_tags: res})
+    	$.get("/api/v1.0/search/hot/").done((res) => {
+    		this.setState({hot_tags: JSON.parse(res) })
     	})
 	}
 	_onFocusHandler(){
@@ -108,7 +108,7 @@ class SearchComponent extends React.Component{
 		that = this;
 		if(val !== ""){
 			this.setState({isTyping:true})
-			var url = "http://121.41.6.148:5050/api/v1.0/search/?page=1&per_page=20&keywords=" + encodeURIComponent(val)
+			var url = "/api/v1.0/search/?page=1&per_page=20&keywords=" + encodeURIComponent(val)
 			$.get(url).done(function(data){
 				var l_data = JSON.parse(data);
 				if(l_data.length){
