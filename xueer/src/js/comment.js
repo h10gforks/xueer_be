@@ -104,8 +104,8 @@ class CommentBox extends React.Component {
   		var hot_tags = [],current_tags = [];
   	 	this.props.hot_tags.map((x,i) => hot_tags.push(<Tag key={i} data={x} _onClickedHandler={this._onAddDataHandler}/>));
   	 	this.state.tags.map((x,i) => current_tags.push(<TagDeletable key={i} data={x} id={i} _onClickedHandler={this._onDeleteDataHandler}/>));
-     	return  <form action="/add_comment/" method="post" className="form">
-     				<textarea className="textarea"></textarea>
+     	return  <div>
+     				<textarea className="textarea" name="body"></textarea>
      				<div className="tags_box space">
      					<Tags>
      				 		<ReactCSSTransitionGroup transitionName="tags" transitionAppearTimeout={300} transitionEnterTimeout={300} transitionLeaveTimeout={300}>
@@ -118,9 +118,9 @@ class CommentBox extends React.Component {
         				热门标签，点击直接添加
     				</div>
     				<HotTags _onAddHandler={this._onAddDataHandler}>{hot_tags}</HotTags>
-    				<input type="text" value={ this.state.tags.join(" ")} className="comment_tags_input"></input>
+    				<input type="text" name="tags" value={ this.state.tags.join(" ")} className="comment_tags_input"></input>
     				<button type="submit" className="submit_bt tc margin_auto">发布评论</button>
-     			</form>
+     			</div>
   }
 }
 
