@@ -1,0 +1,86 @@
+<div class="comments_box  margin_auto margin_b">
+    {% if hot_comments_len > 0 %}
+    <div class="comments_cont">
+        <div class="head">
+            <span class="head_txt">热门评论</span>
+        </div>
+        
+        {% for comment in hot_comments %}
+        <div class="comment space">
+            <div class="avatar">
+                <img src="{{ comment.avatar }}" alt="avatar">
+            </div>
+            <div class="content va_top">
+                <div class="top space">
+                    <span class="username">
+                        {{ comment.user_name }}
+                        <span class="hot tc">hot</span>
+                    </span>
+                </div>
+                <div class="body">
+                    {{ comment.body|safe }}
+                </div>
+                <div class="like">
+                    赞同（{{ comment.likes }}）
+                </div>
+                <span class="date">
+                    {{ comment.c_time }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="comments_cont" id="comments">
+        <div class="head">
+            <span class="head_txt">最新评论</span>
+        </div>
+        {% if comments_len == 0  %}
+        <div class="no_comment tc">
+            <div>∑(っ °Д °;)っ</div>
+            <div>竟然没有评论，快去下方评论吧～</div>
+        </div>
+        {% endif %}
+        {% for comment in comments %}
+        <div class="comment space">
+            <div class="avatar">
+                <img src="{{ comment.avatar }}" alt="avatar">
+            </div>
+            <div class="content">
+                <div class="top space">
+                    <span class="username">
+                        {{ comment.user_name }}
+                    </span>
+                </div>
+                <div class="body">
+                    {{ comment.body|safe }}
+                </div>
+                <div class="like">
+                    赞同（{{ comment.likes }}）
+                </div>
+                <span class="date">
+                    {{ comment.c_time }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+        {% block content %}
+                {% include 'hello/desktop/components/search-result/nav-page.html' %}
+        {% endblock %}
+    </div>
+    <div class="comments_cont border_b" id="write_comment">
+        <div class="head">
+            <span class="head_txt">写评论</span>
+        </div>
+        <div class="new_comment_cont">
+            <div class="avatar">
+                <img src="">
+            </div>
+            <form method="POST" action="/add_comments/">
+               <input type="hidden" value="{{ info.id }}" name="cid"/>
+               <div class="comment_box comment_box_x">好好 二二 好好</div>
+            </form>
+        </div>
+
+    </div>
+</div>
