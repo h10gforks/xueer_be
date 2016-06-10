@@ -114,6 +114,7 @@ def course(id):
         get_comment_list = []
         hot_comments = []
         all_comments = Courses.query.get_or_404(id).comment.all()
+        all_comments = sorted(all_comments, reverse=True)
         for each_comment in all_comments:
             each_comment.c_time = each_comment.timestamp.strftime("%Y-%m-%d")
             each_comment.user_name = User.query.get_or_404(each_comment.user_id).username
