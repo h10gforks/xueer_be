@@ -86,7 +86,6 @@ def course(id):
         return render_template("hello/mobile/index.html")
     else:
         course_id = id
-        session['course_id'] = course_id
         page = int(request.args.get('page') or 1)
         former_page = page-2
         next_page = page+2
