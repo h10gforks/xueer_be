@@ -22,5 +22,5 @@ xueer/static/x_d/js
 xueer/static/x_d/css
 xueer/src/node_modules
 tests/__pycache__
-xueer/template/
+xueer/templates/
 xueer/static/

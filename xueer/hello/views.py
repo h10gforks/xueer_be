@@ -7,6 +7,10 @@ from jinja2 import Environment
 from . import hello
 from xueer import db
 from xueer.models import Courses, Tips, Tags, CourseCategories, CourseTag, User, Comments
+from flask_login import login_user
+import requests
+import base64
+
 
 
 def is_mobie():
@@ -48,6 +52,15 @@ def add_tags(course):
             )
         db.session.add(course_tag)
         db.session.commit()
+
+
+def login_xueer_user(user):
+    """
+    登入学而用户, 请求token, 存入session
+    """
+    token = user.generate_auth_token()
+    login_user(user)
+    session[user.username] = token
 
 
 @hello.route('/')
@@ -181,7 +194,25 @@ def login():
     if is_mobie():
         return render_template("hello/mobile/index.html")
     else:
-        return render_template("hello/desktop/pages/login.html")
+        return redirect("http://120.25.166.213:5050/auth/login/")
+
+
+@hello.route('/privateship/', methods=['GET', 'POST'])
+def privateship():
+    """同步登录, token存入session"""
+    email = request.args.get('email')
+    user = User.query.filter_by(email=email).first()
+    info = requests.get('http://120.25.166.213:5050/api/user/?email=%s' % email).json()
+    username = info.get('username')
+    password = 'muxi304'  # password placehold
+    if user is None:
+        u = User(
+            username=username, email=email,
+            password=base64.b64encode(password))
+        db.session.add(u)
+        db.session.commit()
+    login_xueer_user(user)
+    return redirect(url_for('hello.index'))
 
 
 @hello.route('/register/', methods=['GET', 'POST'])
@@ -190,7 +221,7 @@ def register():
     if is_mobie():
         return render_template("hello/mobile/index.html")
     else:
-        return render_template("hello/desktop/pages/register.html")
+        return redirect("http://120.25.166.213:5050/auth/register/")
 
 
 @hello.route('/category/')
