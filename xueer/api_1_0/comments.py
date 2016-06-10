@@ -137,6 +137,7 @@ def get_courses_id_comments(id):
 def get_hot_comments(id):
     hot_comments = Comments.query.filter_by(
         course_id=id).order_by(Comments.likes).all()
+    hot_comments = sorted(hot_comments, key=lambda c: c.likes, reverse=True)
     return json.dumps(
         [comment.to_json() for comment in hot_comments if comment.likes >= 3],
         ensure_ascii=False,
