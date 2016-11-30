@@ -68,10 +68,14 @@ def get_courses():
     sort = request.args.get('sort') or 'view'
     current_app.config['XUEER_COURSES_PER_PAGE'] = int(per_page)
     courses = get_cat_courses(int(main_cat), int(ts_cat))
+
     if sort == 'view':
         courses = sorted(courses, key=lambda c: c.count, reverse=True)
     elif sort == 'like':
         courses = sorted(courses, key=lambda c: c.likes, reverse=True)
+    elif sort == 'score':
+        courses = sorted(courses, key=lambda c: c.score, reverse=True)
+
     pagination_lit = pagination(courses, int(page), int(per_page))
     current = pagination_lit[0]
     next_page = pagination_lit[1][0]
