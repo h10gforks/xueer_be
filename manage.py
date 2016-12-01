@@ -117,19 +117,19 @@ def emoAnalysis():
 
     for course in courses:
         course.score = 0
-        print 'Checking on Class %d' % course.id,
+        print 'Checking on <Course %5d>' % course.id,
         comments = course.comment.all()
         if len(comments) != 0:
             for comment in comments:
                 seg_list = jieba.cut(comment.body, cut_all=False)
                 for each_seg in seg_list:
                     if each_seg in pos_list:
-                        course.score += 1
+                        course.score += 10
                     elif each_seg in neg_list:
-                        course.score -= 1
-        course.score += course.likes*0.1
+                        course.score -= 10
+        course.score += course.likes
         print '  done.'
-    print 'All Done!'
+    print '----------------------ALL DONE!----------------------'
 
 
 if __name__ == '__main__':
