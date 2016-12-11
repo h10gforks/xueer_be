@@ -89,6 +89,49 @@ def adduser():
     print "new user <{name}> created".format(name)
 
 
+@manager.command
+def scoreByDict():
+    import jieba
+    from xueer.emo_list import pos_list
+    from xueer.emo_list import neg_list
+
+    # 将词典中数据项转换成unicode, 便于与jieba分词的结果相匹配
+    def listToUnicode(target):
+        """change encoding of a list to unicode"""
+        count = 0
+        while(count<len(target)):
+            target[count] = unicode(target[count])
+            count += 1
+        return target
+    listToUnicode(pos_list)
+    listToUnicode(neg_list)
+
+    # 加载自定义词频的词典
+    cur_dir_list = os.getcwd().split('/')
+    cur_dir_list.append('xueer/dict.txt')
+    dict_dir = '/'.join(cur_dir_list)
+    jieba.load_userdict(dict_dir)
+
+    # 获取所有课程及其评论，通过分析评论的文本获取情感分析的分数
+    courses = Courses.query.filter_by(available=True).all()
+
+    for course in courses:
+        course.score = 0
+        print 'Checking on <Course %5d>' % course.id,
+        comments = course.comment.all()
+        if len(comments) != 0:
+            for comment in comments:
+                seg_list = jieba.cut(comment.body, cut_all=False)
+                for each_seg in seg_list:
+                    if each_seg in pos_list:
+                        course.score += 10
+                    elif each_seg in neg_list:
+                        course.score -= 10
+        course.score += course.likes
+        print '  done.'
+    print '----------------------ALL DONE!----------------------'
+
+
 if __name__ == '__main__':
     if sys.argv[1] == 'test' or sys.argv[1] == 'lint':
         os.environ['XUEER_CONFIG'] = 'test'

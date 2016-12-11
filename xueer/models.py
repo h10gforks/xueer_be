@@ -306,6 +306,9 @@ class Courses(db.Model):
     :var subcategory_id: 指向CoursesSubCategories的外键, 课程二级分类
     :var type_id: 指向CourseType的外键, 学分类别
     :var credit: 学分
+    :var available: 课程是否可用
+    :var score: 情感分析得分
+    :var loctime: 上课地点和时间
     :var teacher: 老师姓名
     :var introduction: 课程介绍
     :var comment: 课程对应的评论关系: 一对多关系
@@ -328,6 +331,9 @@ class Courses(db.Model):
     subcategory_id = db.Column(db.Integer, db.ForeignKey('subcategory.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('type.id'))
     credit = db.Column(db.Integer)
+    available = db.Column(db.Boolean)
+    loctime = db.Column(db.Text)
+    score = db.Column(db.Integer)
     teacher = db.Column(db.String(164))
     introduction = db.Column(db.Text)
     comment = db.relationship('Comments', backref="courses",
@@ -391,6 +397,9 @@ class Courses(db.Model):
             'comment_url': url_for('api.get_courses_id_comments',
                                    id=self.id, _external=True),
             'hot_tags': self.hot_tags,
+            'available': self.available,
+            'score': self.score,
+            'loctime': self.loctime,
             'likes': self.likes,  # 点赞的总数
             'like_url': url_for('api.new_courses_id_like',
                                 id=self.id, _external=True),
@@ -419,6 +428,9 @@ class Courses(db.Model):
             'id': self.id,
             'title': self.name,
             'teacher': self.teacher,
+            'available': self.available,
+            'score': self.score,
+            'loctime': self.loctime,
             'views': self.count,
             'likes': self.likes,
             'main_category': CourseCategories.query.filter_by(
