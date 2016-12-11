@@ -90,7 +90,7 @@ def adduser():
 
 
 @manager.command
-def emoAnalysis():
+def scoreByDict():
     import jieba
     from xueer.emo_list import pos_list
     from xueer.emo_list import neg_list
