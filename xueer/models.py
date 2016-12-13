@@ -338,7 +338,6 @@ class Courses(db.Model):
     introduction = db.Column(db.Text)
     comment = db.relationship('Comments', backref="courses",
                               lazy='dynamic', cascade='all')
-    count = db.Column(db.Integer, default=0)
     likes = db.Column(db.Integer, default=0)
     tags = db.relationship("CourseTag", backref="courses",
                            lazy="dynamic", cascade='all')

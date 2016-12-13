@@ -90,14 +90,25 @@ def adduser():
 
 
 @manager.command
-def scoreByDict():
+def set_score():
+    # All imports
+    import math
     import jieba
+    from jieba import posseg as pseg
     from xueer.emo_list import pos_list
     from xueer.emo_list import neg_list
 
-    # 将词典中数据项转换成unicode, 便于与jieba分词的结果相匹配
+    # Load user's dictionary
+    cur_dir_list = os.getcwd().split('/')
+    cur_dir_list.append('xueer/dict.txt')
+    dict_dir = '/'.join(cur_dir_list)
+    jieba.load_userdict(dict_dir)
+
+    # Get courses and set scores
+    courses = Courses.query.filter_by(available=True).all()
+
     def listToUnicode(target):
-        """change encoding of a list to unicode"""
+        """Convert words into unicode for matching"""
         count = 0
         while(count<len(target)):
             target[count] = unicode(target[count])
@@ -106,30 +117,78 @@ def scoreByDict():
     listToUnicode(pos_list)
     listToUnicode(neg_list)
 
-    # 加载自定义词频的词典
-    cur_dir_list = os.getcwd().split('/')
-    cur_dir_list.append('xueer/dict.txt')
-    dict_dir = '/'.join(cur_dir_list)
-    jieba.load_userdict(dict_dir)
+    def parse_comment(comment):
+        dismiss = ['b', 'c', 'r', 'uj', 'u', 'p', 'q', 'uz', 't', 'ul', 'k',
+                'f', 'ud', 'ug', 'uv']
+        parsed = []
+        pseg_cut = pseg.cut(comment.body)
+        for word, flag in pseg_cut:
+            if flag not in dismiss:
+                parsed.append(word)
+        return parsed
 
-    # 获取所有课程及其评论，通过分析评论的文本获取情感分析的分数
-    courses = Courses.query.filter_by(available=True).all()
+    def get_count(comment_parsed):
+        """
+        Count positive and negative words in a comment parsed list
+        """
+        pos_count = 0
+        neg_count = 0
+        for word in comment_parsed:
+            if word in pos_list:
+                pos_count += 1
+            elif word in neg_list:
+                neg_count += 1
+            elif '80' <= word <= '99':
+                pos_count += 1
+            elif '0' <= word < '80':
+                neg_count += 1
+        return pos_count, neg_count
+
+    def get_emotion(pos_count, neg_count):
+        """
+        Get comment emotion according to positive and negtive words' quantity
+        """
+        # Theta Matrix
+        theta = [-0.33276, 0.94999, -0.25728]
+        x = [1, float(pos_count), float(neg_count)]
+        feature_sum = 0
+        for i in range(3):
+            feature_sum += theta[i]*x[i]
+        hypothesis = 1 / (1+math.e**-(feature_sum))
+
+        if 0 < hypothesis < 0.4:
+            emotion = 0.0
+        elif 0.4 <= hypothesis < 0.6:
+            emotion = 0.5
+        elif 0.6 <= hypothesis < 1:
+            emotion = 1.0
+        return emotion
+
+    def get_score(course):
+        """Get score of a course by comments"""
+        comments = course.comment.all()
+
+        # No comment on this course, set to 0
+        score = 0
+
+        if len(comments) > 0:
+            for comment in comments:
+                comment_parsed = parse_comment(comment)
+                pos_count, neg_count = get_count(comment_parsed)
+                emotion = get_emotion(pos_count, neg_count)
+                if emotion == 1.0:
+                    score += 1
+                elif emotion == 0.0:
+                    score -= 1
+                elif emotion == 0.5:
+                    pass
+        return score
 
     for course in courses:
-        course.score = 0
-        print 'Checking on <Course %5d>' % course.id,
-        comments = course.comment.all()
-        if len(comments) != 0:
-            for comment in comments:
-                seg_list = jieba.cut(comment.body, cut_all=False)
-                for each_seg in seg_list:
-                    if each_seg in pos_list:
-                        course.score += 10
-                    elif each_seg in neg_list:
-                        course.score -= 10
-        course.score += course.likes
-        print '  done.'
-    print '----------------------ALL DONE!----------------------'
+        course.score = get_score(course)
+        db.session.add(course)
+        print "Course <{cid}> scored: {score}".format(cid=course.id, score=course.score)
+    db.session.commit()
 
 
 if __name__ == '__main__':
