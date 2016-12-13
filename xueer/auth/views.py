@@ -22,7 +22,7 @@ def login():
         if user is not None and user.verify_password(form.password.data) and \
                 user.is_administrator():
             login_user(user)
-            return redirect(url_for("admin.index"))
+            return redirect(url_for("/admin"))
     return render_template('auth/login.html', form=form)
 
 
