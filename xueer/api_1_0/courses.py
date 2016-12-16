@@ -52,24 +52,24 @@ def get_cat_courses(gg_cat=0, ts_cat=0, zy_cat=0, sz_cat=0, sub_cat=0):
     courses = []
 
     if gg_cat:
-        gg_courses = Courses.query.filter_by(main_category=1)
-        courses.append(gg_courses)
+        gg_courses = Courses.query.filter_by(category_id=1).all()
+        courses.extend(gg_courses)
     if ts_cat:
         if sub_cat:
-            ts_courses = Courses.query.filter_by(sub_category=sub_cat)
+            ts_courses = Courses.query.filter_by(subcategory_id=sub_cat).all()
         else:
-            ts_courses = Courses.query.filter_by(main_category=2)
-        courses.append(ts_courses)
+            ts_courses = Courses.query.filter_by(category_id=2).all()
+        courses.extend(ts_courses)
     if zy_cat:
-        zy_courses = Courses.query.filter_by(main_category=3)
-        courses.append(zy_courses)
+        zy_courses = Courses.query.filter_by(category_id=3).all()
+        courses.extend(zy_courses)
     if sz_cat:
-        sz_courses = Courses.query.filter_by(main_category=4)
-        courses.append(sz_courses)
+        sz_courses = Courses.query.filter_by(category_id=4).all()
+        courses.extend(sz_courses)
 
     if not (gg_cat+ts_cat+zy_cat+sz_cat):
         all_courses = Courses.query.all()
-        courses.append(all_courses)
+        courses.extend(all_courses)
     return courses
 
 
