@@ -15,7 +15,7 @@
 """
 
 from functools import wraps
-from flask import abort, request, g
+from flask import abort, request, g, redirect, url_for
 from flask_login import current_user
 from xueer.models import User
 import base64
@@ -34,7 +34,7 @@ def permission_required(permission):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if not current_user.can(permission):
-                return redirect('auth.login')
+                abort(403)
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -73,6 +73,6 @@ def admin_login(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if not current_user.is_administrator():
-            return redirect('auth.login')
+            return redirect(url_for('auth.login'))
         return f(*args, **kwargs)
     return decorated
