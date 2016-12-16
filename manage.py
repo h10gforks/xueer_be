@@ -89,6 +89,108 @@ def adduser():
     print "new user <{name}> created".format(name)
 
 
+@manager.command
+def set_score():
+    # All imports
+    import math
+    import jieba
+    from jieba import posseg as pseg
+    from xueer.emo_list import pos_list
+    from xueer.emo_list import neg_list
+
+    # Load user's dictionary
+    cur_dir_list = os.getcwd().split('/')
+    cur_dir_list.append('xueer/dict.txt')
+    dict_dir = '/'.join(cur_dir_list)
+    jieba.load_userdict(dict_dir)
+
+    # Get courses and set scores
+    courses = Courses.query.filter_by(available=True).all()
+
+    def listToUnicode(target):
+        """Convert words into unicode for matching"""
+        count = 0
+        while(count<len(target)):
+            target[count] = unicode(target[count])
+            count += 1
+        return target
+    listToUnicode(pos_list)
+    listToUnicode(neg_list)
+
+    def parse_comment(comment):
+        dismiss = ['b', 'c', 'r', 'uj', 'u', 'p', 'q', 'uz', 't', 'ul', 'k',
+                'f', 'ud', 'ug', 'uv']
+        parsed = []
+        pseg_cut = pseg.cut(comment.body)
+        for word, flag in pseg_cut:
+            if flag not in dismiss:
+                parsed.append(word)
+        return parsed
+
+    def get_count(comment_parsed):
+        """
+        Count positive and negative words in a comment parsed list
+        """
+        pos_count = 0
+        neg_count = 0
+        for word in comment_parsed:
+            if word in pos_list:
+                pos_count += 1
+            elif word in neg_list:
+                neg_count += 1
+            elif '80' <= word <= '99':
+                pos_count += 1
+            elif '0' <= word < '80':
+                neg_count += 1
+        return pos_count, neg_count
+
+    def get_emotion(pos_count, neg_count):
+        """
+        Get comment emotion according to positive and negtive words' quantity
+        """
+        # Theta Matrix
+        theta = [-0.33276, 0.94999, -0.25728]
+        x = [1, float(pos_count), float(neg_count)]
+        feature_sum = 0
+        for i in range(3):
+            feature_sum += theta[i]*x[i]
+        hypothesis = 1 / (1+math.e**-(feature_sum))
+
+        if 0 < hypothesis < 0.4:
+            emotion = 0.0
+        elif 0.4 <= hypothesis < 0.6:
+            emotion = 0.5
+        elif 0.6 <= hypothesis < 1:
+            emotion = 1.0
+        return emotion
+
+    def get_score(course):
+        """Get score of a course by comments"""
+        comments = course.comment.all()
+
+        # No comment on this course, set to 0
+        score = 0
+
+        if len(comments) > 0:
+            for comment in comments:
+                comment_parsed = parse_comment(comment)
+                pos_count, neg_count = get_count(comment_parsed)
+                emotion = get_emotion(pos_count, neg_count)
+                if emotion == 1.0:
+                    score += 1
+                elif emotion == 0.0:
+                    score -= 1
+                elif emotion == 0.5:
+                    pass
+        return score
+
+    for course in courses:
+        course.score = get_score(course)
+        db.session.add(course)
+        print "Course <{cid}> scored: {score}".format(cid=course.id, score=course.score)
+    db.session.commit()
+
+
 if __name__ == '__main__':
     if sys.argv[1] == 'test' or sys.argv[1] == 'lint':
         os.environ['XUEER_CONFIG'] = 'test'

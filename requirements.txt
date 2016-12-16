@@ -9,12 +9,12 @@ coverage==4.1
 docopt==0.6.2
 Flask==0.11
 Flask-Admin==1.4.0
+flask-script
 Flask-HTTPAuth==3.1.2
 Flask-Login==0.3.2
 Flask-Migrate==1.8.0
 Flask-Moment==0.5.1
 flask-paginate==0.4.1
--e git+https://github.com/neo1218/flask-script.git@2048c22028964f21cbc2e79402fd676265095ee8#egg=Flask_Script
 Flask-SQLAlchemy==2.1
 Flask-WTF==0.12
 Frozen-Flask==0.12
@@ -44,3 +44,4 @@ SQLAlchemy==1.0.12
 wcwidth==0.1.6
 Werkzeug==0.11.10
 WTForms==2.1
+jieba

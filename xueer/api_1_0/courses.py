@@ -45,33 +45,55 @@ def pagination(lit, page, perpage):
     return [current, (next_page, last_page)]
 
 
-def get_cat_courses(main_cat=0, ts_cat=0):
+def get_cat_courses(gg_cat=0, ts_cat=0, zy_cat=0, sz_cat=0, sub_cat=0):
     """
     根据特定类别id获取特定类别课程集
     """
-    if main_cat and not ts_cat:
-        courses = Courses.query.filter_by(category_id=main_cat)
-    elif main_cat and ts_cat:
-        courses = Courses.query.filter_by(subcategory_id=ts_cat)
-    else:
-        courses = Courses.query.all()
+    courses = []
+
+    if gg_cat:
+        gg_courses = Courses.query.filter_by(main_category=1)
+        courses.append(gg_courses)
+    if ts_cat:
+        if sub_cat:
+            ts_courses = Courses.query.filter_by(sub_category=sub_cat)
+        else:
+            ts_courses = Courses.query.filter_by(main_category=2)
+        courses.append(ts_courses)
+    if zy_cat:
+        zy_courses = Courses.query.filter_by(main_category=3)
+        courses.append(zy_courses)
+    if sz_cat:
+        sz_courses = Courses.query.filter_by(main_category=4)
+        courses.append(sz_courses)
+
+    if not (gg_cat+ts_cat+zy_cat+sz_cat):
+        all_courses = Courses.query.all()
+        courses.append(all_courses)
     return courses
 
 
 @api.route('/courses/', methods=["GET"])
 def get_courses():
     global paginate
-    main_cat = request.args.get('main_cat') or '0'
+    gg_cat = request.args.get('gg_cat') or '0'
     ts_cat = request.args.get('ts_cat') or '0'
+    zy_cat = request.args.get('zy_cat') or '0'
+    sz_cat = request.args.get('sz_cat') or '0'
+    sub_cat = request.args.get('sub_cat') or '0'
     page = request.args.get('page', 1, type=int) or '1'
     per_page = request.args.get('per_page', type=int) or '20'
     sort = request.args.get('sort') or 'view'
     current_app.config['XUEER_COURSES_PER_PAGE'] = int(per_page)
-    courses = get_cat_courses(int(main_cat), int(ts_cat))
+    courses = get_cat_courses(int(gg_cat), int(ts_cat), int(zy_cat), int(sz_cat), int(sub_cat))
+
     if sort == 'view':
         courses = sorted(courses, key=lambda c: c.count, reverse=True)
     elif sort == 'like':
         courses = sorted(courses, key=lambda c: c.likes, reverse=True)
+    elif sort == 'score':
+        courses = sorted(courses, key=lambda c: c.score, reverse=True)
+
     pagination_lit = pagination(courses, int(page), int(per_page))
     current = pagination_lit[0]
     next_page = pagination_lit[1][0]

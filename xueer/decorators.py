@@ -34,7 +34,7 @@ def permission_required(permission):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if not current_user.can(permission):
-                abort(403)
+                return redirect('auth.login')
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -73,6 +73,6 @@ def admin_login(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if not current_user.is_administrator():
-             abort(403)
+            return redirect('auth.login')
         return f(*args, **kwargs)
     return decorated
