@@ -333,6 +333,7 @@ class Courses(db.Model):
     credit = db.Column(db.Integer)
     available = db.Column(db.Boolean)
     loctime = db.Column(db.Text)
+    count = db.Column(db.Integer)
     score = db.Column(db.Integer)
     teacher = db.Column(db.String(164))
     introduction = db.Column(db.Text)
