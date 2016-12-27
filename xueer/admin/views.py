@@ -17,7 +17,7 @@ from flask_login import login_required, current_user
 from xueer.decorators import admin_login
 
 
-@admin.route('/')
 @admin_login
+@admin.route('/')
 def index():
     return render_template("admin/index.html")
