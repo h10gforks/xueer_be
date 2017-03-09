@@ -2,6 +2,7 @@
 **/*.pyc
 *.pyc
 .DS_Store
+xueer.env
 **/*.rdb
 xueer.sock
 xueer_test.sqlite

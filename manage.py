@@ -95,13 +95,11 @@ def set_score():
     import math
     import jieba
     from jieba import posseg as pseg
-    from xueer.emo_list import pos_list
-    from xueer.emo_list import neg_list
+    from xueer.sentiment_score.emo_list import pos_list
+    from xueer.sentiment_score.emo_list import neg_list
 
     # Load user's dictionary
-    cur_dir_list = os.getcwd().split('/')
-    cur_dir_list.append('xueer/dict.txt')
-    dict_dir = '/'.join(cur_dir_list)
+    dict_dir = './xueer/sentiment_score/dict.txt'
     jieba.load_userdict(dict_dir)
 
     # Get courses and set scores

@@ -16,7 +16,7 @@
 ### 2. 创建虚拟环境并安装扩展
 
     $ virtualenv venv && source venv/bin/activate
-    $ pip install -r requirements/dev.txt
+    $ pip install -r requirements/requirements.txt
 
 如果pip安装较慢推荐使用[豆瓣pypi源](https://www.douban.com/note/302711300/)
 
@@ -35,9 +35,9 @@
 
 ### 5. 添加用户
 
-    $ python manage.py adduser username useremail
-    password: 
-    comfirmd: 
+    $ python manage.py adduser <username> <useremail>
+    password:
+    comfirmd:
 
 完成以上步骤, 你就可以在本地运行学而桌面版(目前就一个placeholder页面),
 以及在浏览器手机调试器中运行学而web app, 并使用学而的API服务.
@@ -120,12 +120,9 @@ muxiOOOOOauth中使用了一下技术:
 
 ### 9. 项目部署
 
-[nginx](http://nginx.org) + [supervisord](http://supervisord.org) + [gunicorn](http://gunicorn.org) + wsgi <br/>
-**nginx 反向代理gunicorn启动flask应用,使用supervisord管理进程**
+[nginx](http://nginx.org) + [docker](https://www.docker.com/) <br/>
 
-1. [supervisord使用教程](http://www.restran.net/2015/10/04/supervisord-tutorial/)
 2. [nginx常用命令](http://www.cnblogs.com/derekchen/archive/2011/02/17/1957209.html)
-3. [gunicorn与uwsgi](http://lenciel.cn/2013/08/why-you-need-something-like-gunicorn/)
 
 ### 10. 其他
 
