@@ -26,6 +26,7 @@ class Config(object):
     配置基类
         密钥配置、数据库配置、管理员配置、参数配置
     """
+    MUXIAUTH = 'http://user.muxixyz.com'
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'I hate flask hahahaha'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
@@ -51,8 +52,8 @@ class DevConfig(Config):
     """
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('XUEER_ORM_URI')
-    CELERY_BROKER_URL = 'redis://localhost:6382/2'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6382/2'
+    CELERY_BROKER_URL = "redis://{host}:4382/2".format(host=os.getenv("REDIS3_HOST"))
+    CELERY_RESULT_BACKEND = "redis://{host}:4382/2".format(host=os.getenv("REDIS3_HOST"))
     CELERYBEAT_SCHEDULE = {
         'restart_redis_every_259200s': {
             'task': 'restart_keywords_redis',

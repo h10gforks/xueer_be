@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import json
-from flask import Flask, g, session, redirect, url_for
+from flask import Flask, g, session, redirect, url_for, current_app
 from flask import render_template,request
 from jinja2 import Environment
 from . import hello
@@ -195,7 +195,7 @@ def login():
     if is_mobie():
         return render_template("hello/mobile/index.html")
     else:
-        return redirect("http://120.25.166.213:5050/auth/login/")
+        return redirect("/auth/login/")
 
 
 @hello.route('/privateship/', methods=['GET', 'POST'])
@@ -203,7 +203,7 @@ def privateship():
     """同步登录, token存入session"""
     email = request.args.get('email')
     user = User.query.filter_by(email=email).first()
-    info = requests.get('http://120.25.166.213:5050/api/user/?email=%s' % email).json()
+    info = requests.get(current_app.config['MUXIAUTH'] + '/api/user/?email=%s' % email).json()
     username = info.get('username')
     password = 'muxi304'  # password placehold
     if user is None:
@@ -222,7 +222,7 @@ def register():
     if is_mobie():
         return render_template("hello/mobile/index.html")
     else:
-        return redirect("http://120.25.166.213:5050/auth/register/")
+        return redirect(current_app.config["MUXIAUTH"] + "/auth/register/")
 
 
 @hello.route('/category/')

@@ -1,0 +1,35 @@
+#-------------------- xueer ------------------------
+xueer:
+    build: .
+    env_file:
+        - xueer.env
+    command: gunicorn --name xueer -b 0.0.0.0:5488 -w 2 wsgi:app
+    ports:
+        - "5488:5488"
+    links:
+        - redis3
+
+#-------------------- celery --------------------------
+celery:
+    build: .
+    env_file:
+        - xueer.env
+    command: celery worker -A xueer.workers.workers.celery --loglevel=INFO
+    links:
+        - redis3
+
+#------------------- celery beats----------------------
+celery_beats:
+    build: .
+    env_file:
+        - xueer.env
+    command: celery -A xueer.workers.workers.celery beat --loglevel=INFO
+    links:
+        - redis3
+
+#------------------- redis servers---------------------
+redis3:
+    image: redis
+    command: redis-server --port 6382  # Celery
+    ports:
+        - "4382:6382"

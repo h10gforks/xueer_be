@@ -1,5 +1,0 @@
--r com.txt
-
-mysql-python
-Frozen-Flask
-jieba
