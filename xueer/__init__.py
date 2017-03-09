@@ -30,9 +30,9 @@ login_manager = LoginManager()
 moment = Moment()
 
 # Initial redis for keywords store
-rds = redis.StrictRedis(host='localhost', port=6380, db=0, password=os.getenv("REDIS6380PASS"))
+rds = redis.StrictRedis(host='localhost', port=6380, db=0, password="foobared6380")
 # Initial redis for LRU/memory cache
-lru = redis.StrictRedis(host='localhost', port=6385, db=1, password=os.getenv("REDIS6385PASS"))
+lru = redis.StrictRedis(host='localhost', port=6385, db=1, password="foobared6385")
 
 from . import models
 
