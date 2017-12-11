@@ -1,0 +1,13 @@
+{% extends "hello/desktop/pages/base.html" %}
+{% block title %}{{ info.name }}-学而{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    {% include 'hello/desktop/components/course/info.html' %}
+    {% include 'hello/desktop/components/course/comments.html' %}
+{% endblock %}
+{% block js %}
+ <script src="/static/x_d/js/course.bundle.js"></script>
+ <script src="/static/x_d/js/comment.bundle.js"></script>
+{% endblock %}
