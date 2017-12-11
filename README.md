@@ -5,6 +5,27 @@
 华师评课平台, 华师***课程经验收割机***<br/>
 
 ## Sails Xueer
+
+### 0. xueer.env配置
+
+* postgresql数据库配置
+
+  * XUEER\_ORM\_URI: postgresql://\<username\>:\<passwd\>@\<host\>:\<port\>/\<db_name\>
+
+* Celery配置
+
+  * C\_FORCE\_ROOT: 是否root运行celery
+  * CELERY\_ACCEPT\_CONTENT: pickle root运行celery有漏洞
+
+* Redis配置
+
+  * REDIS1_HOST: 热搜词存储host
+  * REDIS2_HOST: LRU/memory cache host
+  * REDIS6380PASS: REDIS1的密码
+  * REDIS6385PASS: REDIS2的密码
+  * REDIS3_HOST: 运行redis3的主机
+
+
 ### 1. 准备
 
 0. 基础环境: {*nix系统(推荐ubuntu)} + {python2.7环境} + {virtualenv, Flask} + {git}
