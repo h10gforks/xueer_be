@@ -9,8 +9,7 @@
     : GET /api/v1.0/search/hot/: 返回全站热搜词
     ............................................
 
-"""
-
+""" 
 from . import api
 from flask import request, url_for
 from xueer import rds, lru

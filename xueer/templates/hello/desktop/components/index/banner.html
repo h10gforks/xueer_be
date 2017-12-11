@@ -1,0 +1,12 @@
+<div class="banner margin_auto">
+    {% for tip in tips %}
+	<div class="item" style="background-color:#717DB5">
+		<img src="{{ tip.banner_url }}"/>
+	</div>
+	{% endfor %}
+	<div class="dots space">
+		{% for tip in tips %}
+		<span class="dot va_top"></span>
+		{% endfor %}
+	</div>
+</div>
