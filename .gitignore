@@ -4,6 +4,7 @@
 .DS_Store
 xueer.env
 **/*.rdb
+migrations
 xueer.sock
 xueer_test.sqlite
 xueer_dev.sqlite

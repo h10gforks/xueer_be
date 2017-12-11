@@ -12,7 +12,7 @@ from flask import Blueprint
 hello = Blueprint('hello', __name__)
 
 
-from . import errors, views
+from . import views
 from ..models import Permission
 
 

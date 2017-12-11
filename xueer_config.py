@@ -26,7 +26,7 @@ class Config(object):
     配置基类
         密钥配置、数据库配置、管理员配置、参数配置
     """
-    MUXIAUTH = 'http://user.muxixyz.com'
+    MUXIAUTH = 'https://user.muxixyz.com'
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'I hate flask hahahaha'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
