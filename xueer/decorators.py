@@ -62,17 +62,3 @@ def admin_required(f):
         else:
             abort(401)
     return decorated
-
-
-def admin_login(f):
-    """
-    管理员权限装饰器
-
-    :param f: 被修饰视图函数(同步视图函数)
-    """
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not current_user.is_administrator():
-            return redirect(url_for('auth.login'))
-        return f(*args, **kwargs)
-    return decorated
