@@ -390,12 +390,14 @@ class Courses(db.Model):
         else:
             sub_category = CoursesSubCategories.query.filter_by(
                 id=self.subcategory_id).first().name
+
         json_courses = {
             'id': self.id,
             'title': self.name,
             'teacher': self.teacher,
-            'comment_url': url_for('api.get_courses_id_comments',
-                                   id=self.id, _external=True),
+            # 'comment_id': url_for('api.get_courses_id_comments',
+            #                        id=self.id, _external=True),
+            'comment_id':[i.id for i in self.comment],
             'hot_tags': self.hot_tags,
             'available': self.available,
             'score': self.score,

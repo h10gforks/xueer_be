@@ -138,6 +138,7 @@ def put_course(id):
         course.subcategory_id = data_dict.get('sub_category_id',
             course.subcategory_id)
         course.type_id = data_dict.get('type_id', course.type_id)
+        course.available=data_dict.get('available',course.available)
         db.session.add(course)
         db.session.commit()
     return jsonify({'update': id}), 200
@@ -187,3 +188,5 @@ def get_tags_id_courses(id):
         ensure_ascii=False,
         indent=1
     ), 200, {'link': '<%s>; rel="next", <%s>; rel="last"' % (next, last)}
+
+
