@@ -16,8 +16,10 @@ from flask import render_template
 from flask_login import login_required, current_user
 from xueer.decorators import admin_login
 
-
-@admin_login
-@admin.route('/')
-def index():
-    return render_template("admin/index.html")
+'''
+不需要下面的路由了
+'''
+# @admin_login
+# @admin.route('/')
+# def index():
+#     return render_template("admin/index.html")

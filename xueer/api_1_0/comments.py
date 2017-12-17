@@ -48,10 +48,12 @@ def add_tags(course):
         tag_in_db = Tags.query.filter_by(name=tag).first()
         if tag_in_db:
             tag_in_db.count += 1
+            db.session.add(tag_in_db)
+            db.session.commit()
         else:
             add_tag = Tags(name=tag, count=1)
-        db.session.add(add_tag)
-        db.session.commit()
+            db.session.add(add_tag)
+            db.session.commit()
     # add course & tag
     for tag in tags:
         get_tag = Tags.query.filter_by(name=tag).first()
@@ -160,7 +162,7 @@ def new_comment(id):
         db.session.commit()
         # add tags ["tag1", "tag2"]
         add_tags(course)
-    return jsonify({'id': comment.id}), 201
+        return jsonify({'id': comment.id}), 201
 
 
 @api.route('/comments/<int:id>/', methods=["GET", "DELETE"])
