@@ -11,10 +11,11 @@ import json
 import re
 from base64 import b64encode
 from flask import url_for
-from xueer import create_app, db
+from xueer import create_app
 from xueer.models import User, Role, Courses, Comments
 from xueer.models import Tips
 from xueer.api_1_0.kmp import kmp
+from flask_sqlalchemy import SQLAlchemy
 
 
 class APITestCase(unittest.TestCase):
@@ -27,6 +28,7 @@ class APITestCase(unittest.TestCase):
             SERVER_NAME = 'localhost:5000',
             debug = False
         )
+        db = SQLAlchemy()
         self.app.testing = True
         self.app_context = self.app.app_context()
         self.app_context.push()
