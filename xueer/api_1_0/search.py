@@ -31,17 +31,30 @@ def category_catch(keywords, main_cat_id=0, ts_cat_id=0):
         1: '通识核心课',
         2: '通识选修课'
     }.get(ts_cat_id)
+
+    lrukeys = lru.keys()
+
     if category and not subcategory:
-        gen = (course_json for course_json in lru.keys() \
+        gen = (course_json for course_json in lrukeys \
                 if eval(course_json).get('main_category') == category)
     elif subcategory:
-        gen = (course_json for course_json in lru.keys() \
+        gen = (course_json for course_json in lrukeys \
                 if eval(course_json).get('sub_category') == subcategory)
     else:
-        gen = lru.keys()
+        gen = lrukeys
     results = []; courses = []; sort = {};
     for course_json in gen:
-        searchs = lru.get(course_json)
+        #searchs = lru.get(course_json)
+        #不再从lru中拿，而是直接从course_json中获取
+        #因为从redis中获取时间太长(每个0.04s, 100个课4秒)
+        searchs = []
+        course_json = eval(course_json)
+        searchs.append(course_json['title'])
+        searchs.append(course_json['teacher'])
+        searchs.append(course_json['hot_tags'])
+        searchs = str(searchs)
+        course_json = str(course_json)
+
         if keywords in eval(searchs)[0]:
             sort[course_json] = kmp(eval(searchs)[0], keywords)
             sorted_list = sorted(sort.iteritems(), key=lambda d: d[1])

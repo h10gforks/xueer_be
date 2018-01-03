@@ -15,6 +15,8 @@ from xueer import create_app, db
 from xueer.models import User, Role, Courses, Comments
 from xueer.models import Tips
 from xueer.api_1_0.kmp import kmp
+from flask_sqlalchemy import SQLAlchemy
+
 
 
 class APITestCase(unittest.TestCase):
