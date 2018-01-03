@@ -82,6 +82,7 @@ class TestConfig(Config):
     测试环境下配置
     """
     DEBUG = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "data-dev.sqlite")
 
 
 config = {
