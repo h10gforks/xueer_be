@@ -29,4 +29,4 @@ before_script:
 script:
 - docker-compose -f xueer_be/docker-compose.yml build 
 - docker-compose -f xueer_be/docker-compose.yml up -d
-- docker exec xueer_be python manage.py test
+- docker exec xueer python manage.py test
