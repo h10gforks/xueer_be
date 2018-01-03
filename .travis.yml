@@ -1,32 +1,6 @@
+language: python
+python:
+    - "2.7"
 sudo: required
-
-env:
-  DOCKER_COMPOSE_VERSION: 1.4.2
-
-services:
-  - docker
-  - mysql
-
-before_install:
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - echo "XUEER_ORM_URI=mysql://root:@127.0.0.1/XUEER"  > xueer_be/xueer.env
-  - echo "C_FORCE_ROOT=tru_ORM_URI=C_FORCE_ROOT=tru_ORM_URI" >> xueer_be/xueer.env
-  - echo "C_FORCE_ROOT=true" >> xueer_be/xueer.env 
-  - echo "CELERY_ACCEPT_CONTENT=json" >> xueer_be/xueer.env
-  - echo "REDIS1_HOST=127.0.0.1" >> xueer_be/xueer.env
-  - echo "REDIS2_HOST=127.0.0.1" >> xueer_be/xueer.env
-  - echo "REDIS6380PASS=pass" >> xueer_be/xueer.env
-  - echo "REDIS6385PASS=pass" >> xueer_be/xueer.env 
-  - echo "REDIS3_host=127.0.0.1" >> xueer_be/xueer.env 
-
-
-before_script:
-- mysql -u root -e 'CREATE DATABASE XUEER;'
-
-script:
-- docker-compose -f xueer_be/docker-compose.yml build 
-- docker-compose -f xueer_be/docker-compose.yml up -d
-- docker exec xueer python manage.py test
+install: "pip install -r requirements.txt"
+script: python manage.py test

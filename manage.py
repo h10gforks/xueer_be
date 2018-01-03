@@ -59,8 +59,8 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def test(coverage=False):
     """Run the unit tests."""
+    import sys
     if coverage and not os.environ.get('XUEER_COVERAGE'):
-        import sys
         os.environ['XUEER_COVERAGE'] = '1'
         os.execvp(sys.executable, [sys.executable] + sys.argv)
     import unittest
@@ -72,6 +72,8 @@ def test(coverage=False):
         print('Coverage Summary:')
         COV.report()
         COV.erase()
+    sys.exit(0)
+
 
 
 @manager.command
