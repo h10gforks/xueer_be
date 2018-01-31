@@ -103,6 +103,11 @@
     .tag_title a {
         color: $font_grey_light;
     }
+    .tag_list .tag{
+        @include tag(14px,5px,12px);
+        font-size:12px;
+        background: $bg_orange_middle;
+    }
 }
 
 .nav {

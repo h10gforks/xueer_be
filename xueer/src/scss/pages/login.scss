@@ -9,54 +9,54 @@ login.scss
   form {
     input {
       width: 240px;
+      box-sizing: border-box;
+      margin-top: 20px;
       font-size: 18px;
       font-weight: lighter;
       line-height: 18px;
-      box-sizing: border-box;
-      margin-top: 20px;
     }
     input[type=text] {
-      color: $font_black_middle;
       padding: 11px 6px;
+      color: $font_black_middle;
       border: 1px solid $font_black_middle;
     }
     input[type=submit] {
-      background: $font_red_deep;
-      color: $main_white;
       padding: 11px 0;
       margin-top: 25px;
+      color: $main_white;
       cursor: pointer;
+      background: $font_red_deep;
     }
     .forget {
+      padding: 3px 0;
       margin-top: 5px;
       font-size: 12px;
-      padding: 3px 0;
-      text-align: right;
       color: $font_red_deep;
+      text-align: right;
     }
   }
   .login {
-    width: 1000px;
-    height: 676px;
     position: absolute;
     bottom: 55px;
+    width: 1000px;
+    height: 676px;
   }
   .content {
-    padding: 0 50px;
-    width: 340px;
-    background: $main_white;
     position: absolute;
     right: 140px;
     bottom: 295px;
+    width: 340px;
     box-sizing: border-box;
-    box-shadow: 5px 1px 0px #CDCDCD;
+    padding: 0 50px;
+    background: $main_white;
+    box-shadow: 5px 1px 0 #cdcdcd;
   }
   .band {
-    width: 48px;
-    height: 70px;
     position: absolute;
     top: -35px;
     left: 146px;
+    width: 48px;
+    height: 70px;
   }
   .band_t,
   .band_b {
@@ -67,56 +67,56 @@ login.scss
     opacity: .3;
   }
   .folder {
+    position: absolute;
+    right: -4px;
+    bottom: -3px;
     width: 92px;
     height: 60px;
-    position: absolute;
-    bottom: -3px;
-    right: -4px;
   }
   .cactus {
-    width: 85px;
-    height: 135px;
     position: absolute;
     bottom: -76px;
     left: -10px;
+    width: 85px;
+    height: 135px;
   }
   .trg {
+    position: absolute;
+    right: -5px;
+    bottom: -1px;
     width: 94px;
     height: 52px;
     box-sizing: border-box;
-    border-bottom: 26px solid $bg_yellow_light;
     border-top: 26px solid transparent;
-    border-left: 47px solid transparent;
     border-right: 47px solid $bg_yellow_light;
-    position: absolute;
-    bottom: -1px;
-    right: -5px;
+    border-bottom: 26px solid $bg_yellow_light;
+    border-left: 47px solid transparent;
   }
   p.bottom_line {
-    text-align: center;
-    color: $font_blue_middle;
-    font-size: 12px;
-    font-weight: lighter;
     margin-top: 50px;
     margin-bottom: 33px;
+    font-size: 12px;
+    font-weight: lighter;
+    color: $font_blue_middle;
+    text-align: center;
     a {
       font-size: 16px;
       font-weight: bold;
       color: $font_red_deep;
     }
   }
-  .login>svg {
-    width: 1002px;
-    height: 676px;
+  .login > svg {
     position: absolute;
     bottom: 0;
+    width: 1002px;
+    height: 676px;
   }
   .log_option {
     margin: 71px 0 10px;
     p {
-      color: #F44336;
-      font-size: 18px;
       padding: 3px 0;
+      font-size: 18px;
+      color: #f44336;
     }
     p span {
       display: inline-block;
