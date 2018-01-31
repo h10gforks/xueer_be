@@ -32,7 +32,8 @@ from flask import g
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 from xueer.models import Permission, Role, User, AnonymousUser, Courses, \
-    CourseCategories, CourseTypes, Comments, Teachers, Tags, Tips
+    CourseCategories, CourseTypes, Comments, Teachers, Tags, Tips, \
+    CourseQuestion, Answer
 
 
 # set encoding to utf-8
@@ -50,7 +51,8 @@ def make_shell_context():
                      User=User, AnonymousUser=AnonymousUser, Courses=Courses,
                      g=g, CourseCategories=CourseCategories,
                      CourseTypes=CourseTypes, Comments=Comments,
-                     Teachers=Teachers, Tags=Tags, Tips=Tips)
+                     Teachers=Teachers, Tags=Tags, Tips=Tips,
+                     CourseQuestion=CourseQuestion, Answer=Answer)
     return shell_ctx
 manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)

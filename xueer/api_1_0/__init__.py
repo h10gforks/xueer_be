@@ -18,4 +18,4 @@ api = Blueprint('api', __name__)
 
 from . import authentication, comments, courses, errors, register,\
     tags, teachers, tips, users, like, category, sure, search,\
-    memcached, statistics
+    memcached, statistics,question_and_answer

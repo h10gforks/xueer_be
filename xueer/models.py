@@ -175,6 +175,10 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     comments = db.relationship("Comments", backref='users',
                                lazy="dynamic", cascade='all')
+    questions = db.relationship("CourseQuestion", backref='user',
+                               lazy="dynamic", cascade='all')
+    answers = db.relationship("Answer", backref='user',
+                               lazy="dynamic", cascade='all')
     phone = db.Column(db.String(200), default=None)
     school = db.Column(db.String(200), index=True, default=None)
     avatar = db.Column(db.String(200))
@@ -349,6 +353,8 @@ class Courses(db.Model):
         lazy='dynamic',
         cascade='all'
     )
+    questions = db.relationship("CourseQuestion", backref="course", lazy="dynamic",
+                                          cascade='all')
 
     @property
     def liked(self):
@@ -794,3 +800,68 @@ class Tips(db.Model):
 
     def __repr__(self):
         return '<Tips %r>' % self.title
+
+class CourseQuestion(db.Model):
+    """
+       CourseQuestion: 问大家对应的问题
+       :var id: 主键
+       :var content: 问题内容
+       :var author_id: 作者id
+       :var create_time: 提问时间
+       :var course_id:　对应的课程id
+
+       :func to_json
+       """
+    __table_args__ = {'mysql_charset': 'utf8'}
+    __tablename__ = 'coursequestions'
+    id = db.Column(db.Integer, primary_key=True)
+    question_content = db.Column(db.String(200))
+    create_time = db.Column(db.DateTime(), default=datetime.utcnow)
+    author_id = db.Column(db.Integer,db.ForeignKey("users.id"))
+    course_id=db.Column(db.Integer,db.ForeignKey("courses.id"))
+    answers=db.relationship("Answer",backref="question",lazy = "dynamic",cascade = 'all')
+
+    def __repr__(self):
+        return '<CourseQuestion %r>' % self.content
+
+    def to_json(self):
+        json_question = {
+            'id': self.id,
+            "question_content":self.question_content,
+            "create_time":self.create_time,
+            "author_id":self.author_id,
+            "course_id":self.course_id
+        }
+        return json_question
+
+class Answer(db.Model):
+    """
+           CourseQuestion: 问大家的回答
+           :var id: 主键
+           :var content: 回答内容
+           :var author_id: 作者id
+           :var create_time: 回答时间
+           :var question_id:　对应的问题id
+
+           :func to_json
+           """
+    __table_args__ = {'mysql_charset': 'utf8'}
+    __tablename__ = 'answers'
+    id = db.Column(db.Integer, primary_key=True)
+    answer_content = db.Column(db.String(200))
+    create_time = db.Column(db.DateTime(), default=datetime.utcnow)
+    author_id = db.Column(db.Integer,db.ForeignKey("users.id"))
+    question_id=db.Column(db.Integer,db.ForeignKey("coursequestions.id"))
+
+    def __repr__(self):
+        return '<Answer %r>' % self.content
+
+    def to_json(self):
+        json_answer = {
+            'id': self.id,
+            "answer_content":self.question_content,
+            "create_time":self.create_time,
+            "author_id":self.author_id,
+            "question_id":self.question_id
+        }
+        return json_answer
