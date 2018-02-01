@@ -77,7 +77,7 @@ def new_answer(id):
 
 @api.route("/delete_answer/<int:id>/", methods=["DELETE"])
 @admin_required
-def delete_question(id):
+def delete_answer(id):
     """
     删除指定id的回答
     :param id: 回答的id
@@ -93,7 +93,7 @@ def delete_question(id):
 
 @api.route('/course/<int:id>/questions/', methods=['GET'])
 @auth.login_required
-def get_question(id):
+def get_questions(id):
     """
     获取课程为id的所有提问
     :param id: 课程id

@@ -816,7 +816,7 @@ class CourseQuestion(db.Model):
     __tablename__ = 'coursequestions'
     id = db.Column(db.Integer, primary_key=True)
     question_content = db.Column(db.String(200))
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow)
+    create_time = db.Column(db.DateTime,index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer,db.ForeignKey("users.id"))
     course_id=db.Column(db.Integer,db.ForeignKey("courses.id"))
     answers=db.relationship("Answer",backref="question",lazy = "dynamic",cascade = 'all')
@@ -828,7 +828,7 @@ class CourseQuestion(db.Model):
         json_question = {
             'id': self.id,
             "question_content":self.question_content,
-            "create_time":self.create_time,
+            "create_time":self.create_time.strftime('%Y-%m-%d %H:%M:%S'),
             "author_id":self.author_id,
             "course_id":self.course_id
         }
@@ -849,7 +849,7 @@ class Answer(db.Model):
     __tablename__ = 'answers'
     id = db.Column(db.Integer, primary_key=True)
     answer_content = db.Column(db.String(200))
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow)
+    create_time = db.Column(db.DateTime,index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer,db.ForeignKey("users.id"))
     question_id=db.Column(db.Integer,db.ForeignKey("coursequestions.id"))
 
@@ -859,8 +859,8 @@ class Answer(db.Model):
     def to_json(self):
         json_answer = {
             'id': self.id,
-            "answer_content":self.question_content,
-            "create_time":self.create_time,
+            "answer_content":self.answer_content,
+            "create_time":self.create_time.strftime('%Y-%m-%d %H:%M:%S'),
             "author_id":self.author_id,
             "question_id":self.question_id
         }
