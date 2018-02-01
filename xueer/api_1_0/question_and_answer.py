@@ -53,7 +53,7 @@ def delete_question(id):
     db.session.delete(question)
     db.session.commit()
     return jsonify({
-        'message': '该评论已经被删除'
+        'message': '该问题已经成功删除'
     }),201
 
 
