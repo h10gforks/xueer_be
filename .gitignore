@@ -16,6 +16,7 @@ workers/workers.db
 **/*npm-debug.log
 -1
 .idea/
+.vscode/
 venv/
 whoosh_index/
 todo/
