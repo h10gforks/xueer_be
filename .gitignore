@@ -16,8 +16,10 @@ workers/workers.db
 **/*npm-debug.log
 -1
 .idea/
+.vscode/
 venv/
 whoosh_index/
 todo/
 xueer/src/node_modules
 tests/__pycache__
+*.swp

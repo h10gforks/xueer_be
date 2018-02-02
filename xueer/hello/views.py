@@ -140,7 +140,7 @@ def course(id):
             next_page = next_page,
             course_id = course_id,
             last_page = last_page,
-            hot_comments_len = len(hot_comments),
+            hot_comments_len = len(sort_hot_comments),
             comments_len = len(all_comments)
         )
 

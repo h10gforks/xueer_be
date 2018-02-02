@@ -14,6 +14,7 @@ from flask import url_for
 from xueer import create_app, db
 from xueer.models import User, Role, Courses, Comments
 from xueer.models import Tips
+from xueer.models import CourseQuestion,Answer
 from xueer.api_1_0.kmp import kmp
 from flask_sqlalchemy import SQLAlchemy
 
@@ -407,3 +408,134 @@ class APITestCase(unittest.TestCase):
         pattern_string = "haha"
         result = kmp(target_string, pattern_string)
         self.assertTrue(result == False)
+
+    def test_create_and_delete_question(self):
+        """
+        测试向特定课程提问和删除问题
+        """
+        u = User(
+            email='andrew@gmail.com',
+            username='andrew',
+            password=b64encode('muxi304'),
+            role_id=2
+        )
+        db.session.add(u)
+        db.session.commit()
+        token = u.generate_auth_token()
+
+        res = self.client.post(url_for('api.new_course'),
+                               headers=self.get_token_headers(token),
+                               data=json.dumps({
+                                   'name': 'test course',
+                                   'teacher': 'test teacher',
+                                   'category_id': 1,
+                                   'type_id': 1,
+                               })
+                               )
+
+        res1 = self.client.post(url_for('api.new_question', id=1),
+                               headers=self.get_token_headers(token),
+                               data=json.dumps({
+                                   'question_content': 'this is a test question'
+                               })
+                               )
+        self.assertTrue(res1.status_code == 201)
+
+        res2 = self.client.delete(url_for('api.delete_question',id=1),
+                                 headers=self.get_token_headers(token) ,
+                                 data=json.dumps({}))
+        self.assertTrue(res2.status_code==201)
+
+
+    def test_create_and_delete_answer(self):
+        """
+        测试向指定提问回答和删除回答
+        """
+        u = User(
+            email='andrew@gmail.com',
+            username='andrew',
+            password=b64encode('muxi304'),
+            role_id=2
+        )
+        db.session.add(u)
+        db.session.commit()
+        token = u.generate_auth_token()
+
+        res = self.client.post(url_for('api.new_course'),
+                               headers=self.get_token_headers(token),
+                               data=json.dumps({
+                                   'name': 'test course',
+                                   'teacher': 'test teacher',
+                                   'category_id': 1,
+                                   'type_id': 1,
+                               })
+                               )
+
+        res = self.client.post(url_for('api.new_question', id=1),
+                                headers=self.get_token_headers(token),
+                                data=json.dumps({
+                                    'question_content': 'this is a test question'
+                                })
+                                )
+
+        res1 = self.client.post(url_for('api.new_answer', id=1),
+                                headers=self.get_token_headers(token),
+                                data=json.dumps({
+                                    'answer_content': 'this is a test answer'
+                                })
+                                )
+        self.assertTrue(res1.status_code == 201)
+
+        res2 = self.client.delete(url_for('api.delete_answer', id=1),
+                                headers=self.get_token_headers(token),
+                                data=json.dumps({})
+                                )
+        self.assertTrue(res2.status_code == 201)
+
+    def test_get_questions_and_get_answers(self):
+        """
+        测试获得特定课程的所有问题
+        """
+        u = User(
+            email='andrew@gmail.com',
+            username='andrew',
+            password=b64encode('muxi304'),
+            role_id=2
+        )
+        db.session.add(u)
+        db.session.commit()
+        token = u.generate_auth_token()
+
+        res = self.client.post(url_for('api.new_course'),
+                               headers=self.get_token_headers(token),
+                               data=json.dumps({
+                                   'name': 'test course',
+                                   'teacher': 'test teacher',
+                                   'category_id': 1,
+                                   'type_id': 1,
+                               })
+                               )
+
+        res = self.client.post(url_for('api.new_question', id=1),
+                               headers=self.get_token_headers(token),
+                               data=json.dumps({
+                                   'question_content': 'this is a test question'
+                               })
+                               )
+        res = self.client.post(url_for('api.new_answer', id=1),
+                                headers=self.get_token_headers(token),
+                                data=json.dumps({
+                                    'answer_content': 'this is a test answer'
+                                })
+                                )
+        res1 = self.client.get(url_for("api.get_questions",id=1),
+                             headers=self.get_token_headers(token),
+                             data=json.dumps({}))
+        self.assertTrue(res1.status_code == 200)
+
+        res2 = self.client.get(url_for("api.get_answers", id=1),
+                               headers=self.get_token_headers(token),
+                               data=json.dumps({}))
+        self.assertTrue(res2.status_code == 200)
+
+
