@@ -47,7 +47,7 @@ def verify_password(email_or_token, password):
 
     g.current_user = user
     g.token_used = False
-
+   
     return user.verify_password(password)
 
 
