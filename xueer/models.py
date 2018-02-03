@@ -17,6 +17,8 @@
     : -- Teachers               老师类
     : -- Tips                   运营文章
     : -- User                   用户
+    : -- CourseQuestion         提问
+    ：-- Answer                　回答
 
     : copyright: (c) 2016 by MuxiStudio
     : license: MIT
