@@ -10,17 +10,24 @@
     : -- DELETE(admin) /api/v1.0/delete_answer/<id>/ 删除指定id的回答
     : -- GET(login) /api/v1.0/course/<id>/questions/ 获取指定课程的所有评论
     : -- GET(login) /api/v1.0/question/<id>/answers/ 获取指定问题的所有回答
+    : -- GET(admin) /api/v1.0/questions/ 分页获取所有问题
+    : -- GET(admin) /api/v1.0/answers/ 分页获取所有回答
     ....................................................................
 
 """
-from flask import request, jsonify,g
+from flask import request, jsonify,g,url_for
 from .. import db
 from flask_login import login_required, current_user
 from ..models import CourseQuestion,Answer,Courses
 from . import api
 import json
+from sqlalchemy import desc
 from xueer.api_1_0.authentication import auth
 from xueer.decorators import admin_required
+
+
+questions_per_page = 20
+answers_per_page = 20
 
 
 @api.route('/course/<int:id>/create_question/', methods=['POST'])
@@ -127,3 +134,62 @@ def get_answers(id):
 
 
 
+@api.route('/questions/', methods=["GET"])
+@admin_required
+def get_pagination_questions():
+    """
+    获取所有问题，支持分页
+    """
+    page = request.args.get('page', 1, type=int)
+    pagination = CourseQuestion.query.order_by(desc(CourseQuestion.create_time)).paginate(
+        page, per_page=questions_per_page, error_out=False
+    )
+    questions = pagination.items
+    prev = ""
+    next = ""
+    if pagination.has_prev:
+        prev = url_for('api.get_pagination_questions', page=page - 1)
+    if pagination.has_next:
+        next = url_for('api.get_pagination_questions', page=page + 1)
+    questions_count = len(CourseQuestion.query.all())
+    if questions_count % questions_per_page == 0:
+        page_count = questions_count//questions_per_page
+    else:
+        page_count = questions_count//questions_per_page
+    last = url_for('api.get_pagination_questions', page=page_count)
+    return json.dumps(
+        [q.to_json() for q in questions],
+        ensure_ascii=False,
+        indent=1
+    ), 200, {'link': '<%s>; rel="next", <%s>; rel="last"' % (next, last)}
+
+
+
+@api.route('/answers/', methods=["GET"])
+@admin_required
+def get_pagination_answers():
+    """
+    获取所有回答，支持分页
+    """
+    page = request.args.get('page', 1, type=int)
+    pagination = Answer.query.order_by(desc(Answer.create_time)).paginate(
+        page, per_page=answers_per_page, error_out=False
+    )
+    answers = pagination.items
+    prev = ""
+    next = ""
+    if pagination.has_prev:
+        prev = url_for('api.get_pagination_answers', page=page - 1)
+    if pagination.has_next:
+        next = url_for('api.get_pagination_answers', page=page + 1)
+    answers_count = len(Answer.query.all())
+    if answers_count % answers_per_page == 0:
+        page_count = answers_count//answers_per_page
+    else:
+        page_count = answers_count//answers_per_page
+    last = url_for('api.get_pagination_answers', page=page_count)
+    return json.dumps(
+        [answer.to_json() for answer in answers],
+        ensure_ascii=False,
+        indent=1
+    ), 200, {'link': '<%s>; rel="next", <%s>; rel="last"' % (next, last)}
