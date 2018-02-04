@@ -30,7 +30,6 @@ def verify_password(email_or_token, password):
                 : Token: token
     :param password: 密码
     """
-    password = "muxi304"#固定
     if email_or_token == '':
         g.current_user = AnonymousUser()
         return True
@@ -47,8 +46,8 @@ def verify_password(email_or_token, password):
 
     g.current_user = user
     g.token_used = False
-   
     return user.verify_password(password)
+
 
 
 @api.route('/token/', methods=['GET'])
