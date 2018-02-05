@@ -249,8 +249,7 @@ class User(UserMixin, db.Model):
     @staticmethod
     def from_json(json_user):
         username = json_user.get('username')
-        # password = json_user.get('password')
-        password=base64.b64encode(json_user.get('password'))
+        password = json_user.get('password')
         email = json_user.get('email')
         role_id = json_user.get('roleid')
         qq = json_user.get('qq')
