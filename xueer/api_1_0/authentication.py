@@ -23,6 +23,7 @@ auth = HTTPBasicAuth()
 
 @auth.verify_password
 def verify_password(email_or_token, password):
+    print(email_or_token,password)
     """
     验证回调函数
     :param email_or_token:

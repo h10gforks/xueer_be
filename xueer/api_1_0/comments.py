@@ -49,8 +49,8 @@ def add_tags(course):
         if tag_in_db:
             tag_in_db.count += 1
         else:
-            add_tag = Tags(name=tag, count=1)
-        db.session.add(add_tag)
+            tag_in_db = Tags(name=tag, count=1)
+        db.session.add(tag_in_db)
         db.session.commit()
 
     # add course & tag
@@ -59,13 +59,14 @@ def add_tags(course):
         course_tags = [tag.tags for tag in course.tags.all()]
         if get_tag in course_tags:
             course_tag = CourseTag.query.filter_by(
-                tag_id=get_tag.id, course_id=id,
+                tag_id=get_tag.id, course_id=course.id,
             ).first()
             course_tag.count += 1
         else:
             course_tag = CourseTag(
-                tag_id=get_tag.id, course_id=id, count=1
+                tag_id=get_tag.id, course_id=course.id, count=1
             )
+            print("new tag")
         db.session.add(course_tag)
         db.session.commit()
 
@@ -149,8 +150,8 @@ def get_hot_comments(id):
 @api.route('/courses/<int:id>/comments/', methods=['POST', 'GET'])
 @auth.login_required
 def new_comment(id):
+    print("here is new comment")
     if request.method == 'POST':
-        print(request.get_json())
         comment = Comments.from_json(request.get_json())
         comment.user_id = g.current_user.id
         comment.course_id = id
@@ -161,6 +162,7 @@ def new_comment(id):
         db.session.add(course)
         db.session.commit()
         # add tags ["tag1", "tag2"]
+        print("here is tag")
         add_tags(course)
     return jsonify({'id': comment.id}), 201
 
