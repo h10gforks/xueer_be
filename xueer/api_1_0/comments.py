@@ -150,7 +150,6 @@ def get_hot_comments(id):
 @api.route('/courses/<int:id>/comments/', methods=['POST', 'GET'])
 @auth.login_required
 def new_comment(id):
-    print("here is new comment")
     if request.method == 'POST':
         comment = Comments.from_json(request.get_json())
         comment.user_id = g.current_user.id
@@ -162,7 +161,6 @@ def new_comment(id):
         db.session.add(course)
         db.session.commit()
         # add tags ["tag1", "tag2"]
-        print("here is tag")
         add_tags(course)
     return jsonify({'id': comment.id}), 201
 
