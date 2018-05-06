@@ -42,7 +42,7 @@ def add_tags(course):
         向数据库中添加tag实例
         向数据库中添加tag和course关系
     """
-    tags = request.json.get("tags").split()
+    tags = request.json.get("tags","").split()
     # add tag
     for tag in tags:
         tag_in_db = Tags.query.filter_by(name=tag).first()
@@ -61,12 +61,12 @@ def add_tags(course):
             course_tag = CourseTag.query.filter_by(
                 tag_id=get_tag.id, course_id=course.id,
             ).first()
-            course_tag.count += 1
+            if course_tag:
+                course_tag.count += 1
         else:
             course_tag = CourseTag(
                 tag_id=get_tag.id, course_id=course.id, count=1
             )
-            print("new tag")
         db.session.add(course_tag)
         db.session.commit()
 
