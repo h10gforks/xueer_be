@@ -3,8 +3,8 @@ xueer:
     build: .
     env_file:
         - xueer.env
-    command: gunicorn --name xueer -b 0.0.0.0:5488 -w 2 wsgi:app
-    ports:
+    command: gunicorn --name xueer -k gevent --timeout "120" --log-level debug -b 0.0.0.0:5488 -w 2 wsgi:app
+ ports:
         - "5488:5488"
     links:
         - redis3
