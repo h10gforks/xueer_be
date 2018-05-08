@@ -191,6 +191,11 @@ class User(UserMixin, db.Model):
 
     @password.setter
     def password(self, password):
+        print("password:",password)
+        #终于找到问题所在了，好好的密码解码干嘛？？？这个错误以前咋就没有呢
+        missing_padding = 4 - len(password) % 4
+        if missing_padding:
+            password += b'=' * missing_padding
         password_decode = base64.b64decode(password)
         self.password_hash = generate_password_hash(password_decode)
 
@@ -249,6 +254,7 @@ class User(UserMixin, db.Model):
     @staticmethod
     def from_json(json_user):
         username = json_user.get('username')
+
         password = json_user.get('password')
         email = json_user.get('email')
         role_id = json_user.get('roleid')
@@ -262,8 +268,8 @@ class User(UserMixin, db.Model):
             raise ValidationError('请输入密码！')
         if email is None or email == '':
             raise ValidationError('请输入邮箱地址！')
-        return User(username=username, password=password,
-                    email=email, role_id=role_id)
+        from base64  import b64decode
+        return User(username=username, password=password,email=email, role_id=role_id)
 
     def __repr__(self):
         return '<User %r>' % self.username
