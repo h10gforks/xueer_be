@@ -90,7 +90,7 @@ def adduser():
                password=password, role=role)
     db.session.add(new)
     db.session.commit()
-    print "new user <{name}> created".format(name)
+    print "new user <%s> created"%name
 
 
 @manager.command

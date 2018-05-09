@@ -348,15 +348,11 @@ class Courses(db.Model):
     likes = db.Column(db.Integer, default=0)
     tags = db.relationship("CourseTag", backref="courses",
                            lazy="dynamic", cascade='all')
-    users = db.relationship(
-        "User",
-        secondary=UCLike,
+    users = db.relationship("User",secondary=UCLike,
         backref=db.backref('courses', lazy="dynamic"),
-        lazy='dynamic',
-        cascade='all'
-    )
-    questions = db.relationship("CourseQuestion", backref="course", lazy="dynamic",
-                                          cascade='all')
+        lazy='dynamic',cascade='all')
+    questions = db.relationship("CourseQuestion",
+        backref="course", lazy="dynamic",cascade='all')
 
     @property
     def liked(self):
