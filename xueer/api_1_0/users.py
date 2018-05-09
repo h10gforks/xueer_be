@@ -64,7 +64,7 @@ def get_user_id(id):
     return jsonify(user.to_json2())
 
 
-@api.route('/users/', methods=["GET", "POST"])
+@api.route('/users/', methods=["POST"])
 @admin_required
 def new_user():
     user = User.from_json(request.json)
