@@ -175,6 +175,7 @@ class User(UserMixin, db.Model):
     qq = db.Column(db.String(164), index=True)
     major = db.Column(db.String(200), index=True)
     password_hash = db.Column(db.String(128))
+    # confirmed = db.Column(db.Boolean,default=False)
     comments = db.relationship("Comments", backref='users',
                                lazy="dynamic", cascade='all')
     questions = db.relationship("CourseQuestion", backref='user',

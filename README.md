@@ -2,7 +2,7 @@
 
 ![travis](https://api.travis-ci.org/Muxi-Studio/xueer_be.svg)
 
-华师评课平台, 华师***课程经验收割机***<br/>
+华师评课平台, 华师**课程经验收割机**<br/>
 
 ## Sails Xueer
 

@@ -23,3 +23,4 @@ todo/
 xueer/src/node_modules
 tests/__pycache__
 *.swp
+setenv.sh
