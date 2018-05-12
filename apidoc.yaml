@@ -1,533 +1,1048 @@
-# this is the xueer new added and changed API
-# as a demonstration of an API spec in YAML
 swagger: '2.0'
+
+#################################INFO START##########################
 info:
-  title: Xueer API
-  description: 学而新版新增及改动api
-  version: "1.0.0"
-# the domain of the service
+  description: |
+    学而API
+
+  version: 1.0.0
+  title: Xueer api
+#  termsOfService: http://swagger.io/terms/
+  contact:
+    email: 3480437308@qq.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+###############################INFO END#################################
+
 host: xueer.muxixyz.com
-# array of all schemes that your API supports
-schemes:
-  - https
-# will be prefixed to all paths
 basePath: /api/v1.0
-produces:
-  - application/json
+schemes:
+ - https
+ - http
+######################TAG START#######################################
+tags:
+- name: auth
+  description: 学而鉴权
+
+- name: category
+  description: 课程分类操作
+
+- name: comment
+  description: 评论操作
+
+- name: course
+  description: 课程操作
+# - name: user
+#   description: Operations about user
+#   externalDocs:
+#     description: Find out more about our store
+#     url: http://swagger.io
+##########################TAG END######################################
+
+###########################AUTH START#################################
+securityDefinitions:
+  # basic_auth:
+    # type: oauth2
+    # authorizationUrl: http://petstore.swagger.io/oauth/dialog
+    # flow: implicit
+    # scopes:
+      # write:pets: modify pets in your account
+      # read:pets: read your pets
+  basic:
+    type: basic
+    # scope: all
+    description: 学而中需要登录请求的api，采用basic auth的方式，即在请求头中添加Authorization字段，内容为base64.encode(“邮箱:muxi304”)
+
+  token:
+    type: apiKey
+    description: 另一种鉴权的方式是token,用户先登录(采用basic auth)请求/api/v1.0/token/获取token,然后在请求头中添加Authorization字段，内容为base64.encode(“token:”)
+    name: token
+    in: header
+########################AUTH END######################################
+
+
+########################PATH START####################################
 paths:
-  /products:
+  /token/:
     get:
-      summary: Product Types
-      description: |
-        The Products endpoint returns information about the *Uber* products
-        offered at a given location. The response includes the display name
-        and other details about each product, and lists the products in the
-        proper display order.
-      parameters:
-        - name: latitude
-          in: query
-          description: Latitude component of location.
-          required: true
-          type: number
-          format: double
-        - name: longitude
-          in: query
-          description: Longitude component of location.
-          required: true
-          type: number
-          format: double
       tags:
-        - Products
+      - auth
+      summary: 获取用户token
+      description: 采用basic auth方式登录获取token
+      produces:
+      - application/json
+      responses:
+        401:
+          description: unathorized
+        200:
+          description: OK
+          schema:
+            properties:
+              token:
+                type: string
+      security:
+      - basic:
+        - all
+
+  /main_category/:
+    get:
+      tags:
+      - category
+      summary: 获取主课程分类信息
+      description: 1. 公共课 2. 通识课 3. 专业课 4. 素质课
+      produces:
+      - application/json
       responses:
         200:
-          description: An array of products
+          description: 返回所有的以课程主分类名为key,课程主分类在数据库中的id为value的对象的列表
+    post:
+      tags:
+      - category
+      summary: 创建一个课程主分类
+      description: 以下的参数以json的形式传递,注意，该api需要管理员才可以调用
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        # name: body
+        description: 请求体中的课程主分类中的json对象
+        required: true
+        schema:
+          type: object
+          properties:
+            id:
+              type: string
+            category_name:
+              type: string
+      responses:
+        201:
+          description: 操作成功，返回由当前新建的课程主分类名为key,id为value的字典
+        500:
+          description: 服务器内部错误
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+  /main_category/{id}/:
+    put:
+      tags:
+      - category
+      summary: 更新课程主分类名称
+      description: 需要管理员权限方可调用该api
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 所需要更改的课程主分类的id,通过路径参数传入
+        # - name: body
+        - in: body
+          description: 请求体中的新的课程主分类名称对象
+
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: 新的课程主分类名称
+      responses:
+        200:
+          description: 更改成功.
+        404:
+          description: 根据传入的id没有找到对应的课程主分类
+        500:
+          description: 服务器错误
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+  /sub_category/:
+    get:
+      tags:
+      - category
+      summary: 获取某一主分類下的二級分类信息
+      description:  1. 通识核心课 2. 通识选修课
+      parameters:
+        - name: main_category_id
+          description: 主分類課程id
+          in: query
+          required: true
+      produces:
+      - application/json
+      responses:
+        200:
+          description: 返回查詢的主分類下的所有二級分類的名稱和id所組成的對象的列表
+        404:
+          description: 主分类不存在
+    post:
+      tags:
+      - category
+      summary: 在某一个主分类下面创建一个二级分类
+      description: 以下的参数以json的形式传递,注意，该api需要管理员才可以调用
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        # name: body
+        description: 请求体中包含新二级分类的名称以及其所属的主分类的id的json对象
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            main_category_id:
+              type: string
+      responses:
+        201:
+          description: 操作成功，返回由当前新建的课程二级分类名为key,id为value的字典
+        500:
+          description: 服务器内部错误
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+  /sub_category/{id}/:
+    put:
+      tags:
+      - category
+      summary: 更新二级课程分类
+      description: 该api需要管理员才可以调用
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          # required: true
+          in: path
+          description: 所要更新的二级分类的id
+
+        - in: body
+          # name: body
+          description: 请求体中包含该二级分类的新名称以及其所要变更到的主分类的id的json对象
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              main_category_id:
+                type: string
+      responses:
+        200:
+          description: 操作成功
+        404:
+          description: 更具传入的id找不到二级课程分类对象
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+
+  /comments/:
+    get:
+      tags:
+      - comment
+      summary: 管理后台分页获取所有评论，默认每页10条
+      description: 按照发表时间分页返回所有评论,管理员才可以调用该api
+
+      produces:
+      - application/json
+      parameters:
+        - name: page
+          # required: true
+          in: path
+          description: 当前要获取的页面数,当不传此参数，则默认获取第一页
+      responses:
+        200:
+          description: 返回评论对象数组
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
           schema:
             type: array
             items:
-              $ref: '#/definitions/Product'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-  /estimates/price:
+              $ref: '#/definitions/CommentObj'
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+  /comments/{id}/:
     get:
-      summary: Price Estimates
-      description: |
-        The Price Estimates endpoint returns an estimated price range
-        for each product offered at a given location. The price estimate is
-        provided as a formatted string with the full price range and the localized
-        currency symbol.<br><br>The response also includes low and high estimates,
-        and the [ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code for
-        situations requiring currency conversion. When surge is active for a particular
-        product, its surge_multiplier will be greater than 1, but the price estimate
-        already factors in this multiplier.
-      parameters:
-        - name: start_latitude
-          in: query
-          description: Latitude component of start location.
-          required: true
-          type: number
-          format: double
-        - name: start_longitude
-          in: query
-          description: Longitude component of start location.
-          required: true
-          type: number
-          format: double
-        - name: end_latitude
-          in: query
-          description: Latitude component of end location.
-          required: true
-          type: number
-          format: double
-        - name: end_longitude
-          in: query
-          description: Longitude component of end location.
-          required: true
-          type: number
-          format: double
       tags:
-        - Estimates
+      - comment
+      summary: 通过id获取某一条评论的信息
+      description: 需登录
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 所需要获取的评论的id
       responses:
         200:
-          description: An array of price estimates by product
+          description: OK
+          schema:
+            $ref: '#/definitions/CommentObj'
+        400:
+          description: 通过id未找到该评论
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+    delete:
+      tags:
+      - comment
+      summary: 通过id删除某条评论
+      description: 管理员操作
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 所需要删除的评论的id
+      responses:
+        404:
+          description: 未找到评论，或者未找到评论所对应的课程
+        200:
+          description: 成功删除，并且更新了课程所对应的评论数
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+
+  /courses/{id}/comments/:
+    get:
+      tags:
+      - comment
+      summary: 分页获取某一课程的评论
+      description:
+
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 课程id
+        - name: page
+          required: true
+          in: path
+          description: 需要获取的页面，如果获取第一页则可以不用传该参数
+      responses:
+        404:
+          description: 未找到课程
+        200:
+          description: OK
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
           schema:
             type: array
             items:
-              $ref: '#/definitions/PriceEstimate'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-  /estimates/time:
-    get:
-      summary: Time Estimates
-      description: The Time Estimates endpoint returns ETAs for all products offered at a given location, with the responses expressed as integers in seconds. We recommend that this endpoint be called every minute to provide the most accurate, up-to-date ETAs.
-      parameters:
-        - name: start_latitude
-          in: query
-          description: Latitude component of start location.
-          required: true
-          type: number
-          format: double
-        - name: start_longitude
-          in: query
-          description: Longitude component of start location.
-          required: true
-          type: number
-          format: double
-        - name: customer_uuid
-          in: query
-          type: string
-          format: uuid
-          description: Unique customer identifier to be used for experience customization.
-        - name: product_id
-          in: query
-          type: string
-          description: Unique identifier representing a specific product for a given latitude & longitude.
+              $ref: '#/definitions/CommentObj'
+    post:
       tags:
-        - Estimates
+      - comment
+      summary: 对某一课程进行评论
+      description: 登录之后操作,tag字段为给该课程添加的标签，为可选字段，若有多个tag,则每个tag用一个空格隔开
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 课程id
+        - in: body
+          # name: body
+          description: 请求体中包含的评论json对象
+          required: true
+          schema:
+            type: object
+            properties:
+              body:
+                type: string
+              tags:
+                type: string
+                description: 以一个空格分隔的多个标签
       responses:
+        201:
+          description: 创建评论成功，返回新创建的评论的id
+        404:
+          description: 未找到该课程
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+  /courses/{id}/comments/hot/:
+    get:
+      tags:
+      - comment
+      summary: 获取某一课程的热门评论
+      description: 按照点赞数从高到低排序，一次返回所有，点赞数>=3
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 课程id
+      responses:
+        404:
+          description: 未找到课程
         200:
-          description: An array of products
+          description: OK
           schema:
             type: array
             items:
-              $ref: '#/definitions/Product'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-  /me:
+              $ref: '#/definitions/CommentObj'
+
+  /tip/{id}/comments/:
     get:
-      summary: User Profile
-      description: The User Profile endpoint returns information about the Uber user that has authorized with the application.
       tags:
-        - User
-      responses:
-        200:
-          description: Profile information for a user
-          schema:
-            $ref: '#/definitions/Profile'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-  /history:
-    get:
-      summary: User Activity
-      description: The User Activity endpoint returns data about a user's lifetime activity with Uber. The response will include pickup locations and times, dropoff locations and times, the distance of past requests, and information about which products were requested.<br><br>The history array in the response will have a maximum length based on the limit parameter. The response value count may exceed limit, therefore subsequent API requests may be necessary.
+      - comment
+      summary: 分页获取运营文章的评论
+      description: 按照评论发布的时间排序，新评论排在前面，默认每页10条
+      produces:
+      - application/json
       parameters:
-        - name: offset
-          in: query
-          type: integer
-          format: int32
-          description: Offset the list of returned results by this amount. Default is zero.
-        - name: limit
-          in: query
-          type: integer
-          format: int32
-          description: Number of items to retrieve. Default is 5, maximum is 100.
-      tags:
-        - User
+        - name: id
+          required: true
+          in: path
+          description: 运营文章id
+        - name: page
+          required: true
+          in: path
+          description: 需要获取的页面，如果获取第一页则可以不用传该参数
       responses:
+        404:
+          description: 未找到该运营文章
         200:
-          description: History information for the given user
+          description: OK
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
           schema:
-            $ref: '#/definitions/Activities'
-        default:
-          description: Unexpected error
+            type: array
+            items:
+              $ref: '#/definitions/CommentObj'
+    post:
+      tags:
+      - comment
+      summary: 对某一运营文章评论
+      description: 登录操作
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 运营文章id
+        - in: body
+          required: true
+          # name:
+          description: 包含评论内容的json对象
           schema:
-            $ref: '#/definitions/Error'
+            type: object
+            properties:
+              body:
+                type: string
+      responses:
+        404:
+          description: 未找到该运营文章
+        201:
+          description: OK,成功处理请求，并且更新了该运营文章的评论数，返回新创建的评论的id
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+  /tip/{tid}/comments/{id}/:
+    delete:
+      tags:
+      - comment
+      summary: 删除某一运营文章下的某一个评论
+      description: 管理员操作
+      produces:
+      - application/json
+      parameters:
+        - name: tid
+          required: true
+          in: path
+          description: 运营文章id
+        - name: id
+          required: true
+          in: path
+          description: 评论id
+      responses:
+        404:
+          description: 未找到该运营文章,或未找到该评论
+        200:
+          description: OK,成功处理请求，并且更新了该运营文章的评论数，返回新创建的评论的id
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+  /courses/:
+    get:
+      tags:
+      - course
+      summary: 获取相关操作
+      description:
+###########################PATH END###################################
+
+
+
+###########################DEF START#################################
+
 definitions:
-  Role:
+  CommentObj:
     type: object
     properties:
-      id:
-        type: integer
-        format: int32
-        description: Role的自增主键.
-      name:
+      body:
         type: string
-        description: 角色名，要求在表中唯一.
-      default:
-        type: bool
-        description: 是否是注册用户默认角色，默认为False
-      permissions:
-        type: integer
-        description: 当前角色拥有的权限.
-      users:
-        type: array
-        description: 与User表相关联的虚拟属性，可以拿到属于当前角色的User对象.
-        items:
-          $ref: '#/definitions/User'
-  User:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: 用户表自增主键
-      username:
-        type: string
-        description: 用户名,唯一，有索引
-      email:
-        type: string
-        description: 邮箱，唯一，索引
-      qq:
-        type: string
-        description: 用户QQ,有索引.
-      major:
-        type: string
-        description: 专业.
-      password_hash:
-        type: string
-        description: 密码的哈希值.
-      phone:
-        type: string
-        description: 电话，默认为None 
-      school:
-        type: string
-        description: 学院，默认为空，有索引
+        description: 评论体
+      liked:
+        type: boolean
+        description: 当前用户是否给这条评论点赞,已经赞了为true,否则为false;若匿名用户，则为false
       avatar:
         type: string
-        description: 头像URL 
-      role_id: 
-        type: integer
-        description: 指向Role的外键
-      confirmed:
-        type: bool
-        description: 该用户是否通过验证的标志位
-      comments:
-        type: array
-        description: 与Comments表相关联的虚拟属性，可以拿到当前用户发表的评论的Comments对象的查询对象 
-        items:
-          $ref: '#/definitions/Comments'
-      questions:
-        type: array
-        description: 与CourseQuestion表相关联的虚拟属性，可以拿到当前用户发表课程提问的CourseQuestion对象的查询对象
-        items:
-          $ref: '#/definitions/CourseQuestion'
-      answers:
-        type: array
-        description: 与Answer表相关联的虚拟属性，可以拿到当前用户发表的回答的Answer对象的查询对象 
-        items:
-          $ref: '#/definitions/Answer'
-  Courses:
-    type: object
-    properties:
+        description: 评论用户的头像url
+      date:
+        type: string
+        description: 评论日期
+      is_usefull:
+        type: int
+        description: 我也不知道这个字段是干什么的
+      user_name:
+        type: string
+        description: 评论作者姓名
       id:
-        type: integer
-        description: 主键.
-      name:
-        type: string
-        description: 课程名
-      category_id:
-        type: integer
-        description: 指向CourseCategory的外键, 课程主分类
-      subcategory_id:
-        type: integer
-        description: 指向CoursesSubCategories的外键, 课程二级分类
-      type_id:
-        type: integer
-        description: 指向CourseType的外键, 学分类别.
-      credit:
-        type: integer
-        description: 该课程对应的学分
-      available:
-        type: bool
-        description: 课程是否可用
-      loctime:
-        type: string
-        description: 上课地点和时间
-      teacher:
-        type: string
-        description: 老师姓名
-      count:
-        type: integer
-        description: 课程对应的评论数
-      score:
-        type: integer
-        description: 情感分析得分
-      introduction:
-        type: string
-        description: 课程介绍
+        type: int
+        description: 评论id
       likes:
-        type: integer
-        description: 课程对应的点赞数,默认为０
-      liked:
-        type: bool
-        description: 属性方法，当前用户是否点赞了这门课
-      hot_tags:
+        type: int
+        description: 这条评论获得的点赞数
+      like_url:
         type: string
-        description: 返回热门的4个标签，用空格隔开
-      comment:
-        type: array
-        description:  与Comments表相关联的虚拟属性，可以拿到当前课程的Comments对象的查询.
-        items:
-          $ref: '#/definitions/Comments'  
-      tags:
-        type: array
-        description: 与CourseTag表相关联的虚拟属性，可以拿到当前课程的CourseTag对象的查询.
-        items:
-          $ref: '#/definitions/CourseTag'
-      users:
-        type: array
-        description: 课程与用户点赞的多对多关系, cascade级联删除
-        items:
-          $ref: '#/definitions/User'
-      questions:
-        type: array
-        description: 课程与提问的多对多关系, cascade级联删除
-        items:
-          $ref: '#/definitions/CourseQuestion'
-  CourseCategories:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: 课程主分类主键
-      name:
-        type: string
-        description: 课程主分类的名称
-      courses:
-        type: array
-        description: 与Courses表相关联的虚拟属性，可以拿到当前课程主分类的Courses对象的查询对象
-        items:
-          $ref: '#/definitions/Courses'
-      subcategories:
-        type: array
-        description: 该主分类下面对应的课程子分类
-        items:
-          $ref: "#/definitions/CoursesSubCategories"
-  CoursesSubCategories:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: 课程子分类主键
-      name:
-        type: string
-        description: 课程子分类名称
-      courses:
-        type: array
-        description: 该课程子分类下面对应的课程
-        items:
-          $ref: "#/definitions/Courses"
-  CourseTypes:
-    type: object
-    properties:
-      id:
-       type: integer
-       description: 课程类型主键
-      name:
-        type: string
-        description: 课程类型名称
-      courses:
-        type: array
-        description: 该课程类型下面对应的课程
-        items:
-          $ref: "#/definitions/Courses"
-  
-  Comments:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: 评论主键
-      course_id:
-        type: integer
-        description: 指向Courses.id的外键,与课程的多对一关系
-      user_id:
-        type: integer
-        description: 指向User.id的外键，与用户的多对一关系
-      timestamp:
-        type: datetime
-        description: 时间戳, 默认是系统时间(datetime.utcnow)
-      body:
-        type: string
-        description: 评论内容
-      likes:
-        types: integer
-        description: 评论获得的点赞数，默认为０
-      is_userful:
-        type: integer
-        description: ??????
-      tip_id:
-        type: integer
-        description: 指向tip的外键, 与tip的多对一关系
-      time:
-        type: string
-        description: 属性方法，将timestamp转成字符串表示的时间
-      liked:
-        type: bool
-        description: 当前用户是否给当前评论点赞，匿名用户默认为false,即未点赞
-      user:
-        type: array
-        deascription: 与用户点赞的多对多关系
-        items:
-          $ref: "#/definitions/User"
-  Teacher:
-  type: object
-  description: 老师类，目前未使用该类
-  properties:
-    id:
-      type: integer
-      description: 主键
-    name:
-      type: string
-      description: 老师姓名
-    department:
-      type: string
-      description: 所在院系
-    introduction:
-      type: string
-      description: 老师简介
-    phone:
-      type: string
-      description: 老师联系方式
-    weibo:
-      type: string
-      description: 老师微博主页地址
-  Tags:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: 主键
-      name:
-        type: string
-        description: Tag名称
-      count:
-        type: integer
-        description: 标签计数, 用于全站热门标签统计,默认为０
-      courses:
-        type: array
-        deascription: 标签和课程的多对多关系
-        items:
-          $ref: "#/definitions/CourseTag"
-  Tips:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: 运营文章表主键
-      title:
-        type: string
-        description: 运营文章标题
-      body:
-        type: string
-        description: 文章主题(含HTML)
-      img_url:
-        type: string
-        description: 文章对应的图片
-      banner_url:
-        type: string
-        description: 桌面版banner
-      author:
-        type: string
-        description: 作者名称
-      timestamp: 
-        type: datatime
-        description: 时间戳, 默认是系统时间
-      likes:
-        type: integer
-        description: 文章对应的点赞数
-      views:
-        type: integer
-        description: 文章的浏览量
-      time:
-        type: string
-        description: 将上面的timestamp格式化为字符串
-      liked:
-        type: bool
-        description: 当前用户是否给该文章点赞，匿名用户为false,即未点赞
-      users:
-        type: array
-        description: 文章和用户点赞的多对多关系
-        items:
-          $ref: "#/definitions/User"
-  CourseQuestion:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: 主键
-      question_content:
-        type : string
-        description: 问题的内容
-      create_time:
-        type: datatime
-        description: 提问时间
-      author_id:
-        type: integer
-        description: 指向User.id的外键
-      course_id:
-        type: integer
-        description: 指向Course.id的外键
-      answers:
-        type: array
-        description: 该提问对应的回答的Answer对象
-        items:
-          $ref: "#/definitions/Answer"
-  Answer:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: 主键
-      answer_content:
-        type : string
-        description: 回答的内容
-      create_time:
-        type: datatime
-        description: 回答时间
-      author_id:
-        type: integer
-        description: 指向User.id的外键
-      question_id:
-        type: integer
-        description: 指向CourseQuestion.id的外键
-      
-            
+        description: 给该评论点赞的需要请求的url
+
+  # Role:
+  #   type: object
+  #   properties:
+  #     id:
+  #       type: integer
+  #       format: int32
+  #       description: Role的自增主键.
+  #     name:
+  #       type: string
+  #       description: 角色名，要求在表中唯一.
+  #     default:
+  #       type: boolean
+  #       description: 是否是注册用户默认角色，默认为False
+  #     permissions:
+  #       type: integer
+  #       description: 当前角色拥有的权限.
+  #     users:
+  #       type: array
+  #       description: 与User表相关联的虚拟属性，可以拿到属于当前角色的User对象.
+  #       items:
+  #         $ref: '#/definitions/User'
+  # User:
+  #   type: object
+  #   properties:
+  #     id:
+  #       type: integer
+  #       description: 用户表自增主键
+  #     username:
+  #       type: string
+  #       description: 用户名,唯一，有索引
+  #     email:
+  #       type: string
+  #       description: 邮箱，唯一，索引
+  #     qq:
+  #       type: string
+  #       description: 用户QQ,有索引.
+  #     major:
+  #       type: string
+  #       description: 专业.
+  #     password_hash:
+  #       type: string
+  #       description: 密码的哈希值.
+  #     phone:
+  #       type: string
+  #       description: 电话，默认为None
+  #     school:
+  #       type: string
+  #       description: 学院，默认为空，有索引
+  #     avatar:
+  #       type: string
+  #       description: 头像URL
+  #     role_id:
+  #       type: integer
+  #       description: 指向Role的外键
+  #     confirmed:
+  #       type: boolean
+  #       description: 该用户是否通过验证的标志位
+  #     comments:
+  #       type: array
+  #       description: 与Comments表相关联的虚拟属性，可以拿到当前用户发表的评论的Comments对象的查询对象
+  #       items:
+  #         $ref: '#/definitions/Comments'
+  #     questions:
+  #       type: array
+  #       description: 与CourseQuestion表相关联的虚拟属性，可以拿到当前用户发表课程提问的CourseQuestion对象的查询对象
+  #       items:
+  #         $ref: '#/definitions/CourseQuestion'
+  #     answers:
+  #       type: array
+  #       description: 与Answer表相关联的虚拟属性，可以拿到当前用户发表的回答的Answer对象的查询对象
+  #       items:
+  #         $ref: '#/definitions/Answer'
+  # Courses:
+  #   type: object
+  #   properties:
+  #     id:
+  #       type: integer
+  #       description: 主键.
+  #     name:
+  #       type: string
+  #       description: 课程名
+  #     category_id:
+  #       type: integer
+  #       description: 指向CourseCategory的外键, 课程主分类
+  #     subcategory_id:
+  #       type: integer
+  #       description: 指向CoursesSubCategories的外键, 课程二级分类
+  #     type_id:
+  #       type: integer
+  #       description: 指向CourseType的外键, 学分类别.
+  #     credit:
+  #       type: integer
+  #       description: 该课程对应的学分
+  #     available:
+  #       type: boolean
+  #       description: 课程是否可用
+  #     loctime:
+  #       type: string
+  #       description: 上课地点和时间
+  #     teacher:
+  #       type: string
+  #       description: 老师姓名
+  #     count:
+  #       type: integer
+  #       description: 课程对应的评论数
+  #     score:
+  #       type: integer
+  #       description: 情感分析得分
+  #     introduction:
+  #       type: string
+  #       description: 课程介绍
+  #     likes:
+  #       type: integer
+  #       description: 课程对应的点赞数,默认为０
+  #     liked:
+  #       type: boolean
+  #       description: 属性方法，当前用户是否点赞了这门课
+  #     hot_tags:
+  #       type: string
+  #       description: 返回热门的4个标签，用空格隔开
+  #     comment:
+  #       type: array
+  #       description:  与Comments表相关联的虚拟属性，可以拿到当前课程的Comments对象的查询.
+  #       items:
+  #         $ref: '#/definitions/Comments'
+  #     tags:
+  #       type: array
+  #       description: 与CourseTag表相关联的虚拟属性，可以拿到当前课程的CourseTag对象的查询.
+  #       items:
+  #         $ref: '#/definitions/CourseTag'
+  #     users:
+  #       type: array
+  #       description: 课程与用户点赞的多对多关系, cascade级联删除
+  #       items:
+  #         $ref: '#/definitions/User'
+  #     questions:
+  #       type: array
+  #       description: 课程与提问的多对多关系, cascade级联删除
+  #       items:
+  #         $ref: '#/definitions/CourseQuestion'
+  # CourseCategories:
+  #   type: object
+  #   properties:
+  #     id:
+  #       type: integer
+  #       description: 课程主分类主键
+  #     name:
+  #       type: string
+  #       description: 课程主分类的名称
+  #     courses:
+  #       type: array
+  #       description: 与Courses表相关联的虚拟属性，可以拿到当前课程主分类的Courses对象的查询对象
+  #       items:
+  #         $ref: '#/definitions/Courses'
+  #     subcategories:
+  #       type: array
+  #       description: 该主分类下面对应的课程子分类
+  #       items:
+  #         $ref: "#/definitions/CoursesSubCategories"
+  # CoursesSubCategories:
+  #   type: object
+  #   properties:
+  #     id:
+  #       type: integer
+  #       description: 课程子分类主键
+  #     name:
+  #       type: string
+  #       description: 课程子分类名称
+  #     courses:
+  #       type: array
+  #       description: 该课程子分类下面对应的课程
+  #       items:
+  #         $ref: "#/definitions/Courses"
+  # CourseTypes:
+  #   type: object
+  #   properties:
+  #     id:
+  #      type: integer
+  #      description: 课程类型主键
+  #     name:
+  #       type: string
+  #       description: 课程类型名称
+  #     courses:
+  #       type: array
+  #       description: 该课程类型下面对应的课程
+  #       items:
+  #         $ref: "#/definitions/Courses"
+
+  # Comments:
+  #   type: object
+  #   properties:
+  #     id:
+  #       type: integer
+  #       description: 评论主键
+  #     course_id:
+  #       type: integer
+  #       description: 指向Courses.id的外键,与课程的多对一关系
+  #     user_id:
+  #       type: integer
+  #       description: 指向User.id的外键，与用户的多对一关系
+  #     timestamp:
+  #       type: string
+  #       description: 时间戳, 默认是系统时间(datetime.utcnow)
+  #     body:
+  #       type: string
+  #       description: 评论内容
+  #     likes:
+  #       type: integer
+  #       description: 评论获得的点赞数，默认为０
+  #     is_userful:
+  #       type: integer
+  #       description: ??????
+  #     tip_id:
+  #       type: integer
+  #       description: 指向tip的外键, 与tip的多对一关系
+  #     time:
+  #       type: string
+  #       description: 属性方法，将timestamp转成字符串表示的时间
+  #     liked:
+  #       type: boolean
+  #       description: 当前用户是否给当前评论点赞，匿名用户默认为false,即未点赞
+  #     user:
+  #       type: array
+  #       # deascription: 与用户点赞的多对多关系
+  #       items:
+  #         $ref: "#/definitions/User"
+  # Teacher:
+  #   type: object
+  #   description: 老师类，目前未使用该类
+  #   properties:
+  #     id:
+  #       type: integer
+  #       description: 主键
+  #     name:
+  #       type: string
+  #       description: 老师姓名
+  #     department:
+  #       type: string
+  #       description: 所在院系
+  #     introduction:
+  #       type: string
+  #       description: 老师简介
+  #     phone:
+  #       type: string
+  #       description: 老师联系方式
+  #     weibo:
+  #       type: string
+  #       description: 老师微博主页地址
+  # Tags:
+  #   type: object
+  #   properties:
+  #     id:
+  #       type: integer
+  #       description: 主键
+  #     name:
+  #       type: string
+  #       description: Tag名称
+  #     count:
+  #       type: integer
+  #       description: 标签计数, 用于全站热门标签统计,默认为０
+  #     courses:
+  #       type: array
+  #       # deascription: 标签和课程的多对多关系
+  #       items:
+  #         $ref: "#/definitions/CourseTag"
+  # Tips:
+  #   type: object
+  #   properties:
+  #     id:
+  #       type: integer
+  #       description: 运营文章表主键
+  #     title:
+  #       type: string
+  #       description: 运营文章标题
+  #     body:
+  #       type: string
+  #       description: 文章主题(含HTML)
+  #     img_url:
+  #       type: string
+  #       description: 文章对应的图片
+  #     banner_url:
+  #       type: string
+  #       description: 桌面版banner
+  #     author:
+  #       type: string
+  #       description: 作者名称
+  #     timestamp:
+  #       type: string
+  #       format: date-time
+  #       description: 时间戳, 默认是系统时间
+  #     likes:
+  #       type: integer
+  #       description: 文章对应的点赞数
+  #     views:
+  #       type: integer
+  #       description: 文章的浏览量
+  #     time:
+  #       type: string
+  #       description: 将上面的timestamp格式化为字符串
+  #     liked:
+  #       type: boolean
+  #       description: 当前用户是否给该文章点赞，匿名用户为false,即未点赞
+  #     users:
+  #       type: array
+  #       description: 文章和用户点赞的多对多关系
+  #       items:
+  #         $ref: "#/definitions/User"
+  # CourseQuestion:
+  #   type: object
+  #   properties:
+  #     id:
+  #       type: integer
+  #       description: 主键
+  #     question_content:
+  #       type : string
+  #       description: 问题的内容
+  #     create_time:
+  #       type: string
+  #       format: date-time
+  #       description: 提问时间
+  #     author_id:
+  #       type: integer
+  #       description: 指向User.id的外键
+  #     course_id:
+  #       type: integer
+  #       description: 指向Course.id的外键
+  #     answers:
+  #       type: array
+  #       description: 该提问对应的回答的Answer对象
+  #       items:
+  #         $ref: "#/definitions/Answer"
+  # Answer:
+  #   type: object
+  #   properties:
+  #     id:
+  #       type: integer
+  #       description: 主键
+  #     answer_content:
+  #       type : string
+  #       description: 回答的内容
+  #     create_time:
+  #       type: string
+  #       format: date-time
+  #       description: 回答时间
+  #     author_id:
+  #       type: integer
+  #       description: 指向User.id的外键
+  #     question_id:
+  #       type: integer
+  #       description: 指向CourseQuestion.id的外键
+
+  # CourseTag:
+  #   type: object
+  #   properties:
+  #     conrse_id:
+  #       type: integer
+  #       description: 课程的id,与下面的tag_id构成联合主键
+  #     tag_id:
+  #       type : integer
+  #       description: 标签id,与上面的course_id构成联合主键
+  #     count:
+  #       type: integer
+  #       description: 纪录(课程, 标签)的引用次数, 作为热门标签的统计
+  #       default: 0
 
 
+##########################DEF END#######################################
+
+# definitions:
+#   Order:
+#     type: object
+#     properties:
+#       id:
+#         type: integer
+#         format: int64
+#       petId:
+#         type: integer
+#         format: int64
+#       quantity:
+#         type: integer
+#         format: int32
+#       shipDate:
+#         type: string
+#         format: date-time
+#       status:
+#         type: string
+#         description: Order Status
+#         enum:
+#         - placed
+#         - approved
+#         - delivered
+#       complete:
+#         type: boolean
+#         default: false
+#     xml:
+#       name: Order
+#   Category:
+#     type: object
+#     properties:
+#       id:
+#         type: integer
+#         format: int64
+#       name:
+#         type: string
+#     xml:
+#       name: Category
+#   User:
+#     type: object
+#     properties:
+#       id:
+#         type: integer
+#         format: int64
+#       username:
+#         type: string
+#       firstName:
+#         type: string
+#       lastName:
+#         type: string
+#       email:
+#         type: string
+#       password:
+#         type: string
+#       phone:
+#         type: string
+#       userStatus:
+#         type: integer
+#         format: int32
+#         description: User Status
+#     xml:
+#       name: User
+#   Tag:
+#     type: object
+#     properties:
+#       id:
+#         type: integer
+#         format: int64
+#       name:
+#         type: string
+#     xml:
+#       name: Tag
+#   Pet:
+#     type: object
+#     required:
+#     - name
+#     - photoUrls
+#     properties:
+#       id:
+#         type: integer
+#         format: int64
+#       category:
+#         $ref: '#/definitions/Category'
+#       name:
+#         type: string
+#         example: doggie
+#       photoUrls:
+#         type: array
+#         xml:
+#           name: photoUrl
+#           wrapped: true
+#         items:
+#           type: string
+#       tags:
+#         type: array
+#         xml:
+#           name: tag
+#           wrapped: true
+#         items:
+#           $ref: '#/definitions/Tag'
+#       status:
+#         type: string
+#         description: pet status in the store
+#         enum:
+#         - available
+#         - pending
+#         - sold
+#     xml:
+#       name: Pet
+#   ApiResponse:
+#     type: object
+#     properties:
+#       code:
+#         type: integer
+#         format: int32
+#       type:
+#         type: string
+#       message:
+#         type: string
+# externalDocs:
+#   description: Find out more about Swagger
+#   url: http://swagger.io
+# # Added by API Auto Mocking Plugin
