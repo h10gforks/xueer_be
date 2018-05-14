@@ -30,7 +30,7 @@ questions_per_page = 20
 answers_per_page = 20
 
 
-@api.route('/course/<int:id>/create_question/', methods=['POST'])
+@api.route('/course/<int:id>/question/', methods=['POST'])
 @auth.login_required
 def new_question(id):
     """
@@ -48,7 +48,7 @@ def new_question(id):
     return jsonify({'id': new_question.id}), 201
 
 
-@api.route("/delete_question/<int:id>/",methods=["DELETE"])
+@api.route("/question/<int:id>/",methods=["DELETE"])
 @admin_required
 def delete_question(id):
     """
@@ -64,7 +64,7 @@ def delete_question(id):
     }),201
 
 
-@api.route('/question/<int:id>/create_answer/', methods=['POST'])
+@api.route('/question/<int:id>/answer/', methods=['POST'])
 @auth.login_required
 def new_answer(id):
     """
@@ -82,7 +82,7 @@ def new_answer(id):
     return jsonify({'id': new_answer.id}), 201
 
 
-@api.route("/delete_answer/<int:id>/", methods=["DELETE"])
+@api.route("/answer/<int:id>/", methods=["DELETE"])
 @admin_required
 def delete_answer(id):
     """

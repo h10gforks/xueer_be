@@ -26,13 +26,26 @@ tags:
   description: 学而鉴权
 
 - name: category
-  description: 课程分类操作
+  description: 课程分类相关操作
 
 - name: comment
-  description: 评论操作
+  description: 评论相关操作
 
 - name: course
-  description: 课程操作
+  description: 课程相关操作
+
+- name: like
+  description: 点赞相关操作
+
+- name: memcached
+  description: 缓存相关操作
+
+- name: question
+  description: 课程提问相关操作
+
+- name: answer
+  description: 课程提问的回答的相关操作
+
 # - name: user
 #   description: Operations about user
 #   externalDocs:
@@ -515,8 +528,409 @@ paths:
     get:
       tags:
       - course
-      summary: 获取相关操作
-      description:
+      summary: 分页获取课程
+      description: 分页获取所有课程，一次获取20门，通过url参数可以设置排序规则以及分类获取。<br><b>主标签:</b>gg_cat=1返回公共课； ts_cat=1返回通识课； zy_cat=1返回专业课； sz_cat=1返回素质课；<br><b>二级标签（仅限通识课，即ts_cat=1时）:</b> sub_cat=1返回通识核心课 sub_cat=2返回通识选修课 sub_cat缺省则为0，若此时ts_cat=1返回所有通识课<br>gg_cat/ts_cat/zy_cat/sz_cat均为零或者缺省返回所有课程 各参数的值以数据库中值为准。<br>sort描述排序规则， "view",按评论数降序;"like"，按点赞数降序;"score"，按情感得分降序。默认为"view"
+      produces:
+      - application/json
+      parameters:
+        - name: gg_cat
+          in: path
+        - name: ts_cat
+          in: path
+        - name: zy_cat
+          in: path
+        - name: sz_cat
+          in: path
+        - name: sub_cat
+          in: path
+        - name: page
+          in: path
+          description: 当前需要获取的页数，当不传此参数则默认获取第一页
+        - name: per_page
+          in: path
+          description: 每页获取的条数，当不传此参数默认获取20条
+        - name: sort
+          in: path
+          description: 排序方案，若不传默认为“view”
+      responses:
+        200:
+          description: OK
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Course_resp'
+    post:
+      tags:
+      - course
+      summary: 创建课程
+      description: 需要管理员权限
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - in: body
+          description: 请求体
+          required: true
+          schema:
+            type: object
+            $ref: '#/definitions/Course_req'
+      responses:
+        201:
+          description: ok
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+
+  /courses/{id}/:
+    get:
+      tags:
+      - course
+      summary: 根据id获取某一课程信息
+      description: 
+      produces:
+      - application/json
+      parameters:   
+        - name: id
+          in: path
+          required: true
+          description: 课程id
+      responses:
+        404:
+          description: 未找到课程
+        200:
+          description: OK
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Course_resp'
+    put:
+      tags:
+      - course
+      summary: 更新某一课程的信息
+      description: 需要管理员权限，在请求体中提供需要更改的字段和更改后的值
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 课程id
+        - in: body
+          description: 请求体
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              teacher:
+                type: string
+              category_id:
+                type: integer
+              sub_category_id:
+                type: integer
+              type_id:
+                type: integer
+              available:
+                type: boolean
+      responses:
+        404:
+          description: 未找到该课程
+        200:
+          description: ok
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+    delete:
+      tags:
+      - course
+      summary: 删除某一课程的信息
+      description: 需要管理员权限，删除该课程及其在redis中的缓存
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 课程id
+      responses:
+        404:
+          description: 未找到该课程
+        200:
+          description: ok
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+  
+  /tags/{id}/courses/:
+    get:
+      tags:
+      - course
+      summary: 分页获取拥有某一tag的所有course
+      description: 
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: tag id
+        - name: page
+          in: query
+          required: false
+          description: 当前获取的页数,若不传则默认获取第一页
+      responses:
+        404:
+          description: tag不存在
+        200:
+          description: OK
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Course_resp'
+
+  /courses/{id}/like/:
+    post:
+      tags:
+      - like
+      summary: 向特定id的课程点赞
+      description: 需登录
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 课程id
+      responses:
+        404:
+          description: 未找到该课程
+        403:
+          description: 已经点赞过该课程
+        201:
+          description: 点赞成功
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+    delete:
+      tags:
+      - like  
+      summary: 给特定课程取消点赞
+      description: 需登录
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 课程id
+      responses:
+        200:
+          description: OK
+        403:
+          description: 还未给该课程点赞
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+      
+  /comments/{id}/like/:
+    post:
+      tags:
+      - like
+      summary: 给特定id的评论点赞
+      description: 需登录
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 评论id
+      responses:
+        404:
+          description: 未找到该评论
+        403:
+          description: 已经点赞过该评论
+        201:
+          description: 点赞成功
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+    delete:
+      tags:
+      - like  
+      summary: 给特定评论取消点赞
+      description: 需登录
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 评论id
+      responses:
+        200:
+          description: OK
+        403:
+          description: 还未给该评论点赞
+        404:
+          description: 未找到该评论
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+  /tip/{id}/like/:
+    post:
+      tags:
+      - like
+      summary: 给特定id的运营文章(选课贴士)点赞
+      description: 需登录
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 运营文章id
+      responses:
+        404:
+          description: 未找到该运营文章
+        403:
+          description: 已经点赞过该贴士
+        201:
+          description: 点赞成功
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+    delete:
+      tags:
+      - like  
+      summary: 给特定运营文章取消点赞
+      description: 需登录
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 运营文章id
+      responses:
+        200:
+          description: OK
+        403:
+          description: 还未给该运营文章点赞
+        404:
+          description: 未找到该运营文章
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+  /memcached/:
+    post:
+      tags:
+      - memcached
+      summary: 将录入的课程信息全部读入缓存
+      description: 管理员操作
+      # produces:
+      # - application/json
+      # parameters:
+      # - name: id
+      #   in: path
+      #   required: true
+      #   description: 运营文章id
+      responses: 
+        200:
+          description: OK
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+  /memcached/{id}/:
+    post:
+      tags:
+      - memcached
+      summary: 更新特定课程的缓存
+      description: 管理员操作
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 课程id 
+      responses: 
+        200:
+          description: OK
+        404:
+          description: 未找到该课程
+      security:
+      - basic:
+        - all
+      - token:
+        - all 
+    delete:
+      tags:
+      - memcached
+      summary: 删除特定课程的缓存
+      description: 管理员操作 
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 课程id 
+      responses: 
+        200:
+          description: OK
+        404:
+          description: 未找到该课程
+      security:
+      - basic:
+        - all
+      - token:
+        - all 
+
+  /course/{id}/question
+
 ###########################PATH END###################################
 
 
@@ -554,6 +968,83 @@ definitions:
       like_url:
         type: string
         description: 给该评论点赞的需要请求的url
+
+  Course_resp:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 课程id
+      title:
+        type: string
+        description: 课程名
+      teacher:
+        type: string
+        description: 老师名
+      comment_id:
+        type: string
+        description: 评论的id
+      hot_tags:
+        type: string
+        description: 热门标签
+      available:
+        type: boolean
+        description: 该课程当前是否可用
+      score:
+        type: int
+        description: 情感得分
+      loctime:
+        type: string
+        description: 上课时间地点
+      likes:
+        type: integer
+        description: 点赞总数
+      like_url:
+        type: string
+        description: 给该课程点赞需要请求的url
+      liked:
+        type: boolean
+        description: 当前用户是否给该课程点赞，匿名用户默认为false
+      main_category:
+        type: string
+        description: 当前课程的主分类名
+      sub_category:
+        type: string
+        description: 子分类名
+      credit_category:
+        type: string
+        description: ???
+      views:
+        type: integer
+        description: 评论数
+
+
+  Course_req:
+    type: object
+    properties:
+      name:
+        type: string
+        description: 课程名
+      teacher:
+        type: string
+        description: 老师姓名
+      introduction:
+        type: string
+        description: 课程简介
+      category_id:
+        type: integer
+        description: 课程主分类
+      credit:
+        type: integer
+        description: 学分
+      type_id:
+        type: integer
+        description: 学分类别分类id
+      sub_category_id:
+        type: integer
+        description: 二级课程分类
+
+
 
   # Role:
   #   type: object

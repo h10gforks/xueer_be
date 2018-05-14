@@ -82,7 +82,7 @@ def search():
     """
     搜索API
     """
-    keywords = request.args.get('keywords',"教育")
+    keywords = request.args.get('keywords')
     page = request.args.get('page') or '1'
     per_page = request.args.get('per_page') or '20'
     main_cat = request.args.get('main_cat') or '0'

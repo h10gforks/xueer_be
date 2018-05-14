@@ -25,9 +25,13 @@ from xueer.decorators import admin_required
 
 def pagination(lit, page, perpage):
     """
-    返回当前分页的列表对象,
-    next、last链接
-    {current: next_lit}
+
+    :param lit:分页对象列表
+    :param page: 当前页
+    :param perpage: 每页的数量
+    :return: 返回当前分页的列表对象,
+            next、last链接
+            {current: next_lit}
     """
     _yu = len(lit) % perpage
     _chu = len(lit) // perpage
