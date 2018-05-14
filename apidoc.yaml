@@ -44,8 +44,16 @@ tags:
   description: 课程提问相关操作
 
 - name: answer
-  description: 课程提问的回答的相关操作
+  description: 回答的相关操作
 
+- name: tip
+  description: 运营文章相关操作
+
+- name: user
+  description: 用户相关操作
+
+- name: tag
+  description: tag相关操作
 # - name: user
 #   description: Operations about user
 #   externalDocs:
@@ -929,8 +937,670 @@ paths:
       - token:
         - all 
 
-  /course/{id}/question
+  /course/{id}/question/:
+    post:
+      tags:
+      - question
+      summary: 向某一课程提问
+      description: 需登录 
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 课程id 
+      - in: body
+        required: true
+        description: 请求体中放置问题信息的json
+        schema:
+          type: object
+          properties:
+            question_content:
+              type: string
+              description: 问题内容
+      responses:
+        201: 
+          description: OK
+        404:
+          description: 未找到该课程
+      security:
+        - basic:
+          - all
+        - token:
+          - all 
+  
+  /question/{id}/:
+    delete:
+      tags:
+      - question
+      summary: 删除某一提问
+      description: 管理员操作
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 问题id 
+      responses:
+        201: 
+          description: OK
+        404:
+          description: 未找到该提问
+      security:
+        - basic:
+          - all
+        - token:
+          - all
+      
+  /question/{id}/answer/:
+    post:
+      tags:
+      - answer
+      summary: 回答某一个问题
+      description: 需登录
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 问题id 
+      - in: body
+        required: true
+        description: 请求体中放置回答信息的json
+        schema:
+          type: object
+          properties:
+            answer_content:
+              type: string
+              description: 回答内容
+      responses:
+        201: 
+          description: OK
+        404:
+          description: 未找到该提问
+      security:
+        - basic:
+          - all
+        - token:
+          - all
 
+  /answer/{id}/:
+    delete:
+      tags:
+      - answer
+      summary: 删除某一回答
+      description: 管理员操作
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 回答id 
+      responses:
+        201: 
+          description: OK
+        404:
+          description: 未找到该回答
+      security:
+        - basic:
+          - all
+        - token:
+          - all
+
+  /course/{id}/questions/:
+    get:
+      tags:
+      - question
+      summary: 获取某一课程的所有提问
+      description: 按照发表顺序排序，最新的排在前面
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 课程id 
+      responses:
+        200: 
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Question'
+        404:
+          description: 未找到该课程
+
+  /question/{id}/answers/:
+    get:
+      tags:
+      - answer
+      summary: 获取某一问题的所有回答
+      description: 按照发表顺序排序，最新的排在前面
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 问题id 
+      responses:
+        200: 
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Answer'
+        404:
+          description: 未找到该问题
+
+  /questions/:
+    get:
+      tags:
+      - question
+      summary: 分页获取所有问题
+      description: 管理员操作，按照发布的时间排序，新问题排在前面，默认每页10条
+      produces:
+      - application/json
+      parameters:
+        - name: page
+          required: true
+          in: path
+          description: 需要获取的页面，如果获取第一页则可以不用传该参数
+      responses:
+        200:
+          description: OK
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Question'
+      security:
+        - basic:
+          - all
+        - token:
+          - all
+
+  /answers/:
+    get:
+      tags:
+      - answer
+      summary: 分页获取所有回答
+      description: 管理员操作，按照评论发布的时间排序，新回答排在前面，默认每页10条
+      produces:
+      - application/json
+      parameters:
+        - name: page
+          required: true
+          in: path
+          description: 需要获取的页面，如果获取第一页则可以不用传该参数
+      responses:
+        200:
+          description: OK
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Answer'
+      security:
+        - basic:
+          - all
+        - token:
+          - all
+  
+  /tips/:
+    get:
+      tags:
+      - tip
+      summary: 分页获取所有运营文章
+      description: 每页5条，按时间倒序排列
+      produces:
+      - application/json
+      parameters:
+        - name: page
+          required: true
+          in: path
+          description: 需要获取的页面，如果获取第一页则可以不用传该参数
+      responses:
+        200:
+          description: OK
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tip'
+    post:
+      tags:
+      - tip
+      summary: 发布一篇新的运营文章
+      description: 管理员操作
+      consume:
+       - application/json
+      produces:
+      - application/json
+      parameters:
+        - in: body
+          required: true
+          description: 包含tip信息的json对象
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              body:
+                type: string
+              img_url:
+                type: string
+              author:
+                type: string
+              banner_url:
+                type: string
+      responses:
+        201:
+          description: OK
+      security:
+        - basic:
+          - all
+        - token:
+          - all
+
+  /tips/{id}/:
+    get:
+      tags:
+      - tip
+      summary: 获取某一运营文章
+      description: 同时更新浏览量的计数器
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: tip id
+      responses:
+        404:
+          description: 找不到对应的tip
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tip'
+
+    put:
+      tags:
+      - tip
+      summary: 更新某一运营文章
+      description:　管理员操作
+      consume:
+      - application/json
+      parameters:
+        - in: body
+          required: true
+          description: 包含tip更新信息的json对象
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              body:
+                type: string
+              img_url:
+                type: string
+              author:
+                type: string
+              banner_url:
+                type: string
+      responses:
+        404:
+          description: 找不到该tip
+        200:
+          description: OK
+      security:
+        - basic:
+          - all
+        - token:
+          - all
+
+    delete:
+      tags:
+      - tip
+      summary: 删除某一运营文章
+      description:　管理员操作
+      # consume:
+      # - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 需删除的运营文章id
+      responses:
+        404:
+          description: 找不到该tip
+        200:
+          description: OK
+      security:
+        - basic:
+          - all
+        - token:
+          - all
+  /tags/:
+    get:
+      tags:
+      - tag
+      summary: 获取所有tag信息
+      description:　
+      consume:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: page
+          required: true
+          in: path
+          description: 需要获取的页面，如果获取第一页则可以不用传该参数
+      responses:
+        200:
+          description: OK
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tag'
+  /tags/{id}/:
+    get:
+      tags:
+      - tag
+      summary: 获取特定id的标签
+      description:
+      consume:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 所需获取的tag的id
+      responses:
+        404:
+          description: 找不到该tag
+        200:
+          schema:
+            type: object
+            $ref: '#/definitions/Tag'
+    delete:
+      tags:
+      - tag
+      summary: 删除特定id的标签
+      description:　管理员操作
+      consume:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 所需删除的tag的id
+      responses:
+        404:
+          description: 找不到该tag
+        200:
+          description: OK
+      security:
+        - basic:
+          - all
+        - token:
+          - all
+  /courses/{id}/tags/:
+    get:
+      tags:
+      - tag
+      summary: 获取某一课程的所有标签
+      description:
+      consume:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 课程id
+      responses:
+        404:
+          description: 找不到该课程
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tag'
+  /users/:
+    get:
+      tags:
+      - user
+      summary: 分页获取所有用户信息
+      description:　
+      consume:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: page
+          required: true
+          in: query
+          description: 需要获取的页面，如果获取第一页则可以不用传该参数
+        - name: roleid
+          required: false
+          in: query
+          type: integer
+          description: 需要获取的用户的角色，若不传该参数，则获取所有用户
+      responses:
+        200:
+          description: OK
+          headers:
+            links:
+              type: string
+              description: 下一页和最后一页的请求地址
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+    post:
+      tags:
+      - user
+      summary: 创建一个用户
+      description: 管理员操作
+      consume:
+       - application/json
+      produces:
+      - application/json
+      parameters:
+        - in: body
+          required: true
+          description: 包含用户信息的json对象
+          schema:
+            properties:
+              username:
+                type: string
+                description: 用户名
+              password:
+                type: string
+                description: 密码
+              roleid:
+                type: integer
+                description: 角色id
+              email:
+                type: string
+                description: 邮箱
+              qq:
+                type: string
+                description: QQ
+              major: 
+                type: string
+                description: 专业
+              phone:
+                type: string
+                description: 联系方式
+              school:
+                type: string
+                description: 院系
+      responses:
+        201:
+          description: OK
+          headers:
+            location:
+              type: string
+              description: 获取该用户信息的请求地址
+      security:
+        - basic:
+          - all
+        - token:
+          - all
+  /users/{id}/:
+    get:
+      tags:
+      - user
+      summary: 获取某个用户信息
+      description:　
+      consume:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 用户id
+      responses:
+        404: 找不到该用户
+        200:
+          description: OK
+          schema:
+            type: object
+            $ref: '#/definitions/User2'
+    
+    put:
+      tags:
+      - user
+      summary: 更新某一用户的信息
+      description: 需要管理员权限，在请求体中提供需要更改的字段和更改后的值
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 用户id
+        - in: body
+          description: 请求体
+          required: true
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+              qq:
+                type: string
+              phone:
+                type: string
+              major:
+                type: string
+      responses:
+        404:
+          description: 未找到该用户
+        200:
+          description: ok
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+    delete:
+      tags:
+      - user
+      summary: 删除某一用户的信息
+      description: 需要管理员权限
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 用户id
+      responses:
+        404:
+          description: 未找到该用户
+        200:
+          description: ok
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+  /coourses/{id}/users/:
+    get:
+      tags:
+      - user
+      summary: 获取给特定id课程点赞的所有用户
+      description:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 用户id
+      responses:
+        404:
+          description: 未找到该用户
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+
+  /comments/{id}/users/:
+    get:
+      tags:
+      - user
+      summary: 获取给特定id评论点赞的所有用户
+      description:  
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 评论id
+      responses:
+        404:
+          description: 未找到该评论
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'  
 ###########################PATH END###################################
 
 
@@ -1045,7 +1715,130 @@ definitions:
         description: 二级课程分类
 
 
+  Question:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 提问id
+      question_content:
+        type: string
+        description: 提问内容
+      create_time:
+        type: string
+        description: 提问时间
+      author_id:
+        type: integer
+        description: 提问者id
+      course_id:
+        type: integer
+        description: 所属的课程的id
 
+
+  Answer:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 回答id
+      answer_content:
+        type: string
+        description: 回答内容
+      create_time:
+        type: string
+        description: 回答时间
+      author_id:
+        type: integer
+        description: 回答者id
+      question_id:
+        type: integer
+        description: 所属的问题的id
+
+
+  Tip:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: tip id
+      title:
+        type: string
+        description: 标题
+      body:
+        type: string
+        description: 运营文章内容
+      url:
+        type: string
+        description: 获取该tip信息的url
+      views:
+        type: integer
+        description: 浏览量
+      likes:
+        type: integer
+        description: 点赞数
+      date:
+        type: string
+        description: 发布日期
+      img_url: 
+        type: string
+        description: 插图地址
+      banner_url:
+        type: string
+        description: banner地址
+
+  Tag:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: tag id
+      tag_url:
+        type: string
+        description: 获取该tag信息的url
+      title:
+        type: string
+        description: tag名
+     
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 用户id
+      url:
+        type: string
+        description: 获取该用户信息需要访问的url
+      username:
+        type: string
+        description: 用户名
+      email:
+        type: string
+        description: 邮箱
+      qq:
+        type: string
+        description: QQ
+      major: 
+        type: string
+        description: 专业
+      phone:
+        type: string
+        description: 联系方式
+      school:
+        type: string
+        description: 院系
+  
+  User2:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 用户id
+      username:
+        type: string
+        description: 用户名
+      email:
+        type: string
+        description: 邮箱
   # Role:
   #   type: object
   #   properties:

@@ -99,7 +99,7 @@ def delete_answer(id):
 
 
 @api.route('/course/<int:id>/questions/', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def get_questions(id):
     """
     获取课程为id的所有提问
@@ -117,7 +117,7 @@ def get_questions(id):
 
 
 @api.route('/question/<int:id>/answers/', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def get_answers(id):
     """
     获取指定问题的所有回答

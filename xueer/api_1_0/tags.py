@@ -68,7 +68,7 @@ def delete_tags(id):
         })
 
 
-@api.route('/courses/<int:id>/tags/')
+@api.route('/courses/<int:id>/tags/',methods=["GET"])
 def get_courses_id_tags(id):
     """
     获取特定id课程的所有标签
