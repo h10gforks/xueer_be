@@ -4,11 +4,11 @@
     ```````````
 
     : 问大家模块API
-    : -- POST(login) /api/v1.0/course/<id>/create_question/ 向指定课程创建问题，需登录
-    : -- DELETE(admin) /api/v1.0/delete_question/<id>/ 删除指定id的问题,管理员操作
-    : -- POST(login) /api/v1.0/question/<id>/create_answer/ 向指定问题创建回答，需登录
-    : -- DELETE(admin) /api/v1.0/delete_answer/<id>/ 删除指定id的回答
-    : -- GET(login) /api/v1.0/course/<id>/questions/ 获取指定课程的所有评论
+    : -- POST(login) /api/v1.0/course/<id>/question/ 向指定课程创建问题，需登录
+    : -- DELETE(admin) /api/v1.0/question/<id>/ 删除指定id的问题,管理员操作
+    : -- POST(login) /api/v1.0/question/<id>/answer/ 向指定问题创建回答，需登录
+    : -- DELETE(admin) /api/v1.0/answer/<id>/ 删除指定id的回答
+    : -- GET(login) /api/v1.0/course/<id>/questions/ 获取指定课程的所有提问
     : -- GET(login) /api/v1.0/question/<id>/answers/ 获取指定问题的所有回答
     : -- GET(admin) /api/v1.0/questions/ 分页获取所有问题
     : -- GET(admin) /api/v1.0/answers/ 分页获取所有回答
@@ -30,7 +30,7 @@ questions_per_page = 20
 answers_per_page = 20
 
 
-@api.route('/course/<int:id>/create_question/', methods=['POST'])
+@api.route('/course/<int:id>/question/', methods=['POST'])
 @auth.login_required
 def new_question(id):
     """
@@ -48,7 +48,7 @@ def new_question(id):
     return jsonify({'id': new_question.id}), 201
 
 
-@api.route("/delete_question/<int:id>/",methods=["DELETE"])
+@api.route("/question/<int:id>/",methods=["DELETE"])
 @admin_required
 def delete_question(id):
     """
@@ -64,7 +64,7 @@ def delete_question(id):
     }),201
 
 
-@api.route('/question/<int:id>/create_answer/', methods=['POST'])
+@api.route('/question/<int:id>/answer/', methods=['POST'])
 @auth.login_required
 def new_answer(id):
     """
@@ -82,7 +82,7 @@ def new_answer(id):
     return jsonify({'id': new_answer.id}), 201
 
 
-@api.route("/delete_answer/<int:id>/", methods=["DELETE"])
+@api.route("/answer/<int:id>/", methods=["DELETE"])
 @admin_required
 def delete_answer(id):
     """
@@ -99,7 +99,7 @@ def delete_answer(id):
 
 
 @api.route('/course/<int:id>/questions/', methods=['GET'])
-@auth.login_required
+# @auth.login_required
 def get_questions(id):
     """
     获取课程为id的所有提问
@@ -117,7 +117,7 @@ def get_questions(id):
 
 
 @api.route('/question/<int:id>/answers/', methods=['GET'])
-@auth.login_required
+# @auth.login_required
 def get_answers(id):
     """
     获取指定问题的所有回答
