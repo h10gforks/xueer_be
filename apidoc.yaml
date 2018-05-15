@@ -1709,7 +1709,7 @@ definitions:
       date:
         type: string
         description: 评论日期
-      is_usefull:
+      is_useful:
         type: integer
         description: 我也不知道这个字段是干什么的
       user_name:
@@ -1769,7 +1769,7 @@ definitions:
         description: 子分类名
       credit_category:
         type: string
-        description: ???
+        description: 学分类别
       views:
         type: integer
         description: 评论数
