@@ -1120,7 +1120,7 @@ paths:
       - tip
       summary: 发布一篇新的运营文章
       description: 管理员操作
-      consume:
+      consumes:
        - application/json
       produces:
       - application/json
@@ -1176,7 +1176,7 @@ paths:
       - tip
       summary: 更新某一运营文章
       description: 管理员操作
-      consume:
+      consumes:
       - application/json
       parameters:
         - in: body
@@ -1208,7 +1208,7 @@ paths:
       - tip
       summary: 删除某一运营文章
       description: 管理员操作
-      # consume:
+      # consumes:
       # - application/json
       parameters:
         - name: id
@@ -1229,7 +1229,7 @@ paths:
       - tag
       summary: 获取所有tag信息
       description:
-      consume:
+      consumes:
       - application/json
       produces:
       - application/json
@@ -1255,7 +1255,7 @@ paths:
       - tag
       summary: 获取特定id的标签
       description:
-      consume:
+      consumes:
       - application/json
       produces:
       - application/json
@@ -1276,7 +1276,7 @@ paths:
       - tag
       summary: 删除特定id的标签
       description: 管理员操作
-      consume:
+      consumes:
       - application/json
       produces:
       - application/json
@@ -1299,7 +1299,7 @@ paths:
       - tag
       summary: 获取某一课程的所有标签
       description:
-      consume:
+      consumes:
       - application/json
       produces:
       - application/json
@@ -1323,7 +1323,7 @@ paths:
       - user
       summary: 分页获取所有用户信息
       description:
-      consume:
+      consumes:
       - application/json
       produces:
       - application/json
@@ -1353,7 +1353,7 @@ paths:
       - user
       summary: 创建一个用户
       description: 管理员操作
-      consume:
+      consumes:
        - application/json
       produces:
       - application/json
@@ -1403,7 +1403,7 @@ paths:
       - user
       summary: 获取某个用户信息
       description:
-      consume:
+      consumes:
       - application/json
       produces:
       - application/json
@@ -1590,7 +1590,7 @@ paths:
       - other
       summary: 注册一个用户
       description: 
-      consume:
+      consumes:
        - application/json
       produces:
       - application/json
@@ -1638,7 +1638,7 @@ paths:
       - other
       summary: 显示全站部分集合状态
       description: 管理员操作
-      consume:
+      consumes:
        - application/json
       produces:
       - application/json
@@ -1668,7 +1668,7 @@ paths:
       - other
       summary: 根据邮箱确定用户是否存在
       description: 
-      consume:
+      consumes:
        - application/json
       produces:
       - application/json
