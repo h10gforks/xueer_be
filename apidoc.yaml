@@ -69,13 +69,7 @@ tags:
 
 ###########################AUTH START#################################
 securityDefinitions:
-  # basic_auth:
-    # type: oauth2
-    # authorizationUrl: http://petstore.swagger.io/oauth/dialog
-    # flow: implicit
-    # scopes:
-      # write:pets: modify pets in your account
-      # read:pets: read your pets
+  
   basic:
     type: basic
     # scope: all
@@ -109,8 +103,7 @@ paths:
               token:
                 type: string
       security:
-      - basic:
-        - all
+      - basic: []
 
   /main_category/:
     get:
@@ -134,7 +127,7 @@ paths:
       - application/json
       parameters:
       - in: body
-        # name: body
+        name: body
         description: 请求体中的课程主分类中的json对象
         required: true
         schema:
@@ -150,10 +143,9 @@ paths:
         500:
           description: 服务器内部错误
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
+        # - all
   /main_category/{id}/:
     put:
       tags:
@@ -161,8 +153,8 @@ paths:
       summary: 更新课程主分类名称
       description: 需要管理员权限方可调用该api
       parameters:
-        - name: id
-          in: path
+        - in: path
+          name: id
           required: true
           description: 所需要更改的课程主分类的id,通过路径参数传入
         # - name: body
@@ -184,10 +176,10 @@ paths:
         500:
           description: 服务器错误
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      
+      - token: []
+        
 
   /sub_category/:
     get:
@@ -234,10 +226,9 @@ paths:
         500:
           description: 服务器内部错误
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
+  
   /sub_category/{id}/:
     put:
       tags:
@@ -250,7 +241,7 @@ paths:
       - application/json
       parameters:
         - name: id
-          # required: true
+          required: true
           in: path
           description: 所要更新的二级分类的id
 
@@ -271,10 +262,8 @@ paths:
         404:
           description: 更具传入的id找不到二级课程分类对象
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
 
   /comments/:
@@ -288,7 +277,7 @@ paths:
       - application/json
       parameters:
         - name: page
-          # required: true
+          required: true
           in: path
           description: 当前要获取的页面数,当不传此参数，则默认获取第一页
       responses:
@@ -301,12 +290,10 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/CommentObj'
+              $ref: '#/definitions/Comment'
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
   /comments/{id}/:
     get:
@@ -325,14 +312,12 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/CommentObj'
+            $ref: '#/definitions/Comment'
         400:
           description: 通过id未找到该评论
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
     delete:
       tags:
@@ -352,10 +337,8 @@ paths:
         200:
           description: 成功删除，并且更新了课程所对应的评论数
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
 
   /courses/{id}/comments/:
@@ -388,7 +371,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/CommentObj'
+              $ref: '#/definitions/Comment'
     post:
       tags:
       - comment
@@ -421,10 +404,8 @@ paths:
         404:
           description: 未找到该课程
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
   /courses/{id}/comments/hot/:
     get:
@@ -447,7 +428,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/CommentObj'
+              $ref: '#/definitions/Comment'
 
   /tip/{id}/comments/:
     get:
@@ -478,7 +459,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/CommentObj'
+              $ref: '#/definitions/Comment'
     post:
       tags:
       - comment
@@ -506,10 +487,8 @@ paths:
         201:
           description: OK,成功处理请求，并且更新了该运营文章的评论数，返回新创建的评论的id
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
   /tip/{tid}/comments/{id}/:
     delete:
       tags:
@@ -533,10 +512,8 @@ paths:
         200:
           description: OK,成功处理请求，并且更新了该运营文章的评论数，返回新创建的评论的id
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
   /courses/:
     get:
@@ -597,10 +574,8 @@ paths:
         201:
           description: ok
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
 
   /courses/{id}/:
@@ -667,10 +642,8 @@ paths:
         200:
           description: ok
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
     delete:
       tags:
@@ -692,10 +665,8 @@ paths:
         200:
           description: ok
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
   
   /tags/{id}/courses/:
     get:
@@ -751,10 +722,8 @@ paths:
         201:
           description: 点赞成功
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
     delete:
       tags:
@@ -774,10 +743,8 @@ paths:
         403:
           description: 还未给该课程点赞
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
       
   /comments/{id}/like/:
     post:
@@ -800,10 +767,8 @@ paths:
         201:
           description: 点赞成功
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
     delete:
       tags:
@@ -825,11 +790,8 @@ paths:
         404:
           description: 未找到该评论
       security:
-      - basic:
-        - all
-      - token:
-        - all
-
+      - basic: []
+      - token: []
   /tip/{id}/like/:
     post:
       tags:
@@ -851,10 +813,8 @@ paths:
         201:
           description: 点赞成功
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
     delete:
       tags:
@@ -876,10 +836,8 @@ paths:
         404:
           description: 未找到该运营文章
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
   /memcached/:
     post:
       tags:
@@ -897,10 +855,8 @@ paths:
         200:
           description: OK
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
   /memcached/{id}/:
     post:
       tags:
@@ -918,10 +874,8 @@ paths:
         404:
           description: 未找到该课程
       security:
-      - basic:
-        - all
-      - token:
-        - all 
+      - basic: []
+      - token: []
     delete:
       tags:
       - memcached
@@ -938,10 +892,8 @@ paths:
         404:
           description: 未找到该课程
       security:
-      - basic:
-        - all
-      - token:
-        - all 
+      - basic: []
+      - token: []
 
   /course/{id}/question/:
     post:
@@ -969,10 +921,8 @@ paths:
         404:
           description: 未找到该课程
       security:
-        - basic:
-          - all
-        - token:
-          - all 
+        - basic: []
+        - token: []
   
   /question/{id}/:
     delete:
@@ -991,10 +941,8 @@ paths:
         404:
           description: 未找到该提问
       security:
-        - basic:
-          - all
-        - token:
-          - all
+        - basic: []
+        - token: []
       
   /question/{id}/answer/:
     post:
@@ -1022,10 +970,8 @@ paths:
         404:
           description: 未找到该提问
       security:
-        - basic:
-          - all
-        - token:
-          - all
+        - basic: []
+        - token: []
 
   /answer/{id}/:
     delete:
@@ -1044,10 +990,8 @@ paths:
         404:
           description: 未找到该回答
       security:
-        - basic:
-          - all
-        - token:
-          - all
+        - basic: []
+        - token: []
 
   /course/{id}/questions/:
     get:
@@ -1116,10 +1060,8 @@ paths:
             items:
               $ref: '#/definitions/Question'
       security:
-        - basic:
-          - all
-        - token:
-          - all
+        - basic: []
+        - token: []
 
   /answers/:
     get:
@@ -1146,10 +1088,8 @@ paths:
             items:
               $ref: '#/definitions/Answer'
       security:
-        - basic:
-          - all
-        - token:
-          - all
+        - basic: []
+        - token: []
   
   /tips/:
     get:
@@ -1205,10 +1145,8 @@ paths:
         201:
           description: OK
       security:
-        - basic:
-          - all
-        - token:
-          - all
+        - basic: []
+        - token: []
 
   /tips/{id}/:
     get:
@@ -1237,7 +1175,7 @@ paths:
       tags:
       - tip
       summary: 更新某一运营文章
-      description:　管理员操作
+      description: 管理员操作
       consume:
       - application/json
       parameters:
@@ -1263,16 +1201,13 @@ paths:
         200:
           description: OK
       security:
-        - basic:
-          - all
-        - token:
-          - all
-
+        - basic: []
+        - token: []
     delete:
       tags:
       - tip
       summary: 删除某一运营文章
-      description:　管理员操作
+      description: 管理员操作
       # consume:
       # - application/json
       parameters:
@@ -1286,16 +1221,14 @@ paths:
         200:
           description: OK
       security:
-        - basic:
-          - all
-        - token:
-          - all
+        - basic: []
+        - token: []
   /tags/:
     get:
       tags:
       - tag
       summary: 获取所有tag信息
-      description:　
+      description:
       consume:
       - application/json
       produces:
@@ -1342,7 +1275,7 @@ paths:
       tags:
       - tag
       summary: 删除特定id的标签
-      description:　管理员操作
+      description: 管理员操作
       consume:
       - application/json
       produces:
@@ -1358,10 +1291,8 @@ paths:
         200:
           description: OK
       security:
-        - basic:
-          - all
-        - token:
-          - all
+        - basic: []
+        - token: []
   /courses/{id}/tags/:
     get:
       tags:
@@ -1391,7 +1322,7 @@ paths:
       tags:
       - user
       summary: 分页获取所有用户信息
-      description:　
+      description:
       consume:
       - application/json
       produces:
@@ -1464,16 +1395,14 @@ paths:
               type: string
               description: 获取该用户信息的请求地址
       security:
-        - basic:
-          - all
-        - token:
-          - all
+        - basic: []
+        - token: []
   /users/{id}/:
     get:
       tags:
       - user
       summary: 获取某个用户信息
-      description:　
+      description:
       consume:
       - application/json
       produces:
@@ -1529,10 +1458,8 @@ paths:
         200:
           description: ok
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
     delete:
       tags:
@@ -1554,11 +1481,10 @@ paths:
         200:
           description: ok
       security:
-      - basic:
-        - all
-      - token:
-        - all
-  /coourses/{id}/users/:
+      - basic: []
+      - token: []
+      
+  /courses/{id}/users/:
     get:
       tags:
       - user
@@ -1732,10 +1658,8 @@ paths:
                 type: integer
                 description: 全站课程总数
       security:
-      - basic:
-        - all
-      - token:
-        - all
+      - basic: []
+      - token: []
 
 
   /sure/:
@@ -1770,7 +1694,7 @@ paths:
 ###########################DEF START#################################
 
 definitions:
-  CommentObj:
+  Comment:
     type: object
     properties:
       body:
@@ -1786,16 +1710,16 @@ definitions:
         type: string
         description: 评论日期
       is_usefull:
-        type: int
+        type: integer
         description: 我也不知道这个字段是干什么的
       user_name:
         type: string
         description: 评论作者姓名
       id:
-        type: int
+        type: integer
         description: 评论id
       likes:
-        type: int
+        type: integer
         description: 这条评论获得的点赞数
       like_url:
         type: string
@@ -1823,7 +1747,7 @@ definitions:
         type: boolean
         description: 该课程当前是否可用
       score:
-        type: int
+        type: integer
         description: 情感得分
       loctime:
         type: string
