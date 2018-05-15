@@ -54,6 +54,12 @@ tags:
 
 - name: tag
   description: tag相关操作
+
+- name: search
+  description: 搜索相关操作
+
+- name: other
+  description: 其他api操作
 # - name: user
 #   description: Operations about user
 #   externalDocs:
@@ -1601,6 +1607,162 @@ paths:
             type: array
             items:
               $ref: '#/definitions/User'  
+  /search/:
+    get:
+      tags:
+      - search
+      summary: 根据关键字返回搜索结果集
+      description:  分页获取
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: keywords
+          in: query
+          required: true
+          description: 关键字
+        - name: page
+          in: query
+          required: false
+          description: 当前获取的页数，若不传该参数，则默认返回第一页
+        - name: per_page
+          in: query
+          required: false
+          description: 每页获取的条数，若不传该参数，则默认每页20条
+        - name: main_cat
+          in: query
+          required: false
+          description: 主分类id
+        - name: ts_cat
+          in: query
+          required: false
+          description: 二级分类id
+      responses:
+        200:
+          description: OK
+          headers:
+            link:
+              type: string
+              description: 下一页和最后一页的地址
+  /search/hot/:
+    get:
+      tags:
+      - search
+      summary: 返回最热的10个搜索词
+      description:  
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+  /register/:
+    post:
+      tags:
+      - other
+      summary: 注册一个用户
+      description: 
+      consume:
+       - application/json
+      produces:
+      - application/json
+      parameters:
+        - in: body
+          required: true
+          description: 包含用户信息的json对象
+          schema:
+            properties:
+              username:
+                type: string
+                description: 用户名
+              password:
+                type: string
+                description: 密码
+              roleid:
+                type: integer
+                description: 角色id
+              email:
+                type: string
+                description: 邮箱
+              qq:
+                type: string
+                description: QQ
+              major: 
+                type: string
+                description: 专业
+              phone:
+                type: string
+                description: 联系方式
+              school:
+                type: string
+                description: 院系
+      responses:
+        201:
+          description: OK
+          headers:
+            location:
+              type: string
+              description: 获取该用户信息的请求地址
+
+  /statistics/:
+    get:
+      tags:
+      - other
+      summary: 显示全站部分集合状态
+      description: 管理员操作
+      consume:
+       - application/json
+      produces:
+      - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              comment_count:
+                type: integer
+                description: 全站评论总数
+              users_count:
+                type: integer
+                description: 全站用户总数
+              courses_count:
+                type: integer
+                description: 全站课程总数
+      security:
+      - basic:
+        - all
+      - token:
+        - all
+
+
+  /sure/:
+    post:
+      tags:
+      - other
+      summary: 根据邮箱确定用户是否存在
+      description: 
+      consume:
+       - application/json
+      produces:
+      - application/json
+      parameters:
+        - in: body
+          required: true
+          # description: 包含用户信息的json对象
+          schema:
+            properties:
+              email:
+                type: string
+                description: 邮箱
+      responses:
+        200:
+          description: 返回一个包含提示信息的字典
+
+
+
 ###########################PATH END###################################
 
 
