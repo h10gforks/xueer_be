@@ -44,3 +44,4 @@ WTForms==2.1
 jieba
 MYSQL-python==1.2.5
 gevent
+forgerypy

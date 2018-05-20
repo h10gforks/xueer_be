@@ -175,15 +175,39 @@ class User(UserMixin, db.Model):
     qq = db.Column(db.String(164), index=True)
     major = db.Column(db.String(200), index=True)
     password_hash = db.Column(db.String(128))
+    # confirmed = db.Column(db.Boolean,default=False)
     comments = db.relationship("Comments", backref='users',
                                lazy="dynamic", cascade='all')
     questions = db.relationship("CourseQuestion", backref='user',
-                               lazy="dynamic", cascade='all')
+                                lazy="dynamic", cascade='all')
     answers = db.relationship("Answer", backref='user',
-                               lazy="dynamic", cascade='all')
+                              lazy="dynamic", cascade='all')
     phone = db.Column(db.String(200), default=None)
     school = db.Column(db.String(200), index=True, default=None)
     avatar = db.Column(db.String(200))
+
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        import random
+        import forgery_py
+
+        random.seed()
+        for i in range(count):
+            u = User(username=forgery_py.name.full_name(),
+                     role_id=random.choice([1, 2, 3]),
+                     email=forgery_py.internet.email_address(),
+                     qq=forgery_py.address.street_number() + forgery_py.address.street_number(),
+                     major=forgery_py.name.job_title() + "_major",
+                     password=base64.b64encode(forgery_py.lorem_ipsum.word()),
+                     phone=forgery_py.address.phone(),
+                     school=forgery_py.name.company_name() + "_school",
+                     avatar=forgery_py.name.full_name() + "_avatar")
+            db.session.add(u)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     @property
     def password(self):
@@ -191,7 +215,7 @@ class User(UserMixin, db.Model):
 
     @password.setter
     def password(self, password):
-        #这里是要求前端将用户的密码进行base64编码
+        # 这里是要求前端将用户的密码进行base64编码
         password_decode = base64.b64decode(password)
         self.password_hash = generate_password_hash(password_decode)
 
@@ -263,7 +287,7 @@ class User(UserMixin, db.Model):
             raise ValidationError('请输入密码！')
         if email is None or email == '':
             raise ValidationError('请输入邮箱地址！')
-        return User(username=username, password=password,email=email, role_id=role_id)
+        return User(username=username, password=password, email=email, role_id=role_id)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -348,15 +372,43 @@ class Courses(db.Model):
     likes = db.Column(db.Integer, default=0)
     tags = db.relationship("CourseTag", backref="courses",
                            lazy="dynamic", cascade='all')
-    users = db.relationship(
-        "User",
-        secondary=UCLike,
-        backref=db.backref('courses', lazy="dynamic"),
-        lazy='dynamic',
-        cascade='all'
-    )
-    questions = db.relationship("CourseQuestion", backref="course", lazy="dynamic",
-                                          cascade='all')
+    users = db.relationship("User", secondary=UCLike,
+                            backref=db.backref('courses', lazy="dynamic"),
+                            lazy='dynamic', cascade='all')
+    questions = db.relationship("CourseQuestion",
+                                backref="course", lazy="dynamic", cascade='all')
+
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        import random
+        import forgery_py
+
+        random.seed()
+        category_count = CourseCategories.query.count()
+        subcategory_count = CoursesSubCategories.query.count()
+        type_count = CourseTypes.query.count()
+        for i in range(count):
+            cg_id = CourseCategories.query.offset(random.randint(0, category_count - 1)).first().id
+            sub_cg_id = CoursesSubCategories.query.offset(random.randint(0, subcategory_count - 1)).first().id
+            tp_id = CourseTypes.query.offset(random.randint(0, type_count - 1)).first().id
+            c = Courses(name=forgery_py.name.title() + "_CourseName",
+                        category_id=cg_id,
+                        subcategory_id=sub_cg_id,
+                        type_id=tp_id,
+                        credit=random.choice([1, 2, 3]),
+                        available=random.choice([True, False]),
+                        loctime=forgery_py.name.location() + "_loctime",
+                        count=random.randrange(0, 100),
+                        score=random.randrange(0, 10),
+                        teacher=forgery_py.name.full_name(),
+                        introduction=forgery_py.basic.text(),
+                        )
+            db.session.add(c)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     @property
     def liked(self):
@@ -405,7 +457,7 @@ class Courses(db.Model):
             'teacher': self.teacher,
             # 'comment_id': url_for('api.get_courses_id_comments',
             #                        id=self.id, _external=True),
-            'comment_id':[i.id for i in self.comment],
+            'comment_id': [i.id for i in self.comment],
             'hot_tags': self.hot_tags,
             'available': self.available,
             'score': self.score,
@@ -489,6 +541,18 @@ class CourseCategories(db.Model):
                                     lazy="dynamic",
                                     cascade='all')
 
+    @staticmethod
+    def generate_fake():
+        from sqlalchemy.exc import IntegrityError
+        course_categories = ["公共课", "通识课", "专业课", "素质课"]
+        for i in course_categories:
+            c_cg = CourseCategories(name=unicode(i))
+            db.session.add(c_cg)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+
     def __repr__(self):
         return '<CourseCategory %r>' % self.name
 
@@ -504,6 +568,18 @@ class CoursesSubCategories(db.Model):
     name = db.Column(db.String(640))
     courses = db.relationship('Courses', backref='subcategory',
                               lazy='dynamic', cascade='all')
+
+    @staticmethod
+    def generate_fake():
+        from sqlalchemy.exc import IntegrityError
+        course_sub_categories = ["通识核心课", "通识选修课"]
+        for i in course_sub_categories:
+            c_sub_cg = CoursesSubCategories(name=unicode(i), main_category_id=2)
+            db.session.add(c_sub_cg)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     def __repr__(self):
         return "<SubCategory %r> % self.name"
@@ -522,6 +598,18 @@ class CourseTypes(db.Model):
     name = db.Column(db.String(30))
     courses = db.relationship("Courses", backref="type",
                               lazy="dynamic", cascade='all')
+
+    @staticmethod
+    def generate_fake():
+        from sqlalchemy.exc import IntegrityError
+        course_types = ["理科", "文科", "艺体", "工科"]
+        for i in course_types:
+            ct = CourseTypes(name=unicode(i))
+            db.session.add(ct)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     def __repr__(self):
         return '<CourseType %r>' % self.name
@@ -566,6 +654,34 @@ class Comments(db.Model):
         lazy='dynamic',
         cascade='all'
     )
+
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        import random
+        import forgery_py
+
+        random.seed()
+        course_count = Courses.query.count()
+        user_count = User.query.count()
+        tip_count = Tips.query.count()
+        for i in range(count):
+            c_id = Courses.query.offset(random.randint(0, course_count - 1)).first().id
+            user_id = User.query.offset(random.randint(0, user_count - 1)).first().id
+            tip_id = Tips.query.offset(random.randint(0, tip_count - 1)).first().id
+            cmt = Comments(
+                course_id=c_id,
+                user_id=user_id,
+                timestamp=forgery_py.date.date(),
+                body=forgery_py.basic.text(),
+                likes=random.randrange(0, 100),
+                is_useful=random.randrange(0, 20),
+                tip_id=tip_id)
+            db.session.add(cmt)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     @property
     def time(self):
@@ -619,7 +735,7 @@ class Teachers(db.Model):
     Teachers 老师类: 目前没有使用
     """
     __tablename__ = 'teachers'
-    __table_args__ = {'mysql_charset':'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     department = db.Column(db.String(150))
@@ -672,13 +788,28 @@ class Tags(db.Model):
     :func to_json: API json数据
     :func from_json: API 读取json数据
     """
-    __table_args__ = {'mysql_charset':'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     count = db.Column(db.Integer, default=0)
     courses = db.relationship("CourseTag", backref="tags", lazy="dynamic",
                               cascade='all')
+
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        import random
+        import forgery_py
+        random.seed()
+        for i in range(count):
+            tg = Tags(name=forgery_py.lorem_ipsum.word(),
+                      count=random.randrange(0, 200))
+            db.session.add(tg)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     def to_json(self):
         json_tag = {
@@ -718,7 +849,7 @@ class Tips(db.Model):
     :func to_json2: API json数据显示
     :func from_json: API 读取json数据
     """
-    __table_args__ = {'mysql_charset':'utf8'}
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'tips'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
@@ -737,6 +868,27 @@ class Tips(db.Model):
         backref=db.backref('tips', lazy="dynamic"),
         lazy='dynamic', cascade='all'
     )
+
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        import random
+        import forgery_py
+        random.seed()
+        for i in range(count):
+            tp = Tips(title=forgery_py.lorem_ipsum.title(),
+                      body=forgery_py.basic.text(),
+                      img_url=forgery_py.lorem_ipsum.sentence(),
+                      banner_url=forgery_py.lorem_ipsum.sentence(),
+                      author=forgery_py.name.full_name(),
+                      timestamp=forgery_py.date.date(),
+                      likes=random.randrange(0, 500),
+                      views=random.randrange(0, 1000))
+            db.session.add(tp)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     @property
     def time(self):
@@ -803,6 +955,7 @@ class Tips(db.Model):
     def __repr__(self):
         return '<Tips %r>' % self.title
 
+
 class CourseQuestion(db.Model):
     """
        CourseQuestion: 问大家对应的问题
@@ -818,10 +971,31 @@ class CourseQuestion(db.Model):
     __tablename__ = 'coursequestions'
     id = db.Column(db.Integer, primary_key=True)
     question_content = db.Column(db.String(200))
-    create_time = db.Column(db.DateTime,index=True, default=datetime.utcnow)
-    author_id = db.Column(db.Integer,db.ForeignKey("users.id"))
-    course_id=db.Column(db.Integer,db.ForeignKey("courses.id"))
-    answers=db.relationship("Answer",backref="question",lazy = "dynamic",cascade = 'all')
+    create_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))
+    answers = db.relationship("Answer", backref="question", lazy="dynamic", cascade='all')
+
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        import random
+        import forgery_py
+        random.seed()
+        user_count = User.query.count()
+        course_count = Courses.query.count()
+        for i in range(count):
+            user_id = User.query.offset(random.randint(0, user_count - 1)).first().id
+            course_id = Courses.query.offset(random.randint(0, course_count - 1)).first().id
+            cq = CourseQuestion(question_content=forgery_py.lorem_ipsum.sentence(),
+                                create_time=forgery_py.date.date(),
+                                author_id=user_id,
+                                course_id=course_id)
+            db.session.add(cq)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     def __repr__(self):
         return '<CourseQuestion %r>' % self.content
@@ -829,12 +1003,13 @@ class CourseQuestion(db.Model):
     def to_json(self):
         json_question = {
             'id': self.id,
-            "question_content":self.question_content,
-            "create_time":self.create_time.strftime('%Y-%m-%d %H:%M:%S'),
-            "author_id":self.author_id,
-            "course_id":self.course_id
+            "question_content": self.question_content,
+            "create_time": self.create_time.strftime('%Y-%m-%d %H:%M:%S'),
+            "author_id": self.author_id,
+            "course_id": self.course_id
         }
         return json_question
+
 
 class Answer(db.Model):
     """
@@ -851,9 +1026,30 @@ class Answer(db.Model):
     __tablename__ = 'answers'
     id = db.Column(db.Integer, primary_key=True)
     answer_content = db.Column(db.String(200))
-    create_time = db.Column(db.DateTime,index=True, default=datetime.utcnow)
-    author_id = db.Column(db.Integer,db.ForeignKey("users.id"))
-    question_id=db.Column(db.Integer,db.ForeignKey("coursequestions.id"))
+    create_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    question_id = db.Column(db.Integer, db.ForeignKey("coursequestions.id"))
+
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        import random
+        import forgery_py
+        random.seed()
+        user_count = User.query.count()
+        cq_count = CourseQuestion.query.count()
+        for i in range(count):
+            user_id = User.query.offset(random.randint(0, user_count - 1)).first().id
+            question_id = CourseQuestion.query.offset(random.randint(0, cq_count - 1)).first().id
+            answer = Answer(answer_content=forgery_py.lorem_ipsum.sentence(),
+                            create_time=forgery_py.date.date(),
+                            author_id=user_id,
+                            question_id=question_id)
+            db.session.add(answer)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     def __repr__(self):
         return '<Answer %r>' % self.content
@@ -861,9 +1057,20 @@ class Answer(db.Model):
     def to_json(self):
         json_answer = {
             'id': self.id,
-            "answer_content":self.answer_content,
-            "create_time":self.create_time.strftime('%Y-%m-%d %H:%M:%S'),
-            "author_id":self.author_id,
-            "question_id":self.question_id
+            "answer_content": self.answer_content,
+            "create_time": self.create_time.strftime('%Y-%m-%d %H:%M:%S'),
+            "author_id": self.author_id,
+            "question_id": self.question_id
         }
         return json_answer
+
+
+# class CourseScore(db.Model):
+#     __table_args__ = {'mysql_charset': 'utf8'}
+#     __tablename__ = 'coursescore'
+#     id = db.Column(db.Integer, primary_key=True)
+#     final_grade=db.Column(db.Integer,nullable=True)#可为空
+#     usual_grade=db.Column(db.Integer,nullable=True)#可为空
+#
+#     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+#     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))

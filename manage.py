@@ -17,9 +17,11 @@
 
 """
 import os
+
 COV = None
 if os.environ.get('XUEER_COVERAGE'):
     import coverage
+
     COV = coverage.coverage(branch=True, include='xueer/*')
     COV.start()
 
@@ -32,15 +34,13 @@ from flask import g
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 from xueer.models import Permission, Role, User, AnonymousUser, Courses, \
-    CourseCategories, CourseTypes, Comments, Teachers, Tags, Tips, \
-    CourseQuestion, Answer
-
+    CourseCategories, CoursesSubCategories, CourseTypes, Comments, Teachers, \
+    Tags, Tips, CourseQuestion, Answer
 
 # set encoding to utf-8
 # but reload is evil:)
 reload(sys)
 sys.setdefaultencoding('utf-8')
-
 
 manager = Manager(app)
 migrate = Migrate(app, db)
@@ -50,10 +50,13 @@ def make_shell_context():
     shell_ctx = dict(app=app, db=db, Permission=Permission, Role=Role,
                      User=User, AnonymousUser=AnonymousUser, Courses=Courses,
                      g=g, CourseCategories=CourseCategories,
+                     CoursesSubCategories=CoursesSubCategories,
                      CourseTypes=CourseTypes, Comments=Comments,
                      Teachers=Teachers, Tags=Tags, Tips=Tips,
                      CourseQuestion=CourseQuestion, Answer=Answer)
     return shell_ctx
+
+
 manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
@@ -77,7 +80,6 @@ def test(coverage=False):
     sys.exit(0)
 
 
-
 @manager.command
 def adduser():
     name = raw_input('Username> ')
@@ -87,10 +89,10 @@ def adduser():
 
     password = base64.b64encode(input_password)
     new = User(name=name, email=email,
-               password=password, role=role)
+               password=password, role_id=role)
     db.session.add(new)
     db.session.commit()
-    print "new user <{name}> created".format(name)
+    print "new user <%s> created" % name
 
 
 @manager.command
@@ -112,16 +114,17 @@ def set_score():
     def listToUnicode(target):
         """Convert words into unicode for matching"""
         count = 0
-        while(count<len(target)):
+        while (count < len(target)):
             target[count] = unicode(target[count])
             count += 1
         return target
+
     listToUnicode(pos_list)
     listToUnicode(neg_list)
 
     def parse_comment(comment):
         dismiss = ['b', 'c', 'r', 'uj', 'u', 'p', 'q', 'uz', 't', 'ul', 'k',
-                'f', 'ud', 'ug', 'uv']
+                   'f', 'ud', 'ug', 'uv']
         parsed = []
         pseg_cut = pseg.cut(comment.body)
         for word, flag in pseg_cut:
@@ -155,8 +158,8 @@ def set_score():
         x = [1, float(pos_count), float(neg_count)]
         feature_sum = 0
         for i in range(3):
-            feature_sum += theta[i]*x[i]
-        hypothesis = 1 / (1+math.e**-(feature_sum))
+            feature_sum += theta[i] * x[i]
+        hypothesis = 1 / (1 + math.e ** -(feature_sum))
 
         if 0 < hypothesis < 0.4:
             emotion = 0.0
@@ -195,5 +198,5 @@ def set_score():
 
 if __name__ == '__main__':
     if sys.argv[1] == 'test' or sys.argv[1] == 'lint':
-        os.environ['XUEER_CONFIG'] = 'test'
+        os.environ['XUEER_CONFIG'] = 'testing'
     manager.run()

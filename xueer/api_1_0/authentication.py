@@ -18,8 +18,8 @@ from . import api
 from ..models import User, AnonymousUser
 from .errors import unauthorized, not_found, server_error
 
-
 auth = HTTPBasicAuth()
+
 
 @auth.verify_password
 def verify_password(email_or_token, password):
@@ -47,7 +47,6 @@ def verify_password(email_or_token, password):
     g.current_user = user
     g.token_used = False
     return user.verify_password(password)
-
 
 
 @api.route('/token/', methods=['GET'])

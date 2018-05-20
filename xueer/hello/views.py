@@ -30,9 +30,9 @@ def add_tags(course):
     tags = request.form.get("tags").split()
     # add tag
     for tag in tags:
-        tag_in_db = Tags.query.filter_by(name=tag).first()
-        if tag_in_db:
-            tag_in_db.count += 1
+        add_tag = Tags.query.filter_by(name=tag).first()
+        if add_tag:
+            add_tag.count += 1
         else:
             add_tag = Tags(name=tag, count=1)
         db.session.add(add_tag)
@@ -43,12 +43,13 @@ def add_tags(course):
         course_tags = [tag.tags for tag in course.tags.all()]
         if get_tag in course_tags:
             course_tag = CourseTag.query.filter_by(
-                tag_id=get_tag.id, course_id=id,
+                tag_id=get_tag.id, course_id=course.id,
             ).first()
-            course_tag.count += 1
+            if course_tag:
+                course_tag.count += 1
         else:
             course_tag = CourseTag(
-                tag_id=get_tag.id, course_id=id, count=1
+                tag_id=get_tag.id, course_id=course.id, count=1
             )
         db.session.add(course_tag)
         db.session.commit()
@@ -75,11 +76,12 @@ def index():
         zhuan_top_list = sorted(Courses.query.filter_by(category_id=3).all(), key=lambda x: x.count, reverse=True)[:3]
         tong_top_list = sorted(Courses.query.filter_by(category_id=2).all(), key=lambda x:x.count, reverse=True)[:3]
         su_top_list = sorted(Courses.query.filter_by(category_id=4).all(), key=lambda x:x.count, reverse=True)[:3]
-        # hot_five = sorted(Courses.query.all)
+        hot_five = sorted(Courses.query.all(),key=lambda x:x.likes,reverse=True)[0:5]
         return render_template(
             "hello/desktop/pages/index.html", tips=tips,
             gong_top_list=gong_top_list, su_top_list=su_top_list,
-            zhuan_top_list=zhuan_top_list, tong_top_list=tong_top_list
+            zhuan_top_list=zhuan_top_list, tong_top_list=tong_top_list,
+            hot_five=hot_five
         )
 
 # placehold 路由
@@ -223,7 +225,6 @@ def register():
         return render_template("hello/mobile/index.html")
     else:
         return redirect(current_app.config["MUXIAUTH"] + "/auth/register/")
-
 
 @hello.route('/category/')
 def category():
