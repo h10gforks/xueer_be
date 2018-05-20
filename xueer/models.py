@@ -1065,12 +1065,12 @@ class Answer(db.Model):
         return json_answer
 
 
-class CourseScore(db.Model):
-    __table_args__ = {'mysql_charset': 'utf8'}
-    __tablename__ = 'coursescore'
-    id = db.Column(db.Integer, primary_key=True)
-    final_grade=db.Column(db.Integer,nullable=True)#可为空
-    usual_grade=db.Column(db.Integer,nullable=True)#可为空
-
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))
+# class CourseScore(db.Model):
+#     __table_args__ = {'mysql_charset': 'utf8'}
+#     __tablename__ = 'coursescore'
+#     id = db.Column(db.Integer, primary_key=True)
+#     final_grade=db.Column(db.Integer,nullable=True)#可为空
+#     usual_grade=db.Column(db.Integer,nullable=True)#可为空
+#
+#     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+#     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))
