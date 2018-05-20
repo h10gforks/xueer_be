@@ -411,6 +411,20 @@ class Courses(db.Model):
                 db.session.rollback()
 
     @property
+    def average_usual_score(self):
+        from sqlalchemy.sql import func
+        average=Comments.query.with_entities(func.avg(Comments.usual_score)).\
+            filter(Comments.course_id == self.id and Comments.usual_score is not None)
+        return int(average[0][0])
+
+    @property
+    def average_final_score(self):
+        from sqlalchemy.sql import func
+        average = Comments.query.with_entities(func.avg(Comments.final_score)). \
+            filter(Comments.course_id == self.id and Comments.final_score is not None)
+        return int(average[0][0])
+
+    @property
     def liked(self):
         token_headers = request.headers.get('authorization', None)
         if token_headers:
@@ -470,7 +484,9 @@ class Courses(db.Model):
                 id=self.category_id).first().name,
             'sub_category': sub_category,
             'credit_category': credit_category,
-            'views': self.count  # 浏览量其实是评论数
+            'views': self.count,  # 浏览量其实是评论数
+            'average_final_score':self.average_final_score,
+            'average_usual_score':self.average_usual_score
         }
         return json_courses
 
@@ -498,7 +514,9 @@ class Courses(db.Model):
             'main_category': CourseCategories.query.filter_by(
                 id=self.category_id).first().name,
             'sub_category': sub_category,
-            'credit_category': credit_category
+            'credit_category': credit_category,
+            'average_final_score': self.average_final_score,
+            'average_usual_score': self.average_usual_score
         }
         return json_courses2
 
@@ -638,6 +656,8 @@ class Comments(db.Model):
     __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
+    usual_score=db.Column(db.Integer,nullable=True)
+    final_score=db.Column(db.Integer,nullable=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     # user外键关联到user表的username
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -711,6 +731,8 @@ class Comments(db.Model):
             'avatar': 'http://7xj431.com1.z0.glb.clouddn.com/1-140G2160520962.jpg',
             'date': self.time,
             'body': self.body,
+            'usual_score':self.usual_score,
+            'final_score':self.final_score,
             'is_useful': self.is_useful,
             'likes': self.likes,
             'liked': self.liked,
@@ -721,10 +743,15 @@ class Comments(db.Model):
 
     @staticmethod
     def from_json(json_comments):
+        print(json_comments)
         body = json_comments.get('body')
+        final_score=int(json_comments.get("final_score"))
+        usual_score=int(json_comments.get("usual_score"))
+        print(type(final_score))
+        print(usual_score)
         if body is None or body == '':
             raise ValidationError('评论不能为空哦！')
-        return Comments(body=body)
+        return Comments(body=body,final_score=final_score,usual_score=usual_score)
 
     def __repr__(self):
         return '<Comments %r>' % self.id
@@ -1064,13 +1091,3 @@ class Answer(db.Model):
         }
         return json_answer
 
-
-# class CourseScore(db.Model):
-#     __table_args__ = {'mysql_charset': 'utf8'}
-#     __tablename__ = 'coursescore'
-#     id = db.Column(db.Integer, primary_key=True)
-#     final_grade=db.Column(db.Integer,nullable=True)#可为空
-#     usual_grade=db.Column(db.Integer,nullable=True)#可为空
-#
-#     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-#     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))
