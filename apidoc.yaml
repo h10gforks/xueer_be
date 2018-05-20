@@ -376,7 +376,7 @@ paths:
       tags:
       - comment
       summary: 对某一课程进行评论
-      description: 登录之后操作,tag字段为给该课程添加的标签，为可选字段，若有多个tag,则每个tag用一个空格隔开
+      description: 登录之后操作,tag字段为给该课程添加的标签，为可选字段，若有多个tag,则每个tag用一个空格隔开,final_score,usual_score也都是可选字段
       consumes:
       - application/json
       produces:
@@ -398,6 +398,10 @@ paths:
               tags:
                 type: string
                 description: 以一个空格分隔的多个标签
+              final_score:
+                type: integer
+              usual_score:
+                type: integer
       responses:
         201:
           description: 创建评论成功，返回新创建的评论的id
@@ -1724,6 +1728,12 @@ definitions:
       like_url:
         type: string
         description: 给该评论点赞的需要请求的url
+      usual_score:
+        type: integer
+        description: 平时分
+      final_score:
+        type: integer
+        description: 期末分
 
   Course_resp:
     type: object
@@ -1773,6 +1783,12 @@ definitions:
       views:
         type: integer
         description: 评论数
+      average_final_score:
+        type: integer
+        description: 平均期末分数
+      average_usual_score: 
+        type: integer
+        description: 平均平时分
 
 
   Course_req:
