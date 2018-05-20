@@ -152,6 +152,8 @@ def get_hot_comments(id):
 def new_comment(id):
     if request.method == 'POST':
         comment = Comments.from_json(request.get_json())
+        print("fffffffffffff")
+        print(g.current_user.id)
         comment.user_id = g.current_user.id
         comment.course_id = id
         db.session.add(comment)
