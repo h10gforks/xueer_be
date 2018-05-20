@@ -12,19 +12,20 @@ import re
 from base64 import b64encode
 from flask import url_for
 from xueer import create_app, db
-from xueer.models import User, Role, Courses, Comments
 from xueer.models import Tips
-from xueer.models import CourseQuestion, Answer
+from xueer.models import CourseQuestion, Answer,Tags
 from xueer.api_1_0.kmp import kmp
+from flask import abort
 from flask_sqlalchemy import SQLAlchemy
-
+from xueer.models import User, Role, Courses, Comments,CourseCategories,CoursesSubCategories,CourseTypes
 
 class APITestCase(unittest.TestCase):
     def setUp(self):
         """
         初始化测试
         """
-        self.app = create_app('testing')
+        print("SETUP...............")
+        self.app = create_app("testing")
         self.app.config.update(
             SERVER_NAME='localhost:5000',
             debug=False
@@ -34,12 +35,23 @@ class APITestCase(unittest.TestCase):
         self.app_context.push()
         db.create_all()
         Role.insert_roles()
+        # CourseTypes.generate_fake()
+        # CourseCategories.generate_fake()
+        # CoursesSubCategories.generate_fake()
+        # User.generate_fake()
+        # Courses.generate_fake()
+        # Tips.generate_fake()
+        # Comments.generate_fake()
+        # CourseQuestion.generate_fake()
+        # Answer.generate_fake()
+        # Tags.generate_fake()
         self.client = self.app.test_client()
 
     def tearDown(self):
         """
         测试结束, 清空环境
         """
+        print("TEARDOWN...................")
         db.session.remove()
         db.drop_all()
         self.app_context.pop()

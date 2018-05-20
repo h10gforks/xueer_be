@@ -34,8 +34,8 @@ from flask import g
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 from xueer.models import Permission, Role, User, AnonymousUser, Courses, \
-    CourseCategories, CourseTypes, Comments, Teachers, Tags, Tips, \
-    CourseQuestion, Answer
+    CourseCategories, CoursesSubCategories, CourseTypes, Comments, Teachers, \
+    Tags, Tips, CourseQuestion, Answer
 
 # set encoding to utf-8
 # but reload is evil:)
@@ -50,6 +50,7 @@ def make_shell_context():
     shell_ctx = dict(app=app, db=db, Permission=Permission, Role=Role,
                      User=User, AnonymousUser=AnonymousUser, Courses=Courses,
                      g=g, CourseCategories=CourseCategories,
+                     CoursesSubCategories=CoursesSubCategories,
                      CourseTypes=CourseTypes, Comments=Comments,
                      Teachers=Teachers, Tags=Tags, Tips=Tips,
                      CourseQuestion=CourseQuestion, Answer=Answer)
@@ -88,7 +89,7 @@ def adduser():
 
     password = base64.b64encode(input_password)
     new = User(name=name, email=email,
-               password=password, role=role)
+               password=password, role_id=role)
     db.session.add(new)
     db.session.commit()
     print "new user <%s> created" % name
@@ -197,5 +198,5 @@ def set_score():
 
 if __name__ == '__main__':
     if sys.argv[1] == 'test' or sys.argv[1] == 'lint':
-        os.environ['XUEER_CONFIG'] = 'test'
+        os.environ['XUEER_CONFIG'] = 'testing'
     manager.run()
