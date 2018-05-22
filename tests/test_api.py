@@ -35,9 +35,9 @@ class APITestCase(unittest.TestCase):
         self.app_context.push()
         db.create_all()
         Role.insert_roles()
-        # CourseTypes.generate_fake()
-        # CourseCategories.generate_fake()
-        # CoursesSubCategories.generate_fake()
+        CourseTypes.generate_fake()
+        CourseCategories.generate_fake()
+        CoursesSubCategories.generate_fake()
         # User.generate_fake()
         # Courses.generate_fake()
         # Tips.generate_fake()
@@ -265,7 +265,7 @@ class APITestCase(unittest.TestCase):
 
     def test_write_course_comment(self):
         """
-        测试编写课程评论
+        测试编写课程评论,以及课程平均成绩的计算
         """
         u = User(
             email='neo1218@yeah.net',
@@ -287,14 +287,39 @@ class APITestCase(unittest.TestCase):
                                })
                                )
 
+        res = self.client.get(url_for('api.get_course_id', id=1))
+        average_final_score = json.loads(res.data).get("average_final_score")
+        average_usual_score = json.loads(res.data).get("average_usual_score")
+        self.assertTrue(average_usual_score == None)
+        self.assertTrue(average_final_score == None)
+
         res = self.client.post(url_for('api.new_comment', id=1),
                                headers=self.get_token_headers(token),
                                data=json.dumps({
                                    'body': 'this is a test comment',
-                                   'tags': ''
+                                   'tags': 'tag1 tag2',
+                                   'final_score': 80,
+                                   'usual_score':70
                                })
                                )
         self.assertTrue(res.status_code == 201)
+
+        res = self.client.post(url_for('api.new_comment', id=1),
+                               headers=self.get_token_headers(token),
+                               data=json.dumps({
+                                   'body': 'this is another test comment',
+                                   'tags': 'tag1 tag2 tag3',
+                                   'final_score': 90,
+                                   'usual_score': 60
+                               })
+                               )
+        self.assertTrue(res.status_code == 201)
+
+        res=self.client.get(url_for('api.get_course_id',id=1))
+        average_final_score=json.loads(res.data).get("average_final_score")
+        average_usual_score=json.loads(res.data).get("average_usual_score")
+        self.assertTrue(average_usual_score==65)
+        self.assertTrue(average_final_score==85)
 
     def test_like_comment(self):
         """

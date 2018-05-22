@@ -415,14 +415,14 @@ class Courses(db.Model):
         from sqlalchemy.sql import func
         average=Comments.query.with_entities(func.avg(Comments.usual_score)).\
             filter(Comments.course_id == self.id and Comments.usual_score is not None)
-        return 0 if average[0][0] is None else int(average[0][0])
+        return None if average[0][0] is None else int(average[0][0])
 
     @property
     def average_final_score(self):
         from sqlalchemy.sql import func
         average = Comments.query.with_entities(func.avg(Comments.final_score)). \
             filter(Comments.course_id == self.id and Comments.final_score is not None)
-        return 0 if average[0][0] is None else int(average[0][0])
+        return None if average[0][0] is None else int(average[0][0])
 
 
     @property
@@ -746,10 +746,14 @@ class Comments(db.Model):
     def from_json(json_comments):
         print(json_comments)
         body = json_comments.get('body')
-        final_score=int(json_comments.get("final_score"))
-        usual_score=int(json_comments.get("usual_score"))
-        print(type(final_score))
-        print(usual_score)
+        if json_comments.get("final_score") is not None:
+            final_score=int(json_comments.get("final_score"))
+        else:
+            final_score=None
+        if json_comments.get("usual_score") is not None:
+            usual_score=int(json_comments.get("usual_score"))
+        else:
+            usual_score=None
         if body is None or body == '':
             raise ValidationError('评论不能为空哦！')
         return Comments(body=body,final_score=final_score,usual_score=usual_score)
