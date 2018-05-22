@@ -415,14 +415,15 @@ class Courses(db.Model):
         from sqlalchemy.sql import func
         average=Comments.query.with_entities(func.avg(Comments.usual_score)).\
             filter(Comments.course_id == self.id and Comments.usual_score is not None)
-        return int(average[0][0])
+        return 0 if average[0][0] is None else int(average[0][0])
 
     @property
     def average_final_score(self):
         from sqlalchemy.sql import func
         average = Comments.query.with_entities(func.avg(Comments.final_score)). \
             filter(Comments.course_id == self.id and Comments.final_score is not None)
-        return int(average[0][0])
+        return 0 if average[0][0] is None else int(average[0][0])
+
 
     @property
     def liked(self):
