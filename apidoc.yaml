@@ -143,7 +143,6 @@ paths:
         500:
           description: 服务器内部错误
       security:
-      - basic: []
       - token: []
         # - all
   /main_category/{id}/:
@@ -175,9 +174,7 @@ paths:
           description: 根据传入的id没有找到对应的课程主分类
         500:
           description: 服务器错误
-      security:
-      - basic: []
-      
+      security:  
       - token: []
         
 
@@ -226,7 +223,6 @@ paths:
         500:
           description: 服务器内部错误
       security:
-      - basic: []
       - token: []
   
   /sub_category/{id}/:
@@ -262,7 +258,6 @@ paths:
         404:
           description: 更具传入的id找不到二级课程分类对象
       security:
-      - basic: []
       - token: []
 
 
@@ -292,7 +287,6 @@ paths:
             items:
               $ref: '#/definitions/Comment'
       security:
-      - basic: []
       - token: []
 
   /comments/{id}/:
@@ -316,7 +310,6 @@ paths:
         400:
           description: 通过id未找到该评论
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -337,7 +330,6 @@ paths:
         200:
           description: 成功删除，并且更新了课程所对应的评论数
       security:
-      - basic: []
       - token: []
 
 
@@ -408,7 +400,6 @@ paths:
         404:
           description: 未找到该课程
       security:
-      - basic: []
       - token: []
 
   /courses/{id}/comments/hot/:
@@ -491,7 +482,6 @@ paths:
         201:
           description: OK,成功处理请求，并且更新了该运营文章的评论数，返回新创建的评论的id
       security:
-      - basic: []
       - token: []
   /tip/{tid}/comments/{id}/:
     delete:
@@ -516,7 +506,6 @@ paths:
         200:
           description: OK,成功处理请求，并且更新了该运营文章的评论数，返回新创建的评论的id
       security:
-      - basic: []
       - token: []
 
   /courses/:
@@ -578,7 +567,6 @@ paths:
         201:
           description: ok
       security:
-      - basic: []
       - token: []
 
 
@@ -646,7 +634,6 @@ paths:
         200:
           description: ok
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -669,7 +656,6 @@ paths:
         200:
           description: ok
       security:
-      - basic: []
       - token: []
   
   /tags/{id}/courses/:
@@ -726,7 +712,6 @@ paths:
         201:
           description: 点赞成功
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -747,7 +732,6 @@ paths:
         403:
           description: 还未给该课程点赞
       security:
-      - basic: []
       - token: []
       
   /comments/{id}/like/:
@@ -771,7 +755,6 @@ paths:
         201:
           description: 点赞成功
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -794,7 +777,6 @@ paths:
         404:
           description: 未找到该评论
       security:
-      - basic: []
       - token: []
   /tip/{id}/like/:
     post:
@@ -817,7 +799,6 @@ paths:
         201:
           description: 点赞成功
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -840,7 +821,6 @@ paths:
         404:
           description: 未找到该运营文章
       security:
-      - basic: []
       - token: []
   /memcached/:
     post:
@@ -859,7 +839,6 @@ paths:
         200:
           description: OK
       security:
-      - basic: []
       - token: []
   /memcached/{id}/:
     post:
@@ -878,7 +857,6 @@ paths:
         404:
           description: 未找到该课程
       security:
-      - basic: []
       - token: []
     delete:
       tags:
@@ -896,7 +874,6 @@ paths:
         404:
           description: 未找到该课程
       security:
-      - basic: []
       - token: []
 
   /course/{id}/question/:
@@ -925,7 +902,6 @@ paths:
         404:
           description: 未找到该课程
       security:
-        - basic: []
         - token: []
   
   /question/{id}/:
@@ -945,7 +921,6 @@ paths:
         404:
           description: 未找到该提问
       security:
-        - basic: []
         - token: []
       
   /question/{id}/answer/:
@@ -974,7 +949,6 @@ paths:
         404:
           description: 未找到该提问
       security:
-        - basic: []
         - token: []
 
   /answer/{id}/:
@@ -994,7 +968,6 @@ paths:
         404:
           description: 未找到该回答
       security:
-        - basic: []
         - token: []
 
   /course/{id}/questions/:
@@ -1064,7 +1037,6 @@ paths:
             items:
               $ref: '#/definitions/Question'
       security:
-        - basic: []
         - token: []
 
   /answers/:
@@ -1092,7 +1064,6 @@ paths:
             items:
               $ref: '#/definitions/Answer'
       security:
-        - basic: []
         - token: []
   
   /tips/:
@@ -1149,7 +1120,6 @@ paths:
         201:
           description: OK
       security:
-        - basic: []
         - token: []
 
   /tips/{id}/:
@@ -1205,7 +1175,6 @@ paths:
         200:
           description: OK
       security:
-        - basic: []
         - token: []
     delete:
       tags:
@@ -1225,7 +1194,6 @@ paths:
         200:
           description: OK
       security:
-        - basic: []
         - token: []
   /tags/:
     get:
@@ -1295,7 +1263,6 @@ paths:
         200:
           description: OK
       security:
-        - basic: []
         - token: []
   /courses/{id}/tags/:
     get:
@@ -1399,7 +1366,6 @@ paths:
               type: string
               description: 获取该用户信息的请求地址
       security:
-        - basic: []
         - token: []
   /users/{id}/:
     get:
@@ -1462,7 +1428,6 @@ paths:
         200:
           description: ok
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -1485,7 +1450,6 @@ paths:
         200:
           description: ok
       security:
-      - basic: []
       - token: []
       
   /courses/{id}/users/:
@@ -1662,7 +1626,6 @@ paths:
                 type: integer
                 description: 全站课程总数
       security:
-      - basic: []
       - token: []
 
 
