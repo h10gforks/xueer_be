@@ -768,7 +768,7 @@ class APITestCase(unittest.TestCase):
                                headers=self.get_token_headers(user_token),
                                data=json.dumps({
                                    "username": "andrewpqc",
-                                   "password": "andrewpqc",
+                                   "password": b64encode("andrewpqc"),
                                    "email": "hhhh@163.com",
                                    "roleid": "3"
                                }))
