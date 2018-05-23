@@ -744,7 +744,6 @@ class Comments(db.Model):
 
     @staticmethod
     def from_json(json_comments):
-        print(json_comments)
         body = json_comments.get('body')
         if json_comments.get("final_score") is not None:
             final_score=int(json_comments.get("final_score"))
@@ -900,6 +899,8 @@ class Tips(db.Model):
         backref=db.backref('tips', lazy="dynamic"),
         lazy='dynamic', cascade='all'
     )
+    comment = db.relationship('Comments', backref="tip",
+                              lazy='dynamic', cascade='all')
 
     @staticmethod
     def generate_fake(count=100):

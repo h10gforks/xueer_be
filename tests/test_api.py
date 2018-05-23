@@ -13,18 +13,18 @@ from base64 import b64encode
 from flask import url_for
 from xueer import create_app, db
 from xueer.models import Tips
-from xueer.models import CourseQuestion, Answer,Tags
+from xueer.models import CourseQuestion, Answer, Tags
 from xueer.api_1_0.kmp import kmp
 from flask import abort
 from flask_sqlalchemy import SQLAlchemy
-from xueer.models import User, Role, Courses, Comments,CourseCategories,CoursesSubCategories,CourseTypes
+from xueer.models import User, Role, Courses, Comments, CourseCategories, CoursesSubCategories, CourseTypes
+
 
 class APITestCase(unittest.TestCase):
     def setUp(self):
         """
         初始化测试
         """
-        print("SETUP...............")
         self.app = create_app("testing")
         self.app.config.update(
             SERVER_NAME='localhost:5000',
@@ -51,7 +51,6 @@ class APITestCase(unittest.TestCase):
         """
         测试结束, 清空环境
         """
-        print("TEARDOWN...................")
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
@@ -190,6 +189,21 @@ class APITestCase(unittest.TestCase):
         res = self.client.get(url_for('api.get_tip_id', id=1),
                               content_type='application/json'
                               )
+
+        self.assertTrue(res.status_code == 200)
+
+        # test to post a comment to a tip
+        res = self.client.post(url_for("api.new_tip_comment", id=1),
+                               headers=self.get_token_headers(admin_token),
+                               data=json.dumps({
+                                   'body': 'this is a test comment for tip',
+                                   'tags': ''
+                               }))
+        self.assertTrue(res.status_code == 201)
+
+        # test delete a comment of tip
+        res = self.client.delete(url_for("api.delete_tip_comment", tid=1, id=1),
+                                 headers=self.get_token_headers(admin_token))
         self.assertTrue(res.status_code == 200)
 
     def test_like_tip(self):
@@ -263,6 +277,36 @@ class APITestCase(unittest.TestCase):
                                )
         self.assertTrue(res.status_code == 201)
 
+        # test get course
+        res = self.client.get(url_for("api.get_courses"))
+        self.assertTrue(res.status_code == 200)
+
+        res = self.client.get(url_for("api.get_courses", gg_cat=1, sort='view'))
+        self.assertTrue(res.status_code == 200)
+
+        # test get course by id
+        res = self.client.get(url_for("api.get_course_id", id=5))
+        self.assertTrue(res.status_code == 404)
+
+        res = self.client.get(url_for("api.get_course_id", id=1))
+        self.assertTrue(res.status_code == 200)
+
+        # test admin update a course
+        res = self.client.put(url_for("api.put_course", id=1),
+                              headers=self.get_token_headers(token),
+                              data=json.dumps({"name": "new test course name",
+                                               "available": False})
+                              )
+        self.assertTrue(res.status_code == 200)
+        updated_course = Courses.query.get_or_404(1)
+        self.assertTrue(updated_course.name == "new test course name")
+        self.assertTrue(updated_course.available == False)
+
+        # test delete course
+        res = self.client.delete(url_for("api.delete_course", id=1),
+                                 headers=self.get_token_headers(token))
+        self.assertTrue(res.status_code == 200)
+
     def test_write_course_comment(self):
         """
         测试编写课程评论,以及课程平均成绩的计算
@@ -299,10 +343,29 @@ class APITestCase(unittest.TestCase):
                                    'body': 'this is a test comment',
                                    'tags': 'tag1 tag2',
                                    'final_score': 80,
-                                   'usual_score':70
+                                   'usual_score': 70
                                })
                                )
         self.assertTrue(res.status_code == 201)
+
+        # test admin to get all comments
+        res = self.client.get(url_for("api.get_comments"),
+                              headers=self.get_token_headers(token))
+        self.assertTrue(res.status_code == 200)
+
+        # test login user to get comment by id
+        res = self.client.get(url_for("api.get_id_comment", id=1),
+                              headers=self.get_token_headers(token))
+        self.assertTrue(res.status_code == 200)
+
+        # test get all the comment of a course
+        res = self.client.get(url_for("api.get_courses_id_comments", id=1),
+                              headers=self.get_token_headers(token))
+        self.assertTrue(res.status_code == 200)
+
+        # test get hot comments
+        res = self.client.get(url_for("api.get_hot_comments", id=1))
+        self.assertTrue(res.status_code == 200)
 
         res = self.client.post(url_for('api.new_comment', id=1),
                                headers=self.get_token_headers(token),
@@ -315,11 +378,16 @@ class APITestCase(unittest.TestCase):
                                )
         self.assertTrue(res.status_code == 201)
 
-        res=self.client.get(url_for('api.get_course_id',id=1))
-        average_final_score=json.loads(res.data).get("average_final_score")
-        average_usual_score=json.loads(res.data).get("average_usual_score")
-        self.assertTrue(average_usual_score==65)
-        self.assertTrue(average_final_score==85)
+        res = self.client.get(url_for('api.get_course_id', id=1))
+        average_final_score = json.loads(res.data).get("average_final_score")
+        average_usual_score = json.loads(res.data).get("average_usual_score")
+        self.assertTrue(average_usual_score == 65)
+        self.assertTrue(average_final_score == 85)
+
+        # test admin  to delete a comment
+        res = self.client.delete(url_for("api.delete_comment", id=1),
+                                 headers=self.get_token_headers(token))
+        self.assertTrue(res.status_code == 200)
 
     def test_like_comment(self):
         """
@@ -558,3 +626,182 @@ class APITestCase(unittest.TestCase):
                                headers=self.get_token_headers(token),
                                data=json.dumps({}))
         self.assertTrue(res2.status_code == 200)
+
+    def test_category(self):
+        """
+        测试课程分类相关api
+        由于在SetUp函数中已经生成了主分类，二级分类，学分分类相关数据，
+        所以此处只测试获取，更新操作
+        """
+        # create an admin user
+        u = User(
+            email='admin@admin.com',
+            username='admin',
+            password=b64encode('muxi304'),
+            role_id=2
+        )
+        db.session.add(u)
+        db.session.commit()
+
+        user_token_json = self.client.get(
+            url_for('api.get_token'),
+            headers=self.get_api_headers(
+                'admin@admin.com', 'muxi304'
+            )
+        )
+        user_token = eval(user_token_json.data).get('token')
+
+        # test get main category
+        res1 = self.client.get(url_for("api.category"))
+        self.assertTrue(res1.status_code == 200)
+
+        # test admin create a main category
+        res2 = self.client.post(url_for("api.new_category"),
+                                headers=self.get_token_headers(user_token),
+                                data=json.dumps({
+                                    'category_name': 'test main category',
+                                    'id': 7
+                                })
+                                )
+        self.assertTrue(res2.status_code == 201)
+        self.assertTrue(eval(res2.data).get("test main category") == 7)
+
+        # test admin to update a main category
+        res3 = self.client.put(url_for("api.update_category", id=7),
+                               headers=self.get_token_headers(user_token),
+                               data=json.dumps({'name': 'updated test main category'}))
+        self.assertTrue(res3.status_code == 200)
+        self.assertTrue(eval(res3.data).get("updated test main category") == 7)
+
+        # test get sub category
+        res4 = self.client.get(url_for('api.sub_category', main_category_id=1))
+        self.assertTrue(res4.status_code == 200)
+
+        # test admin create a sub category
+        res5 = self.client.post(url_for("api.new_sub_category"),
+                                headers=self.get_token_headers(user_token),
+                                data=json.dumps({
+                                    'name': 'test sub category',
+                                    'id': 1
+                                })
+                                )
+        self.assertTrue(res5.status_code == 201)
+
+        # test admin to update a sub category
+        res6 = self.client.put(url_for("api.update_sub_category", id=1),
+                               headers=self.get_token_headers(user_token),
+                               data=json.dumps({'name': 'updated test main category',
+                                                'main_category_id': 2}))
+        self.assertTrue(res6.status_code == 200)
+
+        # test get credit category info
+        res7 = self.client.get(url_for("api.credit_categories"))
+        self.assertTrue(res7.status_code == 200)
+
+    def test_statistics(self):
+        # create an admin user
+        u = User(
+            email='admin@admin.com',
+            username='admin',
+            password=b64encode('muxi304'),
+            role_id=2
+        )
+        db.session.add(u)
+        db.session.commit()
+
+        user_token_json = self.client.get(
+            url_for('api.get_token'),
+            headers=self.get_api_headers(
+                'admin@admin.com', 'muxi304'
+            )
+        )
+        user_token = eval(user_token_json.data).get('token')
+
+        res = self.client.get(url_for("api.get_statistics"),
+                              headers=self.get_token_headers(user_token))
+        self.assertTrue(res.status_code == 200)
+
+    def test_about_user(self):
+        """
+        用户信息的增删改查
+        """
+
+        # 首先创建一个admin用户，并且获取该用户的token
+        u = User(
+            email='admin@admin.com',
+            username='admin',
+            password=b64encode('muxi304'),
+            role_id=2
+        )
+        db.session.add(u)
+        db.session.commit()
+
+        user_token_json = self.client.get(
+            url_for('api.get_token'),
+            headers=self.get_api_headers(
+                'admin@admin.com', 'muxi304'
+            )
+        )
+        user_token = eval(user_token_json.data).get('token')
+
+        # 生成100条虚假用户信息
+        User.generate_fake()
+
+        # test admin get users
+        res = self.client.get(url_for("api.get_users"),
+                              headers=self.get_token_headers(user_token))
+        self.assertTrue(res.status_code == 200)
+
+        res = self.client.get(url_for("api.get_users", roleid=1),
+                              headers=self.get_token_headers(user_token))
+        self.assertTrue(res.status_code == 200)
+
+        # test get user by id
+        res = self.client.get(url_for("api.get_user_id", id=10))
+        self.assertTrue(res.status_code == 200)
+
+        res = self.client.get(url_for("api.get_user_id", id=1000))
+        self.assertTrue(res.status_code == 404)
+
+        # test admin create user
+        res = self.client.post(url_for("api.new_user"),
+                               headers=self.get_token_headers(user_token),
+                               data=json.dumps({
+                                   "username": "andrewpqc",
+                                   "password": "andrewpqc",
+                                   "email": "hhhh@163.com",
+                                   "roleid": "3"
+                               }))
+        self.assertTrue(res.status_code == 201)
+        new_user_id = int(eval(res.data).get("id"))
+
+        # update user info
+        res = self.client.put(url_for("api.update_user", id=new_user_id),
+                              headers=self.get_token_headers(user_token),
+                              data=json.dumps({
+                                  "email": "3480437308@qq.com",
+                                  "roleid": 2
+                              }))
+        self.assertTrue(res.status_code == 200)
+        u = User.query.get_or_404(new_user_id)
+        self.assertTrue(u.role_id == 2)
+        self.assertTrue(u.email == "3480437308@qq.com")
+
+        # test delete user
+        res = self.client.delete(url_for("api.delete_user", id=new_user_id),
+                                 headers=self.get_token_headers(user_token))
+        self.assertTrue(res.status_code == 200)
+
+    def test_cache(self):
+        """
+        缓存测试
+        测试环境没有配置redis,暂时无法测试
+        """
+        pass
+
+    def test_search(self):
+        """
+        搜索测试
+        测试环境没有配置redis,暂时无法测试
+        """
+        pass
