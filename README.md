@@ -36,7 +36,7 @@
 5. 学而主仓库: [xueer_be](https://github.com/Muxi-Studio/xueer_be)
 6. 学而静态文件仓库: [xueer_static](https://github.com/Muxi-Studio/xueer_static)
 
-### 2. 搭建
+### 2. 部署
 1. 登录服务器
 2. 切换到root用户的 `~` 目录
 3. 进入`xueer`目录（没有的话自己建一个）
@@ -48,6 +48,9 @@
 9. 重启`nginx`的pods
 10. 检查应用是否正常运行
 11. 登出服务器
+
+注：每次主分支代码更新，阿里云镜像就会自动重新构建，只需要登上k8s集群删除学而对应的deploument,
+然后重建，最新代码即可部署成功
 
 这样就搭建起了一个全自动+自带监控的学而。
 
@@ -65,7 +68,7 @@
 ### 学而管理后台📝 源码
 + 管理后台源码: https://github.com/Muxi-Studio/xueer_management
 
-### 华中师范大学```(ง •_•)ง``[木犀团队](http://muxistudio.com)
+### 华中师范大学```(ง •_•)ง``[木犀团队](http://www.muxixyz.com)
 ![muxi](https://avatars2.githubusercontent.com/u/10476331?v=3&s=200) <br/>
 <hr/>
 
