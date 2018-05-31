@@ -32,6 +32,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeSerializer as Serializer
 from .exceptions import ValidationError
 import base64
+import requests
+import os
 
 
 class Permission:
@@ -110,6 +112,7 @@ UCMLike = db.Table(
               db.ForeignKey('comments.id', ondelete="CASCADE"))
 )
 
+
 UTLike = db.Table(
     'user_tips_like',
     db.Column('user_id', db.Integer,
@@ -117,6 +120,7 @@ UTLike = db.Table(
     db.Column('tips_id', db.Integer,
               db.ForeignKey('tips.id', ondelete="CASCADE"))
 )
+
 
 
 class CourseTag(db.Model):
@@ -139,6 +143,7 @@ class CourseTag(db.Model):
     count = db.Column(db.Integer, default=0)
 
 
+
 class User(UserMixin, db.Model):
     """
     User: 用户
@@ -153,6 +158,7 @@ class User(UserMixin, db.Model):
     :var comments: 关系, 多对一, 用户发表的评论
     :var phone: 电话
     :var school: 学院
+    : var recommend_count：当前用户推荐来的用户的数量
 
     :property password: 不允许读取用户密码明文
     :property password set: 设置用户密码, 单向加密hash值
@@ -185,6 +191,9 @@ class User(UserMixin, db.Model):
     phone = db.Column(db.String(200), default=None)
     school = db.Column(db.String(200), index=True, default=None)
     avatar = db.Column(db.String(200))
+    recommend_count=db.Column(db.Integer,default=0)
+
+
 
     @staticmethod
     def generate_fake(count=100):
@@ -231,6 +240,15 @@ class User(UserMixin, db.Model):
         )
         return s.dumps({'id': self.id})
 
+    def generate_private_promotion_link(self):
+        import json
+        X_API_Key = os.getenv("X_API_KEY")
+        if not X_API_Key:
+            print("请设置X_API_KEY环境变量")
+        headers = {'X-API-Key': X_API_Key}
+        r = requests.post("https://kutt.it/api/url/submit", headers=headers,data={"target": "https://frontendregisterpage.com/?id="+str(self.id)})
+        return json.loads(r.content).get("shortUrl")
+
     @staticmethod
     def verify_auth_token(token):
         """verify the user with token"""
@@ -260,6 +278,7 @@ class User(UserMixin, db.Model):
             'major': self.major,
             'phone': self.phone,
             'school': self.school,
+            "recommand_count": self.recommend_count
         }
         return json_user
 
@@ -267,7 +286,8 @@ class User(UserMixin, db.Model):
         json_user = {
             'id': self.id,
             'username': self.username,
-            'email': self.email
+            'email': self.email,
+            'recommand_count': self.recommend_count
         }
         return json_user
 
@@ -281,6 +301,13 @@ class User(UserMixin, db.Model):
         major = json_user.get('major')
         phone = json_user.get('phone')
         school = json_user.get('school')
+        recommend_id=json_user.get("recommender_id")
+        if recommend_id is not None:
+            recommender=User.query.get_or_404(int(recommender_id))
+            recommender.recommend_count+=1
+            db.session.add(recommender)
+            db.session.commit()
+
         if username is None or username == '':
             raise ValidationError('用户名不能为空哦！')
         if password is None or password == '':
