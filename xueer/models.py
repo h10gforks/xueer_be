@@ -246,7 +246,7 @@ class User(UserMixin, db.Model):
         if not X_API_Key:
             print("请设置X_API_KEY环境变量")
         headers = {'X-API-Key': X_API_Key}
-        r = requests.post("https://kutt.it/api/url/submit", headers=headers,data={"target": "https://frontendregisterpage.com/?id="+str(self.id)})
+        r = requests.post("https://kutt.it/api/url/submit", headers=headers,data={"target": "https://xueer.muxixyz.com/promotion/register/?id="+str(self.id)})
         return json.loads(r.content).get("shortUrl")
 
     @staticmethod
