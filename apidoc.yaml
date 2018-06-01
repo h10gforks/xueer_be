@@ -58,8 +58,13 @@ tags:
 - name: search
   description: 搜索相关操作
 
+- name: promotion
+  description: 木犀推广相关API
+
 - name: other
   description: 其他api操作
+
+
 # - name: user
 #   description: Operations about user
 #   externalDocs:
@@ -143,7 +148,6 @@ paths:
         500:
           description: 服务器内部错误
       security:
-      - basic: []
       - token: []
         # - all
   /main_category/{id}/:
@@ -175,9 +179,7 @@ paths:
           description: 根据传入的id没有找到对应的课程主分类
         500:
           description: 服务器错误
-      security:
-      - basic: []
-      
+      security:  
       - token: []
         
 
@@ -226,7 +228,6 @@ paths:
         500:
           description: 服务器内部错误
       security:
-      - basic: []
       - token: []
   
   /sub_category/{id}/:
@@ -262,7 +263,6 @@ paths:
         404:
           description: 更具传入的id找不到二级课程分类对象
       security:
-      - basic: []
       - token: []
 
 
@@ -292,7 +292,6 @@ paths:
             items:
               $ref: '#/definitions/Comment'
       security:
-      - basic: []
       - token: []
 
   /comments/{id}/:
@@ -316,7 +315,6 @@ paths:
         400:
           description: 通过id未找到该评论
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -337,7 +335,6 @@ paths:
         200:
           description: 成功删除，并且更新了课程所对应的评论数
       security:
-      - basic: []
       - token: []
 
 
@@ -408,7 +405,6 @@ paths:
         404:
           description: 未找到该课程
       security:
-      - basic: []
       - token: []
 
   /courses/{id}/comments/hot/:
@@ -491,7 +487,6 @@ paths:
         201:
           description: OK,成功处理请求，并且更新了该运营文章的评论数，返回新创建的评论的id
       security:
-      - basic: []
       - token: []
   /tip/{tid}/comments/{id}/:
     delete:
@@ -516,7 +511,6 @@ paths:
         200:
           description: OK,成功处理请求，并且更新了该运营文章的评论数，返回新创建的评论的id
       security:
-      - basic: []
       - token: []
 
   /courses/:
@@ -578,7 +572,6 @@ paths:
         201:
           description: ok
       security:
-      - basic: []
       - token: []
 
 
@@ -646,7 +639,6 @@ paths:
         200:
           description: ok
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -669,7 +661,6 @@ paths:
         200:
           description: ok
       security:
-      - basic: []
       - token: []
   
   /tags/{id}/courses/:
@@ -726,7 +717,6 @@ paths:
         201:
           description: 点赞成功
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -747,7 +737,6 @@ paths:
         403:
           description: 还未给该课程点赞
       security:
-      - basic: []
       - token: []
       
   /comments/{id}/like/:
@@ -771,7 +760,6 @@ paths:
         201:
           description: 点赞成功
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -794,7 +782,6 @@ paths:
         404:
           description: 未找到该评论
       security:
-      - basic: []
       - token: []
   /tip/{id}/like/:
     post:
@@ -817,7 +804,6 @@ paths:
         201:
           description: 点赞成功
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -840,7 +826,6 @@ paths:
         404:
           description: 未找到该运营文章
       security:
-      - basic: []
       - token: []
   /memcached/:
     post:
@@ -859,7 +844,6 @@ paths:
         200:
           description: OK
       security:
-      - basic: []
       - token: []
   /memcached/{id}/:
     post:
@@ -878,7 +862,6 @@ paths:
         404:
           description: 未找到该课程
       security:
-      - basic: []
       - token: []
     delete:
       tags:
@@ -896,7 +879,6 @@ paths:
         404:
           description: 未找到该课程
       security:
-      - basic: []
       - token: []
 
   /course/{id}/question/:
@@ -925,7 +907,6 @@ paths:
         404:
           description: 未找到该课程
       security:
-        - basic: []
         - token: []
   
   /question/{id}/:
@@ -945,7 +926,6 @@ paths:
         404:
           description: 未找到该提问
       security:
-        - basic: []
         - token: []
       
   /question/{id}/answer/:
@@ -974,7 +954,6 @@ paths:
         404:
           description: 未找到该提问
       security:
-        - basic: []
         - token: []
 
   /answer/{id}/:
@@ -994,7 +973,6 @@ paths:
         404:
           description: 未找到该回答
       security:
-        - basic: []
         - token: []
 
   /course/{id}/questions/:
@@ -1064,7 +1042,6 @@ paths:
             items:
               $ref: '#/definitions/Question'
       security:
-        - basic: []
         - token: []
 
   /answers/:
@@ -1092,7 +1069,6 @@ paths:
             items:
               $ref: '#/definitions/Answer'
       security:
-        - basic: []
         - token: []
   
   /tips/:
@@ -1149,7 +1125,6 @@ paths:
         201:
           description: OK
       security:
-        - basic: []
         - token: []
 
   /tips/{id}/:
@@ -1205,7 +1180,6 @@ paths:
         200:
           description: OK
       security:
-        - basic: []
         - token: []
     delete:
       tags:
@@ -1225,7 +1199,6 @@ paths:
         200:
           description: OK
       security:
-        - basic: []
         - token: []
   /tags/:
     get:
@@ -1295,7 +1268,6 @@ paths:
         200:
           description: OK
       security:
-        - basic: []
         - token: []
   /courses/{id}/tags/:
     get:
@@ -1399,7 +1371,6 @@ paths:
               type: string
               description: 获取该用户信息的请求地址
       security:
-        - basic: []
         - token: []
   /users/{id}/:
     get:
@@ -1462,7 +1433,6 @@ paths:
         200:
           description: ok
       security:
-      - basic: []
       - token: []
 
     delete:
@@ -1485,7 +1455,6 @@ paths:
         200:
           description: ok
       security:
-      - basic: []
       - token: []
       
   /courses/{id}/users/:
@@ -1662,7 +1631,6 @@ paths:
                 type: integer
                 description: 全站课程总数
       security:
-      - basic: []
       - token: []
 
 
@@ -1689,7 +1657,37 @@ paths:
         200:
           description: 返回一个包含提示信息的字典
 
+  /promotion/private-promotion-link/:
+    get:
+      tags:
+      - promotion
+      summary: 登录用户获取专属推广连接
+      description: 获取的链接为短链接，该短链接会被重定向到:https://xueer.muxixyz.com/promotion/register/?id=<用户ID>,此链接中包含的id参数为用户标识符。前端需要自行实现该URL对应的handler,获取该连接中的id参数，即获取此次请求的推荐人id，然后注册该用户，在注册的请求体中加上recommender_id即可
+      produces:
+      - application/json
+      responses:
+        200:
+          description: 返回推广短链接
+      security:
+      - token: []
 
+  /promotion/top/:
+    get:
+      tags:
+      - promotion
+      summary: 获取推荐成功过的老用户信息，按照推荐成功注册的人数从大到小排行
+      description: 
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+      security:
+      - token: []
 
 ###########################PATH END###################################
 
@@ -1928,6 +1926,9 @@ definitions:
       school:
         type: string
         description: 院系
+      recommand_count:
+        type: integer
+        description: 该用户成功推荐的人数
   
   User2:
     type: object
@@ -1941,6 +1942,9 @@ definitions:
       email:
         type: string
         description: 邮箱
+      recommand_count:
+        type: integer
+        description: 该用户成功推荐的人数
   # Role:
   #   type: object
   #   properties:

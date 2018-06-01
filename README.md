@@ -25,6 +25,8 @@
   * REDIS6385PASS: REDIS2的密码
   * REDIS3_HOST: 运行redis3的主机
 
+* KUTT短URL服务配置
+  * X_API_KEY: [短URL服务](http://kutt.it/)所需要的请求头
 
 ### 1. 准备
 

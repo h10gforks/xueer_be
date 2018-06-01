@@ -134,8 +134,7 @@ def new_course():
 def put_course(id):
     course = Courses.query.get_or_404(id)
     if request.method == "PUT":
-        # eval is evil:( but
-        data_dict = eval(request.data)
+        data_dict = request.json
         course.name = data_dict.get('name', course.name)
         course.teacher = data_dict.get('teacher', course.teacher)
         course.category_id = data_dict.get('category_id', course.category_id)
