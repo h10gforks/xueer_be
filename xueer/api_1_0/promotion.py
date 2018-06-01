@@ -25,7 +25,7 @@ def get_private_promotion_link():
 
 @api.route("/promotion/top/", methods=['GET'])
 def get_promotion_top():
-    top_list = sorted(User.query.all(), key=lambda x: x.recommend_count, reverse=True)
+    top_list = sorted(User.filter(User.recommend_count>0).query.all(), key=lambda x: x.recommend_count, reverse=True)
     return json.dumps(
         [user.to_json2() for user in top_list],
         ensure_ascii=False,
