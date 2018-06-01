@@ -18,14 +18,14 @@ from xueer.api_1_0.authentication import auth
 
 @api.route('/promotion/private-promotion-link/', methods=['GET'])
 @auth.login_required
-def get_private_promotion_link():
+def promotion_link():
     current_user = User.query.get_or_404(g.current_user.id)
     return jsonify({'private_promotion_link': current_user.generate_private_promotion_link()}), 200
 
 
 @api.route("/promotion/top/", methods=['GET'])
 def get_promotion_top():
-    top_list = sorted(User.filter(User.recommend_count>0).query.all(), key=lambda x: x.recommend_count, reverse=True)
+    top_list = sorted(User.query.filter(User.recommend_count>0).all(), key=lambda x: x.recommend_count, reverse=True)
     return json.dumps(
         [user.to_json2() for user in top_list],
         ensure_ascii=False,

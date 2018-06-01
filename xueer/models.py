@@ -27,7 +27,7 @@
 from datetime import datetime
 from flask_login import UserMixin, AnonymousUserMixin
 from . import login_manager, db
-from flask import current_app, url_for, request
+from flask import current_app, url_for, request,abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeSerializer as Serializer
 from .exceptions import ValidationError
@@ -245,6 +245,7 @@ class User(UserMixin, db.Model):
         X_API_Key = os.getenv("X_API_KEY")
         if not X_API_Key:
             print("请设置X_API_KEY环境变量")
+            abort(500)
         headers = {'X-API-Key': X_API_Key}
         r = requests.post("https://kutt.it/api/url/submit", headers=headers,data={"target": "https://xueer.muxixyz.com/promotion/register/?id="+str(self.id)})
         return json.loads(r.content).get("shortUrl")
