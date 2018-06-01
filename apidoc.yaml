@@ -58,8 +58,13 @@ tags:
 - name: search
   description: 搜索相关操作
 
+- name: promotion
+  description: 木犀推广相关API
+
 - name: other
   description: 其他api操作
+
+
 # - name: user
 #   description: Operations about user
 #   externalDocs:
@@ -1652,7 +1657,37 @@ paths:
         200:
           description: 返回一个包含提示信息的字典
 
+  /promotion/private-promotion-link/:
+    get:
+      tags:
+      - promotion
+      summary: 登录用户获取专属推广连接
+      description: 获取的链接为短链接，该短链接会被重定向到:https://xueer.muxixyz.com/promotion/register/?id=<用户ID>,此链接中包含的id参数为用户标识符。前端需要自行实现该URL对应的handler,获取该连接中的id参数，即获取此次请求的推荐人id，然后注册该用户，在注册的请求体中加上recommender_id即可
+      produces:
+      - application/json
+      responses:
+        200:
+          description: 返回推广短链接
+      security:
+      - token: []
 
+  /promotion/top/:
+    get:
+      tags:
+      - promotion
+      summary: 获取推荐成功过的老用户信息，按照推荐成功注册的人数从大到小排行
+      description: 
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+      security:
+      - token: []
 
 ###########################PATH END###################################
 
@@ -1891,6 +1926,9 @@ definitions:
       school:
         type: string
         description: 院系
+      recommand_count:
+        type: integer
+        description: 该用户成功推荐的人数
   
   User2:
     type: object
@@ -1904,6 +1942,9 @@ definitions:
       email:
         type: string
         description: 邮箱
+      recommand_count:
+        type: integer
+        description: 该用户成功推荐的人数
   # Role:
   #   type: object
   #   properties:
