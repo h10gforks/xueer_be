@@ -1885,6 +1885,9 @@ definitions:
       banner_url:
         type: string
         description: banner地址
+      liked:
+        type: integer
+        description: 当前用户是否点赞，匿名用户返回false
 
   Tag:
     type: object

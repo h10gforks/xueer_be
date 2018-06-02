@@ -981,7 +981,8 @@ class Tips(db.Model):
             'likes': self.likes,
             'date': self.time,
             'img_url': self.img_url,
-            'banner_url': self.banner_url
+            'banner_url': self.banner_url,
+            'liked':self.liked
         }
         return json_tips
 
@@ -994,7 +995,8 @@ class Tips(db.Model):
             'likes': self.likes,
             'date': self.time,
             'banner_url': self.banner_url,
-            'img_url': self.img_url
+            'img_url': self.img_url,
+            'liked':self.liked
         }
         return json_tips2
 
