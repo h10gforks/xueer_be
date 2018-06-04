@@ -1427,6 +1427,8 @@ paths:
                 type: string
               major:
                 type: string
+              role_id:
+                type: integer
       responses:
         404:
           description: 未找到该用户
