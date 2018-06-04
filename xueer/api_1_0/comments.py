@@ -24,7 +24,7 @@ from xueer.models import Tags, CourseTag
 from . import api
 import json
 from xueer.api_1_0.authentication import auth
-from xueer.decorators import admin_required
+from xueer.decorators import admin_required,moderator_required
 
 
 comments_per_page = 10
@@ -72,7 +72,7 @@ def add_tags(course):
 
 
 @api.route('/comments/', methods=["GET"])
-@admin_required
+@moderator_required
 def get_comments():
     page = request.args.get('page', 1, type=int)
     pagination = Comments.query.order_by(desc(Comments.timestamp)).paginate(

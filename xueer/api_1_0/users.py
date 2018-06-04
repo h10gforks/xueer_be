@@ -20,7 +20,7 @@ from flask import current_app, request, url_for, jsonify
 from . import api
 from werkzeug.security import generate_password_hash
 from ..models import User, Courses, Comments
-from xueer.decorators import admin_required
+from xueer.decorators import admin_required,moderator_required
 from xueer import db
 import json
 
