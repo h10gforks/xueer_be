@@ -12,6 +12,7 @@
     : DELETE(admin) /api/v1.0/users/id/ 删除特定id的用户
     : GET /api/v1.0/courses/id/users/ 获取给特定id课程点赞的所有用户
     : GET /api/v1.0/comments/id/users/ 获取给特定id评论点赞的所有用户
+    : GET /api/v1.0/user/mime/ 根据token获取用户信息
     .................................................................
 
 """
@@ -122,3 +123,10 @@ def get_comments_id_users(id):
     comments = Comments.query.get_or_404(id)
     user = User.query.filter_by(id=comments.user_id).first()
     return jsonify(user.to_json())
+
+
+@api.route('/user/mime/',methods=["POST"])
+def get_user_by_token():
+    token=request.json.get("token")
+    u=User.verify_auth_token(token)
+    return jsonify(u.to_json2())
