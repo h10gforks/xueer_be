@@ -1507,7 +1507,32 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/User'  
+              $ref: '#/definitions/User'
+  /user/mime/:
+    post:
+      tags:
+      - user
+      summary: 根据token获取用户信息
+      description:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - name: token
+          in: body
+          required: true
+          description: 用户token
+      responses:
+        404:
+          description: 未找到该用户
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User2'
+
   /search/:
     get:
       tags:
