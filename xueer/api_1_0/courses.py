@@ -20,7 +20,7 @@ from ..models import Courses, Tags
 from . import api
 from xueer import db, lru
 import json
-from xueer.decorators import admin_required
+from xueer.decorators import admin_required,moderator_required
 
 
 def pagination(lit, page, perpage):
@@ -118,7 +118,7 @@ def get_course_id(id):
 
 
 @api.route('/courses/', methods=["GET", "POST"])
-@admin_required
+@moderator_required
 def new_course():
     if request.method == "POST":
         course = Courses.from_json(request.get_json())
@@ -130,7 +130,7 @@ def new_course():
 
 
 @api.route('/courses/<int:id>/', methods=["GET", "PUT"])
-@admin_required
+@moderator_required
 def put_course(id):
     course = Courses.query.get_or_404(id)
     if request.method == "PUT":

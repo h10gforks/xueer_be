@@ -18,7 +18,7 @@
 """
 from . import api
 from xueer import db
-from xueer.decorators import admin_required
+from xueer.decorators import admin_required,moderator_required
 from xueer.models import CourseCategories, CourseTypes, CoursesSubCategories
 from flask import jsonify, request
 import json
@@ -31,7 +31,7 @@ def category():
 
 
 @api.route('/main_category/', methods=['GET', 'POST'])
-@admin_required
+@moderator_required
 def new_category():
     category = CourseCategories(
         name=request.get_json().get('category_name'),
@@ -45,7 +45,7 @@ def new_category():
 
 
 @api.route('/main_category/<int:id>/', methods=['GET', 'PUT'])
-@admin_required
+@moderator_required
 def update_category(id):
     category = CourseCategories.query.get_or_404(id)
     category.name = request.get_json().get('name')
@@ -85,7 +85,7 @@ def new_sub_category():
 
 
 @api.route('/sub_category/<int:id>/', methods=["GET", "PUT"])
-@admin_required
+@moderator_required
 def update_sub_category(id):
     sub_category = CoursesSubCategories.query.get_or_404(id)
     sub_category.name = request.get_json().get('name')

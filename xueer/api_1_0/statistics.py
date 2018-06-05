@@ -11,7 +11,7 @@
 """
 
 from . import api
-from xueer.decorators import admin_required
+from xueer.decorators import admin_required,moderator_required
 from xueer.models import Comments
 from xueer.models import User
 from xueer.models import Courses
@@ -19,7 +19,7 @@ from flask import jsonify
 
 
 @api.route('/statistics/', methods=["GET"])
-@admin_required
+@moderator_required
 def get_statistics():
     comments_count = len(Comments.query.all())
     users_count = len(User.query.all())

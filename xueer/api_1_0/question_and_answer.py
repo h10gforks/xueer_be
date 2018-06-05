@@ -23,7 +23,7 @@ from . import api
 import json
 from sqlalchemy import desc
 from xueer.api_1_0.authentication import auth
-from xueer.decorators import admin_required
+from xueer.decorators import admin_required,moderator_required
 
 
 questions_per_page = 20
@@ -133,7 +133,7 @@ def get_answers(id):
 
 
 @api.route('/questions/', methods=["GET"])
-@admin_required
+@moderator_required
 def get_pagination_questions():
     """
     获取所有问题，支持分页
@@ -164,7 +164,7 @@ def get_pagination_questions():
 
 
 @api.route('/answers/', methods=["GET"])
-@admin_required
+@moderator_required
 def get_pagination_answers():
     """
     获取所有回答，支持分页

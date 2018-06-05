@@ -18,7 +18,7 @@ from ..models import Tips
 from . import api
 from xueer import db
 import json
-from xueer.decorators import admin_required
+from xueer.decorators import admin_required,moderator_required
 
 
 @api.route('/tips/', methods=["GET"])
@@ -69,7 +69,7 @@ def get_tip_id(id):
 
 
 @api.route('/tips/', methods=['POST', 'GET'])
-@admin_required
+@moderator_required
 def new_tip():
     """
     发布一条新贴士
@@ -83,7 +83,7 @@ def new_tip():
 
 
 @api.route('/tips/<int:id>/', methods=['PUT', 'GET'])
-@admin_required
+@moderator_required
 def update_tip(id):
     """
     更新一条tips
