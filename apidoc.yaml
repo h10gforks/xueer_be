@@ -125,7 +125,7 @@ paths:
       tags:
       - category
       summary: 创建一个课程主分类
-      description: 以下的参数以json的形式传递,注意，该api需要管理员才可以调用
+      description: 以下的参数以json的形式传递,注意，该api需要运营以上权限才可以调用
       consumes:
       - application/json
       produces:
@@ -155,7 +155,7 @@ paths:
       tags:
       - category
       summary: 更新课程主分类名称
-      description: 需要管理员权限方可调用该api
+      description: 需要运营以上权限方可调用该api
       parameters:
         - in: path
           name: id
@@ -205,7 +205,7 @@ paths:
       tags:
       - category
       summary: 在某一个主分类下面创建一个二级分类
-      description: 以下的参数以json的形式传递,注意，该api需要管理员才可以调用
+      description: 以下的参数以json的形式传递,注意，该api需要运营以上权限才可以调用
       consumes:
       - application/json
       produces:
@@ -235,7 +235,7 @@ paths:
       tags:
       - category
       summary: 更新二级课程分类
-      description: 该api需要管理员才可以调用
+      description: 该api需要运营以上权限才可以调用
       consumes:
       - application/json
       produces:
@@ -271,7 +271,7 @@ paths:
       tags:
       - comment
       summary: 管理后台分页获取所有评论，默认每页10条
-      description: 按照发表时间分页返回所有评论,管理员才可以调用该api
+      description: 按照发表时间分页返回所有评论,运营以上权限才可以调用该api
 
       produces:
       - application/json
@@ -556,7 +556,7 @@ paths:
       tags:
       - course
       summary: 创建课程
-      description: 需要管理员权限
+      description: 需要运营以上权限
       consumes:
       - application/json
       produces:
@@ -605,7 +605,7 @@ paths:
       tags:
       - course
       summary: 更新某一课程的信息
-      description: 需要管理员权限，在请求体中提供需要更改的字段和更改后的值
+      description: 需要运营以上权限，在请求体中提供需要更改的字段和更改后的值
       consumes:
       - application/json
       produces:
@@ -1022,7 +1022,7 @@ paths:
       tags:
       - question
       summary: 分页获取所有问题
-      description: 管理员操作，按照发布的时间排序，新问题排在前面，默认每页10条
+      description: 运营以上权限操作，按照发布的时间排序，新问题排在前面，默认每页10条
       produces:
       - application/json
       parameters:
@@ -1049,7 +1049,7 @@ paths:
       tags:
       - answer
       summary: 分页获取所有回答
-      description: 管理员操作，按照评论发布的时间排序，新回答排在前面，默认每页10条
+      description: 运营以上权限操作，按照评论发布的时间排序，新回答排在前面，默认每页10条
       produces:
       - application/json
       parameters:
@@ -1099,7 +1099,7 @@ paths:
       tags:
       - tip
       summary: 发布一篇新的运营文章
-      description: 管理员操作
+      description: 运营以上权限
       consumes:
        - application/json
       produces:
@@ -1154,7 +1154,7 @@ paths:
       tags:
       - tip
       summary: 更新某一运营文章
-      description: 管理员操作
+      description: 运营以上权限操作
       consumes:
       - application/json
       parameters:
@@ -1612,7 +1612,7 @@ paths:
       tags:
       - other
       summary: 显示全站部分集合状态
-      description: 管理员操作
+      description: 运营以上权限操作
       consumes:
        - application/json
       produces:
