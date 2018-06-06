@@ -1509,7 +1509,7 @@ paths:
             items:
               $ref: '#/definitions/User'
   /user/mine/:
-    post:
+    get:
       tags:
       - user
       summary: 根据token获取用户信息
