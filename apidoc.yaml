@@ -1624,6 +1624,9 @@ paths:
               school:
                 type: string
                 description: 院系
+              recommender_id:
+                type: integer
+                description: 推荐人id
       responses:
         201:
           description: OK
