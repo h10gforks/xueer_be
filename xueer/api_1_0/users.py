@@ -17,11 +17,13 @@
 
 """
 
-from flask import current_app, request, url_for, jsonify
+from flask import current_app, request, url_for, jsonify,g
 from . import api
 from werkzeug.security import generate_password_hash
 from ..models import User, Courses, Comments
 from xueer.decorators import admin_required,moderator_required
+from xueer.api_1_0.authentication import auth
+
 from xueer import db
 import json
 
@@ -125,8 +127,7 @@ def get_comments_id_users(id):
     return jsonify(user.to_json())
 
 
-@api.route('/user/mime/',methods=["POST"])
+@api.route('/user/mine/',methods=["POST"])
+@auth.login_required
 def get_user_by_token():
-    token=request.json.get("token")
-    u=User.verify_auth_token(token)
-    return jsonify(u.to_json2())
+    return jsonify(g.current_user.to_json2())

@@ -1508,21 +1508,16 @@ paths:
             type: array
             items:
               $ref: '#/definitions/User'
-  /user/mime/:
+  /user/mine/:
     post:
       tags:
       - user
       summary: 根据token获取用户信息
-      description:
+      description: 需登录
       consumes:
       - application/json
       produces:
       - application/json
-      parameters:
-        - name: token
-          in: body
-          required: true
-          description: 用户token
       responses:
         404:
           description: 未找到该用户
@@ -1532,7 +1527,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/User2'
-
+      security:
+      - token: []
   /search/:
     get:
       tags:
@@ -1624,6 +1620,9 @@ paths:
               school:
                 type: string
                 description: 院系
+              recommender_id:
+                type: integer
+                description: 推荐人id
       responses:
         201:
           description: OK
