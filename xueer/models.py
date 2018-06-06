@@ -304,7 +304,7 @@ class User(UserMixin, db.Model):
         school = json_user.get('school')
         recommend_id=json_user.get("recommender_id")
         if recommend_id is not None:
-            recommender=User.query.get_or_404(int(recommender_id))
+            recommender=User.query.get_or_404(int(recommend_id))
             recommender.recommend_count+=1
             db.session.add(recommender)
             db.session.commit()
