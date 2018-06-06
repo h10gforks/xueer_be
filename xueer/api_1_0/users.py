@@ -127,7 +127,7 @@ def get_comments_id_users(id):
     return jsonify(user.to_json())
 
 
-@api.route('/user/mine/',methods=["POST"])
+@api.route('/user/mine/',methods=["GET"])
 @auth.login_required
 def get_user_by_token():
     return jsonify(g.current_user.to_json2())
