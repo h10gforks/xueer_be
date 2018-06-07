@@ -158,7 +158,6 @@ class User(UserMixin, db.Model):
     :var comments: 关系, 多对一, 用户发表的评论
     :var phone: 电话
     :var school: 学院
-    : var recommend_count：当前用户推荐来的用户的数量
 
     :property password: 不允许读取用户密码明文
     :property password set: 设置用户密码, 单向加密hash值
@@ -181,7 +180,6 @@ class User(UserMixin, db.Model):
     qq = db.Column(db.String(164), index=True)
     major = db.Column(db.String(200), index=True)
     password_hash = db.Column(db.String(128))
-    # confirmed = db.Column(db.Boolean,default=False)
     comments = db.relationship("Comments", backref='users',
                                lazy="dynamic", cascade='all')
     questions = db.relationship("CourseQuestion", backref='user',
@@ -191,15 +189,21 @@ class User(UserMixin, db.Model):
     phone = db.Column(db.String(200), default=None)
     school = db.Column(db.String(200), index=True, default=None)
     avatar = db.Column(db.String(200))
-    # recommend_count=db.Column(db.Integer,default=0)
     recommender_id=db.Column(db.Integer,nullable=True)
 
-    # @property
-    # def recommend_count_with_three_comment(self):
-    #     db.Session.execute("select count(*) from users where users.id==? and user.")
-    #     return 1
-
-
+    @property
+    def valid_recommend_count(self):
+        result=db.session.execute("""SELECT COUNT(*) 
+                                    FROM users 
+                                    WHERE users.recommender_id = {}
+                                    AND users.id 
+                                    IN (
+                                        SELECT user_id
+                                        FROM comments 
+                                        GROUP BY comments.user_id 
+                                        HAVING COUNT(*)> 3
+                                        );""".format(self.id)).fetchall()[0][0]
+        return result
 
     @staticmethod
     def generate_fake(count=100):
@@ -284,7 +288,8 @@ class User(UserMixin, db.Model):
             'qq': self.qq,
             'major': self.major,
             'phone': self.phone,
-            'school': self.school
+            'school': self.school,
+            "valid_recommend_count": self.valid_recommend_count
         }
         return json_user
 
@@ -292,7 +297,8 @@ class User(UserMixin, db.Model):
         json_user = {
             'id': self.id,
             'username': self.username,
-            'email': self.email
+            'email': self.email,
+            "valid_recommend_count":self.valid_recommend_count
         }
         return json_user
 

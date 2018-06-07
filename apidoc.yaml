@@ -1363,6 +1363,9 @@ paths:
               school:
                 type: string
                 description: 院系
+              recommander_id:
+                type: integer
+                description: 推荐人id,可选
       responses:
         201:
           description: OK
@@ -1955,7 +1958,7 @@ definitions:
       school:
         type: string
         description: 院系
-      recommand_count:
+      valid_recommend_count:
         type: integer
         description: 该用户成功推荐的人数
   
@@ -1971,9 +1974,10 @@ definitions:
       email:
         type: string
         description: 邮箱
-      recommand_count:
+     valid_recommend_count:
         type: integer
         description: 该用户成功推荐的人数
+
   # Role:
   #   type: object
   #   properties:
