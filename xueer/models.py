@@ -191,7 +191,13 @@ class User(UserMixin, db.Model):
     phone = db.Column(db.String(200), default=None)
     school = db.Column(db.String(200), index=True, default=None)
     avatar = db.Column(db.String(200))
-    recommend_count=db.Column(db.Integer,default=0)
+    # recommend_count=db.Column(db.Integer,default=0)
+    recommender_id=db.Column(db.Integer,nullable=True)
+
+    # @property
+    # def recommend_count_with_three_comment(self):
+    #     db.Session.execute("select count(*) from users where users.id==? and user.")
+    #     return 1
 
 
 
@@ -278,8 +284,7 @@ class User(UserMixin, db.Model):
             'qq': self.qq,
             'major': self.major,
             'phone': self.phone,
-            'school': self.school,
-            "recommand_count": self.recommend_count
+            'school': self.school
         }
         return json_user
 
@@ -287,8 +292,7 @@ class User(UserMixin, db.Model):
         json_user = {
             'id': self.id,
             'username': self.username,
-            'email': self.email,
-            'recommand_count': self.recommend_count
+            'email': self.email
         }
         return json_user
 
@@ -302,12 +306,7 @@ class User(UserMixin, db.Model):
         major = json_user.get('major')
         phone = json_user.get('phone')
         school = json_user.get('school')
-        recommend_id=json_user.get("recommender_id")
-        if recommend_id is not None:
-            recommender=User.query.get_or_404(int(recommend_id))
-            recommender.recommend_count+=1
-            db.session.add(recommender)
-            db.session.commit()
+        recommender_id=json_user.get("recommender_id")
 
         if username is None or username == '':
             raise ValidationError('用户名不能为空哦！')
@@ -315,6 +314,8 @@ class User(UserMixin, db.Model):
             raise ValidationError('请输入密码！')
         if email is None or email == '':
             raise ValidationError('请输入邮箱地址！')
+        if recommender_id is not None:
+            return User(username=username, password=password, email=email, role_id=role_id,recommender_id=recommender_id)
         return User(username=username, password=password, email=email, role_id=role_id)
 
     def __repr__(self):
