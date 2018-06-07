@@ -51,8 +51,7 @@ class DevConfig(Config):
         测试管理员账号
     """
     DEBUG = True
-    # SQLALCHEMY_DATABASE_URI = os.environ.get('XUEER_ORM_URI')
-    SQLALCHEMY_DATABASE_URI="mysql://muxi:muxi304@rm-wz986q9gcfau74vi0o.mysql.rds.aliyuncs.com:3306/xueer"
+    SQLALCHEMY_DATABASE_URI = os.environ.get('XUEER_ORM_URI')
     CELERY_BROKER_URL = "redis://{host}:4382/2".format(host=os.getenv("REDIS3_HOST"))
     CELERY_RESULT_BACKEND = "redis://{host}:4382/2".format(host=os.getenv("REDIS3_HOST"))
     CELERYBEAT_SCHEDULE = {
