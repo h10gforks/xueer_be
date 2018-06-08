@@ -162,7 +162,9 @@ def new_comment(id):
         db.session.commit()
         # add tags ["tag1", "tag2"]
         add_tags(course)
-    return jsonify({'id': comment.id}), 201
+    return jsonify({'id': comment.id,
+                    'current_user_comment_count':len(g.current_user.comments.all())
+                    }), 201
 
 
 @api.route('/comments/<int:id>/', methods=["GET", "DELETE"])

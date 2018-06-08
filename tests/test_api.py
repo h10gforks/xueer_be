@@ -348,6 +348,7 @@ class APITestCase(unittest.TestCase):
                                    'usual_score': 70
                                })
                                )
+        print (res.data)
         self.assertTrue(res.status_code == 201)
 
         # test admin to get all comments
