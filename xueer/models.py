@@ -201,7 +201,7 @@ class User(UserMixin, db.Model):
                                         SELECT user_id
                                         FROM comments 
                                         GROUP BY comments.user_id 
-                                        HAVING COUNT(*)> 3
+                                        HAVING COUNT(*)> 1
                                         );""".format(self.id)).fetchall()[0][0]
         return result
 
