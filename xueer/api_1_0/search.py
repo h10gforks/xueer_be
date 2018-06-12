@@ -11,13 +11,23 @@
 
 """ 
 from . import api
-from flask import request, url_for
+from flask import request, url_for, jsonify
 from xueer import rds, lru
 from xueer.models import Tags, Courses
+from xueer.decorators import admin_required,moderator_required
 from .paginate import pagination
 from .kmp import kmp
 import json
 
+lrukeys = lru.keys()
+
+@api.route("/refresh_memcache/", methods = ["GET"])
+#@moderator_required
+def refresh_keys():
+    lrukeys = lru.keys()
+    return jsonify({
+            "msg":"ok"
+        }), 200
 
 def category_catch(keywords, main_cat_id=0, ts_cat_id=0):
     """
@@ -31,8 +41,6 @@ def category_catch(keywords, main_cat_id=0, ts_cat_id=0):
         1: '通识核心课',
         2: '通识选修课'
     }.get(ts_cat_id)
-
-    lrukeys = lru.keys()
 
     if category and not subcategory:
         gen = (course_json for course_json in lrukeys \
