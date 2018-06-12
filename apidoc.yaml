@@ -1974,7 +1974,7 @@ definitions:
       email:
         type: string
         description: 邮箱
-     valid_recommend_count:
+      valid_recommend_count:
         type: integer
         description: 该用户成功推荐的人数
 
