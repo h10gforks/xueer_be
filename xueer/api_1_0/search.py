@@ -24,7 +24,8 @@ lrukeys = lru.keys()
 @api.route("/refresh_memcache/", methods = ["GET"])
 @moderator_required
 def refresh_keys():
-    lrukeys = lru.keys()
+    global lrukeys
+    lrukeys=lru.keys()
     return jsonify({
             "msg":"ok"
         }), 200
