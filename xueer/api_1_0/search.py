@@ -22,7 +22,7 @@ import json
 lrukeys = lru.keys()
 
 @api.route("/refresh_memcache/", methods = ["GET"])
-#@moderator_required
+@moderator_required
 def refresh_keys():
     lrukeys = lru.keys()
     return jsonify({
