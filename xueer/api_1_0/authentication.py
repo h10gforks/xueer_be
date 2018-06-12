@@ -69,7 +69,11 @@ auth.error_handler:
     to checkout the 'WWW-Authenticate' header
 """
 
+@auth.error_handler
+def auth_error():
+    return jsonify({"message":"auth failed"}), 403
 
+'''
 @auth.error_handler
 def auth_error():
     """
@@ -92,3 +96,4 @@ def server_error_error():
     500错误处理
     """
     return server_error('server error')
+'''

@@ -157,21 +157,22 @@ paths:
       summary: 更新课程主分类名称
       description: 需要运营以上权限方可调用该api
       parameters:
-        - in: path
-          name: id
-          required: true
-          description: 所需要更改的课程主分类的id,通过路径参数传入
-        # - name: body
-        - in: body
-          description: 请求体中的新的课程主分类名称对象
-
-          required: true
-          schema:
-            type: object
-            properties:
-              name:
-                type: string
-                description: 新的课程主分类名称
+      - in: body
+        name: category
+        description: 请求体中的新的课程主分类名称对象
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+              description: 新的课程主分类名称
+      
+      - in: path
+        name: id
+        required: true
+        description: 所需要更改的课程主分类的id,通过路径参数传入
+        
       responses:
         200:
           description: 更改成功.
@@ -190,10 +191,10 @@ paths:
       summary: 获取某一主分類下的二級分类信息
       description:  1. 通识核心课 2. 通识选修课
       parameters:
-        - name: main_category_id
-          description: 主分類課程id
-          in: query
-          required: true
+      - in: query
+        name: main_category_id
+        description: 主分类課程id
+        required: true
       produces:
       - application/json
       responses:
@@ -241,22 +242,21 @@ paths:
       produces:
       - application/json
       parameters:
-        - name: id
-          required: true
-          in: path
-          description: 所要更新的二级分类的id
-
-        - in: body
-          # name: body
-          description: 请求体中包含该二级分类的新名称以及其所要变更到的主分类的id的json对象
-          required: true
-          schema:
-            type: object
-            properties:
-              name:
-                type: string
-              main_category_id:
-                type: string
+      - name: id
+        required: true
+        in: path
+        description: 所要更新的二级分类的id
+      - in: body
+        # name: body
+        description: 请求体中包含该二级分类的新名称以及其所要变更到的主分类的id的json对象
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            main_category_id:
+              type: string
       responses:
         200:
           description: 操作成功
@@ -881,6 +881,17 @@ paths:
       security:
       - token: []
 
+  /refresh_memcache/:
+    get:
+      tags: 
+      - memcached
+      description: 更新代码中所用的缓存(耗时约10s) 管理员操作
+      responses:
+        200:
+          description: OK
+      security:
+      - token: []
+      
   /course/{id}/question/:
     post:
       tags:
@@ -1661,8 +1672,40 @@ paths:
                 description: 全站课程总数
       security:
       - token: []
-
-
+    
+  /statistics/user/<uid>/:
+    get:
+      tags:
+      - other
+      summary: 获取从某个id之后新增的用户人数。 管理员操作
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回{"user_added":integer} JSON
+        403:
+          description: 权限不足
+    
+  /statistics/comment/<date>/:
+    get:
+      tags:
+      - other
+      summary: 获取某个日期后的新增评论数。 管理员操作
+      description: data格式 YYYY-MM-DD如 2018-01-01
+      parameters:
+      - in: path
+        name: data
+        required: true
+        type: string
+      responses:
+        200:
+          description: 返回{"comment_added":integer} JSON
+        403:
+          description: 权限不足
+          
   /sure/:
     post:
       tags:
