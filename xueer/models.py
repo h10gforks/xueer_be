@@ -396,7 +396,7 @@ class Courses(db.Model):
     subcategory_id = db.Column(db.Integer, db.ForeignKey('subcategory.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('type.id'))
     credit = db.Column(db.Integer)
-    available = db.Column(db.Boolean)
+    available = db.Column(db.Boolean,default=True)
     loctime = db.Column(db.Text)
     count = db.Column(db.Integer)
     score = db.Column(db.Integer)
