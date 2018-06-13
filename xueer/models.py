@@ -251,15 +251,17 @@ class User(UserMixin, db.Model):
         return s.dumps({'id': self.id})
 
     def generate_private_promotion_link(self):
-        import json
-        X_API_Key = os.getenv("X_API_KEY")
-        if not X_API_Key:
-            print("请设置X_API_KEY环境变量")
-            abort(500)
-        headers = {'X-API-Key': X_API_Key}
-        r = requests.post("https://kutt.it/api/url/submit", headers=headers,data={"target": "https://xueer.muxixyz.com/promotion/register/?id="+str(self.id)})
-        return json.loads(r.content).get("shortUrl")
-
+        # import json
+        # X_API_Key = os.getenv("X_API_KEY")
+        # if not X_API_Key:
+        #     print("请设置X_API_KEY环境变量")
+        #     abort(500)
+        # headers = {'X-API-Key': X_API_Key}
+        # r = requests.post("https://kutt.it/api/url/submit",
+        #                   headers=headers,data={"target":
+        #                 "https://xueer.muxixyz.com/promotion/register/?id="+str(self.id)})
+        # return json.loads(r.content).get("shortUrl")
+        return "https://xueer.muxixyz.com/promotion/register/?id="+str(self.id)
     @staticmethod
     def verify_auth_token(token):
         """verify the user with token"""
