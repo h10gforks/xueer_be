@@ -291,7 +291,8 @@ class User(UserMixin, db.Model):
             'major': self.major,
             'phone': self.phone,
             'school': self.school,
-            "valid_recommend_count": self.valid_recommend_count
+            "valid_recommend_count": self.valid_recommend_count,
+            "role_id":self.role_id
         }
         return json_user
 
@@ -300,7 +301,8 @@ class User(UserMixin, db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            "valid_recommend_count":self.valid_recommend_count
+            "valid_recommend_count":self.valid_recommend_count,
+            "role_id":self.role_id
         }
         return json_user
 
