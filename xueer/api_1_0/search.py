@@ -30,6 +30,7 @@ def refresh_keys():
             "msg":"ok"
         }), 200
 
+# 废弃不用
 def category_catch(keywords, main_cat_id=0, ts_cat_id=0):
     """
     类别筛选
@@ -110,6 +111,7 @@ def new_category_catch(keywords, main_cat_id=0, ts_cat_id=0):
                 yield course_json
             elif not category and not subcategory:
                 yield course_json
+
     gen = filter_category()
 
     primary_result = []; secondary_result = []; third_result = []; sorts = {}; results = []
@@ -177,14 +179,6 @@ def new_category_catch(keywords, main_cat_id=0, ts_cat_id=0):
         lru.rpop("lruList")
         lru_len = lru_len - 1
 
-    """
-    if len(primary_result) != 0:
-        return primary_result
-    elif len(secondary_result) != 0:
-        return secondary_result
-    else:
-        return third_result
-    """
     return results
 
 @api.route('/search/', methods=['GET'])
