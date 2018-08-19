@@ -112,7 +112,7 @@ def new_category_catch(keywords, main_cat_id=0, ts_cat_id=0):
                 yield course_json
     gen = filter_category()
 
-    primary_result = []; secondary_result = []; third_result = []; sorts = {};
+    primary_result = []; secondary_result = []; third_result = []; sorts = {}; results = []
     for course_json_ in  gen:
         course_json = course_json_
         course_json_t = eval(course_json_)
@@ -147,25 +147,29 @@ def new_category_catch(keywords, main_cat_id=0, ts_cat_id=0):
             third_result.append(course.to_json())
 
         for course_json in third_result:
-            tmp = course_json; tmp['pre_key'] = keywords; course_json = str(tmp)
+            results.append(course_json)
+            tmp2 = course_json; tmp2['pre_key'] = keywords; course_json = str(tmp2)
             lru.lpush("lruList",course_json)
+
 
     elif len(primary_result) != 0:
         for course_json in primary_result:
             lru.lrem("lruList",course_json,1)
         for course_json in primary_result:
-            tmp_course = eval(course_json)
-            if keywords not in tmp_course['pre_key']:
-                tmp_course['pre_key'] += keywords; course_json = str(tmp_course)
+            tmp1 = eval(course_json); tmp1.pop('pre_key'); results.append(str(tmp1))
+            tmp2 = eval(course_json)
+            if keywords not in tmp2['pre_key']:
+                tmp2['pre_key'] += keywords; course_json = str(tmp2)
             lru.lpush("lruList",course_json)
 
     elif len(secondary_result) != 0:
         for course_json in secondary_result:
             lru.lrem("lruList",course_json,1)
         for course_json in secondary_result:
-            tmp_course = eval(course_json)
-            if keywords not in tmp_course['pre_key']:
-                tmp_course['pre_key'] += keywords; course_json = str(tmp_course)
+            tmp1 = eval(course_json); tmp1.pop('pre_key'); results.append(str(tmp1))
+            tmp2 = eval(course_json)
+            if keywords not in tmp2['pre_key']:
+                tmp2['pre_key'] += keywords; course_json = str(tmp2)
             lru.lpush("lruList",course_json)
 
     lru_len = lru.llen("lruList")
@@ -173,13 +177,15 @@ def new_category_catch(keywords, main_cat_id=0, ts_cat_id=0):
         lru.rpop("lruList")
         lru_len = lru_len - 1
 
+    """
     if len(primary_result) != 0:
         return primary_result
     elif len(secondary_result) != 0:
         return secondary_result
     else:
         return third_result
-
+    """
+    return results
 
 @api.route('/search/', methods=['GET'])
 def search():
