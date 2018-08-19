@@ -20,9 +20,10 @@ def restart_keywords_redis():
     """
     每3天清空一次搜索词纪录
     """
-    # 清空搜索词中的所有记录
-    rds.flushdb()
-    rds.save()
+    # 搜索词超过100个，就删除100位之后的搜索词
+    count = rds.zcard("sortedSet")
+    if count > 100:
+        rds.zremrangebyrank("sortedSet", 0, count-100)
 
 
 @celery.task(name='dump_progres_db')
