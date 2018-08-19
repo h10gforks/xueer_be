@@ -156,7 +156,7 @@ def new_category_catch(keywords, main_cat_id=0, ts_cat_id=0):
         for course_json in primary_result:
             lru.lrem("lruList",course_json,1)
         for course_json in primary_result:
-            tmp1 = eval(course_json); tmp1.pop('pre_key'); results.append(str(tmp1))
+            tmp1 = eval(course_json); tmp1.pop('pre_key'); results.append(tmp1)
             tmp2 = eval(course_json)
             if keywords not in tmp2['pre_key']:
                 tmp2['pre_key'] += keywords; course_json = str(tmp2)
@@ -166,7 +166,7 @@ def new_category_catch(keywords, main_cat_id=0, ts_cat_id=0):
         for course_json in secondary_result:
             lru.lrem("lruList",course_json,1)
         for course_json in secondary_result:
-            tmp1 = eval(course_json); tmp1.pop('pre_key'); results.append(str(tmp1))
+            tmp1 = eval(course_json); tmp1.pop('pre_key'); results.append(tmp1)
             tmp2 = eval(course_json)
             if keywords not in tmp2['pre_key']:
                 tmp2['pre_key'] += keywords; course_json = str(tmp2)
