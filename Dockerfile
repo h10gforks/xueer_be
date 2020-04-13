@@ -6,6 +6,12 @@ ENV DEPLOY_PATH /xueer
 RUN mkdir -p $DEPLOY_PATH
 WORKDIR $DEPLOY_PATH
 
+
+RUN apt-get install libssl-dev libmariadb-dev-compat
+
+RUN pip install mysql-connector-python \
+	&& pip install pymysql
+
 Add requirements.txt requirements.txt
 RUN pip install --index-url http://pypi.doubanio.com/simple/ -r requirements.txt --trusted-host=pypi.doubanio.com
 
