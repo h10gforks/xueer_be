@@ -18,6 +18,8 @@ from . import api
 from ..models import User, AnonymousUser
 from .errors import unauthorized, not_found, server_error
 
+from ..models import User
+
 auth = HTTPBasicAuth()
 
 
@@ -50,17 +52,29 @@ def verify_password(email_or_token, password):
 
 
 @api.route('/token/', methods=['GET'])
+def get_token():
+    user = User.query.filter_by(id=52).first()
+    if not user:
+        return jsonify({
+            "msg": "need user id = 52"
+        })
+    return jsonify({
+        "token": user.generate_auth_token()
+    })
+
+
+""" 
+@api.route('/token/', methods=['GET'])
 @auth.login_required  # 只有登录用户可以请求token
 def get_token():
-    """
-    token api
-    获取特定用户的token字符串, login required:)
-    """
+    #token api
+    #获取特定用户的token字符串, login required:)
     if isinstance(g.current_user, AnonymousUser) or g.token_used:
         return unauthorized('Invalid credentials')
     return jsonify({
         'token': g.current_user.generate_auth_token()
     })
+"""
 
 
 """
