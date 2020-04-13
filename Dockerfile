@@ -1,5 +1,4 @@
 FROM python:2.7
-MAINTAINER kasheemlew <kasheemirvinglew@gmail.com>
 
 ENV DEPLOY_PATH /xueer
 
@@ -7,11 +6,10 @@ RUN mkdir -p $DEPLOY_PATH
 WORKDIR $DEPLOY_PATH
 
 
-RUN apt-get install libssl-dev libmariadb-dev-compat
+ADD requirements.txt requirements.txt
 
-RUN pip install mysql-connector-python
+RUN apt-get install libssl-dev libmariadb-dev-compat \
+    && pip install mysql-connector-python \
+    && pip install --index-url http://pypi.doubanio.com/simple/ -r requirements.txt --trusted-host=pypi.doubanio.com
 
-Add requirements.txt requirements.txt
-RUN pip install --index-url http://pypi.doubanio.com/simple/ -r requirements.txt --trusted-host=pypi.doubanio.com
-
-Add . .
+ADD . .
