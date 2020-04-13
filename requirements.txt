@@ -42,6 +42,6 @@ wcwidth==0.1.6
 Werkzeug==0.11.10
 WTForms==2.1
 jieba
-MYSQL-python==1.2.5
+pymysql
 gevent
 forgerypy
